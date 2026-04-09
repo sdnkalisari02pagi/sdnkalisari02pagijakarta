@@ -39,8 +39,8 @@ export default function AdminDokumen() {
 
   const filtered = data.dokumen.filter(d => d.nama.toLowerCase().includes(search.toLowerCase()));
 
-  const openAdd = () => { setEditItem(null); setForm({ nama: '', tanggal: '', url: '#' }); setDialogOpen(true); };
-  const openEdit = (d: Dokumen) => { setEditItem(d); setForm({ nama: d.nama, tanggal: d.tanggal, url: d.url }); setDialogOpen(true); };
+  const openAdd = () => { setEditItem(null); setForm({ nama: '', tanggal: '', url: '#' }); setFileName(''); setDialogOpen(true); };
+  const openEdit = (d: Dokumen) => { setEditItem(d); setForm({ nama: d.nama, tanggal: d.tanggal, url: d.url }); setFileName(''); setDialogOpen(true); };
 
   const handleSave = () => {
     if (!form.nama || !form.tanggal) return;
