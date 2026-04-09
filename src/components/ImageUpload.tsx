@@ -44,6 +44,7 @@ export default function ImageUpload({ value, onChange, placeholder }: ImageUploa
         <Button type="button" variant="outline" size="sm" onClick={() => inputRef.current?.click()} className="gap-2">
           <Upload className="w-4 h-4" /> Unggah Foto
         </Button>
+        <p className="text-xs text-muted-foreground">Maksimal 2MB, format JPG/PNG</p>
       </div>
     </div>
   );
