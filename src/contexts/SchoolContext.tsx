@@ -57,6 +57,12 @@ export interface KontakInfo {
   mapsEmbed: string;
 }
 
+export interface HeroData {
+  images: string[];
+  judul: string;
+  subtitle: string;
+}
+
 export interface LastModified {
   logo?: string;
   pegawai?: string;
@@ -66,10 +72,12 @@ export interface LastModified {
   profil?: string;
   sambutan?: string;
   kontak?: string;
+  hero?: string;
 }
 
 export interface SchoolData {
   logo: string;
+  hero: HeroData;
   pegawai: Pegawai[];
   kegiatan: Kegiatan[];
   ekstrakurikuler: Ekstrakurikuler[];
@@ -81,6 +89,15 @@ export interface SchoolData {
 }
 
 const defaultData: SchoolData = {
+  hero: {
+    images: [
+      'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1577896851231-70ef18881754?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1588072432836-e10032774350?w=800&h=400&fit=crop',
+    ],
+    judul: 'SDN Kalisari 02 Pagi',
+    subtitle: 'Mewujudkan Generasi Cerdas, Berkarakter, dan Berprestasi',
+  },
   logo: '',
   pegawai: [
     { id: '1', nama: 'Nuroyanah, M.Pd', jabatan: 'Kepala Sekolah', foto: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=face' },
@@ -148,6 +165,7 @@ const defaultData: SchoolData = {
 interface SchoolContextType {
   data: SchoolData;
   updateLogo: (logo: string) => void;
+  updateHero: (hero: HeroData) => void;
   updatePegawai: (pegawai: Pegawai[]) => void;
   updateKegiatan: (kegiatan: Kegiatan[]) => void;
   updateEkstrakurikuler: (ekskul: Ekstrakurikuler[]) => void;
@@ -176,6 +194,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
 
   const now = () => new Date().toISOString();
   const updateLogo = (logo: string) => setData(d => ({ ...d, logo, lastModified: { ...d.lastModified, logo: now() } }));
+  const updateHero = (hero: HeroData) => setData(d => ({ ...d, hero, lastModified: { ...d.lastModified, hero: now() } }));
   const updatePegawai = (pegawai: Pegawai[]) => setData(d => ({ ...d, pegawai, lastModified: { ...d.lastModified, pegawai: now() } }));
   const updateKegiatan = (kegiatan: Kegiatan[]) => setData(d => ({ ...d, kegiatan, lastModified: { ...d.lastModified, kegiatan: now() } }));
   const updateEkstrakurikuler = (ekstrakurikuler: Ekstrakurikuler[]) => setData(d => ({ ...d, ekstrakurikuler, lastModified: { ...d.lastModified, ekstrakurikuler: now() } }));
@@ -185,7 +204,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   const updateKontak = (kontak: KontakInfo) => setData(d => ({ ...d, kontak, lastModified: { ...d.lastModified, kontak: now() } }));
 
   return (
-    <SchoolContext.Provider value={{ data, updateLogo, updatePegawai, updateKegiatan, updateEkstrakurikuler, updateDokumen, updateProfil, updateSambutan, updateKontak }}>
+    <SchoolContext.Provider value={{ data, updateLogo, updateHero, updatePegawai, updateKegiatan, updateEkstrakurikuler, updateDokumen, updateProfil, updateSambutan, updateKontak }}>
       {children}
     </SchoolContext.Provider>
   );
