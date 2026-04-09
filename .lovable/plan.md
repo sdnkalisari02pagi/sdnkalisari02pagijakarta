@@ -1,17 +1,9 @@
 
-
-# Hero Section Adjustments
+# Lighten Hero Gradient Overlay
 
 ## Changes to `src/pages/Index.tsx`
 
-### 1. Reduce overlay opacity for gradient effect
-- Change image opacity from `0.3` to `0.6` (line 57) so the photo is more visible
-- Change the overlay from `bg-primary/70` to a gradient: `bg-gradient-to-b from-primary/40 via-primary/50 to-primary/70` — this creates a gradation effect where the top is lighter and bottom darker, making the photo colors visible while keeping text readable
+- Line 56: Increase image opacity from `0.6` to `0.75` for more visible photos
+- Line 59: Lighten the gradient overlay from `from-primary/40 via-primary/50 to-primary/70` to `from-primary/20 via-primary/30 to-primary/50`
 
-### 2. Remove "Kegiatan" from stats
-- Remove `{ icon: Calendar, label: 'Kegiatan', value: data.kegiatan.length }` from the `stats` array (line 42)
-- Remove `Calendar` from imports
-
-### 3. Rename "Tenaga Pendidik" to "Pegawai"
-- Change label from `'Tenaga Pendidik'` to `'Pegawai'` (line 41)
-
+This makes the school photos more prominent while still keeping hero text readable.
