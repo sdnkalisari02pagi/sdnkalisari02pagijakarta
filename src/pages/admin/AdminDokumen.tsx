@@ -14,6 +14,28 @@ export default function AdminDokumen() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editItem, setEditItem] = useState<Dokumen | null>(null);
   const [form, setForm] = useState({ nama: '', tanggal: '', url: '#' });
+  const [fileName, setFileName] = useState('');
+  const [dragOver, setDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const ACCEPTED_TYPES = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'image/jpeg', 'image/png', 'image/webp'];
+
+  const processFile = (file: File) => {
+    if (file.size > 2 * 1024 * 1024) {
+      toast({ title: 'Gagal', description: 'Ukuran file maksimal 2MB.', variant: 'destructive' });
+      return;
+    }
+    if (!ACCEPTED_TYPES.includes(file.type)) {
+      toast({ title: 'Gagal', description: 'Format file tidak didukung.', variant: 'destructive' });
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      setForm(f => ({ ...f, url: reader.result as string }));
+      setFileName(file.name);
+    };
+    reader.readAsDataURL(file);
+  };
 
   const filtered = data.dokumen.filter(d => d.nama.toLowerCase().includes(search.toLowerCase()));
 
