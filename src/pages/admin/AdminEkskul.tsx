@@ -9,6 +9,7 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@
 import { Search, Plus, Pencil, Trash2 } from 'lucide-react';
 import ImageUpload from '@/components/ImageUpload';
 import GaleriUpload from '@/components/GaleriUpload';
+import LastModifiedInfo from '@/components/LastModifiedInfo';
 
 export default function AdminEkskul() {
   const { data, updateEkstrakurikuler } = useSchool();
@@ -53,6 +54,7 @@ export default function AdminEkskul() {
           </DialogContent>
         </Dialog>
       </div>
+      <LastModifiedInfo timestamp={data.lastModified?.ekstrakurikuler} />
       <div className="flex gap-4 mb-6">
         <div className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" /><Input placeholder="Cari nama ekskul..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10" /></div>
       </div>

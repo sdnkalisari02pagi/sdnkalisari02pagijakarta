@@ -7,6 +7,7 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Plus, Pencil, Trash2, Search, Upload, FileText, X } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import LastModifiedInfo from '@/components/LastModifiedInfo';
 
 export default function AdminDokumen() {
   const { data, updateDokumen } = useSchool();
@@ -103,6 +104,7 @@ export default function AdminDokumen() {
           </DialogContent>
         </Dialog>
       </div>
+      <LastModifiedInfo timestamp={data.lastModified?.dokumen} />
       <div className="relative max-w-md mb-6"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" /><Input placeholder="Cari..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10" /></div>
       <div className="rounded-lg border bg-background">
         <Table>

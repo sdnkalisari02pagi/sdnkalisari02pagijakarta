@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { Search, Plus, Pencil, Trash2, GripVertical } from 'lucide-react';
 import ImageUpload from '@/components/ImageUpload';
+import LastModifiedInfo from '@/components/LastModifiedInfo';
 
 export default function AdminPegawai() {
   const { data, updatePegawai } = useSchool();
@@ -88,6 +89,7 @@ export default function AdminPegawai() {
           </DialogContent>
         </Dialog>
       </div>
+      <LastModifiedInfo timestamp={data.lastModified?.pegawai} />
       <div className="flex flex-col sm:flex-row gap-4 mb-6">
         <div className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" /><Input placeholder="Cari nama..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10" /></div>
         <Select value={filterJabatan} onValueChange={setFilterJabatan}><SelectTrigger className="w-full sm:w-48"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Semua</SelectItem>{jabatanList.map(j => <SelectItem key={j} value={j}>{j}</SelectItem>)}</SelectContent></Select>

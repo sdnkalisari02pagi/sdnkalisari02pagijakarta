@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/hooks/use-toast';
 import ImageUpload from '@/components/ImageUpload';
+import LastModifiedInfo from '@/components/LastModifiedInfo';
 
 export default function AdminProfil() {
   const { data, updateProfil } = useSchool();
@@ -19,7 +20,8 @@ export default function AdminProfil() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6 text-foreground">Edit Profil Sekolah</h1>
+      <h1 className="text-2xl font-bold mb-2 text-foreground">Edit Profil Sekolah</h1>
+      <LastModifiedInfo timestamp={data.lastModified?.profil} />
       <div className="space-y-6 max-w-2xl">
         <Card><CardHeader><CardTitle className="text-lg">Sejarah</CardTitle></CardHeader><CardContent>
           <Textarea rows={6} value={form.sejarah} onChange={e => setForm(f => ({ ...f, sejarah: e.target.value }))} />

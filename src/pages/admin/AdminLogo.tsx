@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ImageUpload from '@/components/ImageUpload';
 import { toast } from '@/hooks/use-toast';
 import { GraduationCap } from 'lucide-react';
+import LastModifiedInfo from '@/components/LastModifiedInfo';
 
 export default function AdminLogo() {
   const { data, updateLogo } = useSchool();
@@ -14,7 +15,8 @@ export default function AdminLogo() {
 
   return (
     <div className="max-w-xl">
-      <h1 className="text-2xl font-bold text-foreground mb-6">Logo Website</h1>
+      <h1 className="text-2xl font-bold text-foreground mb-2">Logo Website</h1>
+      <LastModifiedInfo timestamp={data.lastModified?.logo} />
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Logo Saat Ini</CardTitle>
