@@ -1,20 +1,19 @@
 
 
-# Add Reorder Functionality to Admin Pegawai
+# Replace Arrow Buttons with Drag-and-Drop Reordering
 
 ## Overview
-Add up/down arrow buttons to each row in the pegawai table so admins can reorder staff. The order in admin will be reflected on the public website since both read from the same `data.pegawai` array.
+Replace the ArrowUp/ArrowDown buttons with HTML5 drag-and-drop for a more intuitive reordering experience. No new dependencies needed — using native HTML5 drag events.
 
 ## Changes
 
 ### `src/pages/admin/AdminPegawai.tsx`
-- Import `ArrowUp` and `ArrowDown` icons from lucide-react
-- Add a "No." (number) column as the first column showing the row index
-- Add up/down arrow buttons in the Aksi column (before edit/delete)
-- `moveUp(index)`: swaps item at `index` with `index-1`, calls `updatePegawai`
-- `moveDown(index)`: swaps item at `index` with `index+1`, calls `updatePegawai`
-- Disable up button on first row, down button on last row
-- Reorder buttons only work on the unfiltered full list — when search/filter is active, hide reorder buttons (since reordering a filtered subset would be confusing)
-
-No other files need changes — the public pages already render `data.pegawai` in array order.
+- Add `draggedIndex` state to track which row is being dragged
+- Add drag event handlers: `onDragStart`, `onDragOver`, `onDrop`, `onDragEnd`
+- On each `TableRow`: add `draggable={!isFiltering}`, attach drag handlers
+- Add a `GripVertical` icon (from lucide-react) as the first column (drag handle visual cue)
+- Remove ArrowUp/ArrowDown buttons and their imports
+- On drop: reorder `data.pegawai` array by moving the dragged item to the drop position, call `updatePegawai`
+- Add visual feedback: highlight the row being dragged over (e.g. border-top indicator)
+- Disable drag when filtering is active
 
