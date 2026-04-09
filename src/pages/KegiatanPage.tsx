@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { useSchool } from '@/contexts/SchoolContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -9,6 +10,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 
 export default function KegiatanPage() {
   const { data } = useSchool();
+  const scrollRef = useScrollAnimation();
   const [search, setSearch] = useState('');
   const [filterDate, setFilterDate] = useState('');
   const [selectedKegiatan, setSelectedKegiatan] = useState<typeof data.kegiatan[0] | null>(null);
@@ -30,9 +32,9 @@ export default function KegiatanPage() {
           </div>
           <Input type="month" value={filterDate} onChange={e => setFilterDate(e.target.value)} className="w-full sm:w-48" />
         </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          {filtered.map(k => (
-            <Card key={k.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setSelectedKegiatan(k)}>
+        <div ref={scrollRef} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          {filtered.map((k, index) => (
+            <Card key={k.id} className={`scroll-animate delay-${(index % 3 + 1) * 100} overflow-hidden hover:shadow-lg transition-shadow cursor-pointer`} onClick={() => setSelectedKegiatan(k)}>
               <img src={k.foto} alt={k.judul} className="w-full h-48 object-cover" />
               <CardContent className="pt-4">
                 <p className="text-xs text-muted-foreground mb-1">{new Date(k.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
