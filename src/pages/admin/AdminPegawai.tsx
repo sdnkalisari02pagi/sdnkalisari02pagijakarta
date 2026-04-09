@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useSchool, Pegawai } from '@/contexts/SchoolContext';
-import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { Search, Plus, Pencil, Trash2 } from 'lucide-react';
 import ImageUpload from '@/components/ImageUpload';
 
@@ -61,20 +61,30 @@ export default function AdminPegawai() {
         <div className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" /><Input placeholder="Cari nama..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10" /></div>
         <Select value={filterJabatan} onValueChange={setFilterJabatan}><SelectTrigger className="w-full sm:w-48"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Semua</SelectItem>{jabatanList.map(j => <SelectItem key={j} value={j}>{j}</SelectItem>)}</SelectContent></Select>
       </div>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filtered.map(p => (
-          <Card key={p.id} className="hover:shadow-lg transition-shadow">
-            <CardContent className="pt-6 text-center">
-              <img src={p.foto} alt={p.nama} className="w-16 h-16 rounded-full mx-auto mb-3 object-cover" />
-              <h4 className="font-semibold text-foreground">{p.nama}</h4>
-              <p className="text-sm text-muted-foreground mb-3">{p.jabatan}</p>
-              <div className="flex justify-center gap-2">
-                <Button size="sm" variant="outline" onClick={() => openEdit(p)}><Pencil className="w-3 h-3" /></Button>
-                <Button size="sm" variant="destructive" onClick={() => handleDelete(p.id)}><Trash2 className="w-3 h-3" /></Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="rounded-lg border bg-background">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Foto</TableHead>
+              <TableHead>Nama</TableHead>
+              <TableHead>Jabatan</TableHead>
+              <TableHead className="text-right">Aksi</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filtered.map(p => (
+              <TableRow key={p.id}>
+                <TableCell><img src={p.foto} alt={p.nama} className="w-10 h-10 rounded-full object-cover" /></TableCell>
+                <TableCell className="font-medium">{p.nama}</TableCell>
+                <TableCell>{p.jabatan}</TableCell>
+                <TableCell className="text-right space-x-2">
+                  <Button size="sm" variant="outline" onClick={() => openEdit(p)}><Pencil className="w-3 h-3" /></Button>
+                  <Button size="sm" variant="destructive" onClick={() => handleDelete(p.id)}><Trash2 className="w-3 h-3" /></Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

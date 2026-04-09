@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useSchool, Kegiatan } from '@/contexts/SchoolContext';
-import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
 import ImageUpload from '@/components/ImageUpload';
 
@@ -49,20 +49,30 @@ export default function AdminKegiatan() {
           </DialogContent>
         </Dialog>
       </div>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {data.kegiatan.map(k => (
-          <Card key={k.id} className="overflow-hidden">
-            <img src={k.foto} alt={k.judul} className="w-full h-40 object-cover" />
-            <CardContent className="pt-4">
-              <p className="text-xs text-muted-foreground">{new Date(k.tanggal).toLocaleDateString('id-ID')}</p>
-              <h4 className="font-semibold text-foreground mb-2">{k.judul}</h4>
-              <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={() => openEdit(k)}><Pencil className="w-3 h-3" /></Button>
-                <Button size="sm" variant="destructive" onClick={() => handleDelete(k.id)}><Trash2 className="w-3 h-3" /></Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="rounded-lg border bg-background">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Foto</TableHead>
+              <TableHead>Judul</TableHead>
+              <TableHead>Tanggal</TableHead>
+              <TableHead className="text-right">Aksi</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {data.kegiatan.map(k => (
+              <TableRow key={k.id}>
+                <TableCell><img src={k.foto} alt={k.judul} className="w-10 h-10 rounded object-cover" /></TableCell>
+                <TableCell className="font-medium">{k.judul}</TableCell>
+                <TableCell>{new Date(k.tanggal).toLocaleDateString('id-ID')}</TableCell>
+                <TableCell className="text-right space-x-2">
+                  <Button size="sm" variant="outline" onClick={() => openEdit(k)}><Pencil className="w-3 h-3" /></Button>
+                  <Button size="sm" variant="destructive" onClick={() => handleDelete(k.id)}><Trash2 className="w-3 h-3" /></Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
     </div>
   );
