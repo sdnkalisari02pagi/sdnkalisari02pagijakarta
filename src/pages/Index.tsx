@@ -53,10 +53,10 @@ export default function Index() {
             src={img}
             alt={`Slide ${i + 1}`}
             className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out"
-            style={{ opacity: i === currentSlide ? 0.6 : 0 }}
+            style={{ opacity: i === currentSlide ? 0.75 : 0 }}
           />
         ))}
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/40 via-primary/50 to-primary/70" />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/20 via-primary/30 to-primary/50" />
 
         {/* Arrows */}
         {images.length > 1 && (
