@@ -17,12 +17,25 @@ export default function AdminPegawai() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [form, setForm] = useState({ nama: '', jabatan: '', foto: '' });
 
+  const isFiltering = search !== '' || filterJabatan !== 'all';
   const jabatanList = [...new Set(data.pegawai.map(p => p.jabatan))];
   const filtered = data.pegawai.filter(p => {
     const ms = p.nama.toLowerCase().includes(search.toLowerCase());
     const mf = filterJabatan === 'all' || p.jabatan === filterJabatan;
     return ms && mf;
   });
+
+  const moveUp = (index: number) => {
+    const arr = [...data.pegawai];
+    [arr[index - 1], arr[index]] = [arr[index], arr[index - 1]];
+    updatePegawai(arr);
+  };
+
+  const moveDown = (index: number) => {
+    const arr = [...data.pegawai];
+    [arr[index], arr[index + 1]] = [arr[index + 1], arr[index]];
+    updatePegawai(arr);
+  };
 
   const openAdd = () => { setEditItem(null); setForm({ nama: '', jabatan: '', foto: '' }); setDialogOpen(true); };
   const openEdit = (p: Pegawai) => { setEditItem(p); setForm({ nama: p.nama, jabatan: p.jabatan, foto: p.foto }); setDialogOpen(true); };
