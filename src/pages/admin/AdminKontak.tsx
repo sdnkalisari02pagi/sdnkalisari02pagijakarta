@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/hooks/use-toast';
+import LastModifiedInfo from '@/components/LastModifiedInfo';
 
 export default function AdminKontak() {
   const { data, updateKontak } = useSchool();
@@ -18,7 +19,8 @@ export default function AdminKontak() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6 text-foreground">Edit Kontak</h1>
+      <h1 className="text-2xl font-bold mb-2 text-foreground">Edit Kontak</h1>
+      <LastModifiedInfo timestamp={data.lastModified?.kontak} />
       <div className="space-y-6 max-w-2xl">
         <Card><CardHeader><CardTitle className="text-lg">Informasi Kontak</CardTitle></CardHeader><CardContent className="space-y-4">
           <div><Label>Alamat</Label><Textarea rows={2} value={form.alamat} onChange={e => setForm(f => ({ ...f, alamat: e.target.value }))} /></div>

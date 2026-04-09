@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { Search, Plus, Pencil, Trash2 } from 'lucide-react';
 import ImageUpload from '@/components/ImageUpload';
+import LastModifiedInfo from '@/components/LastModifiedInfo';
 
 export default function AdminKegiatan() {
   const { data, updateKegiatan } = useSchool();
@@ -52,6 +53,7 @@ export default function AdminKegiatan() {
           </DialogContent>
         </Dialog>
       </div>
+      <LastModifiedInfo timestamp={data.lastModified?.kegiatan} />
       <div className="flex gap-4 mb-6">
         <div className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" /><Input placeholder="Cari judul kegiatan..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10" /></div>
       </div>
