@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useSchool, Ekstrakurikuler } from '@/contexts/SchoolContext';
-import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
 import ImageUpload from '@/components/ImageUpload';
 import GaleriUpload from '@/components/GaleriUpload';
@@ -50,19 +50,28 @@ export default function AdminEkskul() {
           </DialogContent>
         </Dialog>
       </div>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {data.ekstrakurikuler.map(e => (
-          <Card key={e.id} className="overflow-hidden">
-            <img src={e.foto} alt={e.nama} className="w-full h-40 object-cover" />
-            <CardContent className="pt-4 text-center">
-              <h4 className="font-semibold text-foreground mb-3">{e.nama}</h4>
-              <div className="flex justify-center gap-2">
-                <Button size="sm" variant="outline" onClick={() => openEdit(e)}><Pencil className="w-3 h-3" /></Button>
-                <Button size="sm" variant="destructive" onClick={() => handleDelete(e.id)}><Trash2 className="w-3 h-3" /></Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="rounded-lg border bg-background">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Foto</TableHead>
+              <TableHead>Nama</TableHead>
+              <TableHead className="text-right">Aksi</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {data.ekstrakurikuler.map(e => (
+              <TableRow key={e.id}>
+                <TableCell><img src={e.foto} alt={e.nama} className="w-10 h-10 rounded object-cover" /></TableCell>
+                <TableCell className="font-medium">{e.nama}</TableCell>
+                <TableCell className="text-right space-x-2">
+                  <Button size="sm" variant="outline" onClick={() => openEdit(e)}><Pencil className="w-3 h-3" /></Button>
+                  <Button size="sm" variant="destructive" onClick={() => handleDelete(e.id)}><Trash2 className="w-3 h-3" /></Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
     </div>
   );
