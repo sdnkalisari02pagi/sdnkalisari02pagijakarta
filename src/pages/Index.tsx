@@ -1,6 +1,7 @@
+import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useSchool } from '@/contexts/SchoolContext';
-import { Users, BookOpen, Star, Shield, ArrowRight } from 'lucide-react';
+import { Users, BookOpen, Star, Shield, ArrowRight, ChevronLeft, ChevronRight, Calendar, Award } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
@@ -18,20 +19,102 @@ export default function Index() {
   const keunggulanRef = useScrollAnimation();
   const kegiatanRef = useScrollAnimation();
 
+  const images = data.hero.images.length > 0 ? data.hero.images : [data.profil.fotoSekolah];
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const nextSlide = useCallback(() => {
+    setCurrentSlide(prev => (prev + 1) % images.length);
+  }, [images.length]);
+
+  const prevSlide = useCallback(() => {
+    setCurrentSlide(prev => (prev - 1 + images.length) % images.length);
+  }, [images.length]);
+
+  useEffect(() => {
+    if (images.length <= 1) return;
+    const timer = setInterval(nextSlide, 5000);
+    return () => clearInterval(timer);
+  }, [nextSlide, images.length]);
+
+  const stats = [
+    { icon: Users, label: 'Tenaga Pendidik', value: data.pegawai.length },
+    { icon: Calendar, label: 'Kegiatan', value: data.kegiatan.length },
+    { icon: Award, label: 'Ekstrakurikuler', value: data.ekstrakurikuler.length },
+  ];
+
   return (
     <div>
       {/* Hero */}
       <section className="relative h-[70vh] min-h-[400px] flex items-center justify-center bg-primary overflow-hidden">
-        <img src={data.profil.fotoSekolah} alt="SDN Kalisari 02 Pagi" className="absolute inset-0 w-full h-full object-cover opacity-30" />
+        {/* Carousel Images */}
+        {images.map((img, i) => (
+          <img
+            key={i}
+            src={img}
+            alt={`Slide ${i + 1}`}
+            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out"
+            style={{ opacity: i === currentSlide ? 0.3 : 0 }}
+          />
+        ))}
         <div className="absolute inset-0 bg-primary/70" />
+
+        {/* Arrows */}
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={prevSlide}
+              className="absolute left-4 z-20 p-2 rounded-full bg-background/20 backdrop-blur-sm text-primary-foreground hover:bg-background/40 transition-colors"
+              aria-label="Previous"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+            <button
+              onClick={nextSlide}
+              className="absolute right-4 z-20 p-2 rounded-full bg-background/20 backdrop-blur-sm text-primary-foreground hover:bg-background/40 transition-colors"
+              aria-label="Next"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+          </>
+        )}
+
+        {/* Content */}
         <div className="relative z-10 text-center text-primary-foreground px-4 animate-fade-in-up">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">SDN Kalisari 02 Pagi</h1>
-          <p className="text-lg md:text-xl mb-6 opacity-90">Mewujudkan Generasi Cerdas, Berkarakter, dan Berprestasi</p>
-          <div className="inline-flex items-center gap-2 bg-secondary text-secondary-foreground px-6 py-3 rounded-full font-semibold">
-            <Users className="w-5 h-5" />
-            <span>{data.pegawai.length} Tenaga Pendidik & Kependidikan</span>
+          <h1 className="text-4xl md:text-6xl font-bold mb-4">{data.hero.judul}</h1>
+          <p className="text-lg md:text-xl mb-8 opacity-90">{data.hero.subtitle}</p>
+
+          {/* Stats */}
+          <div className="flex flex-wrap justify-center gap-4">
+            {stats.map((s, i) => (
+              <div
+                key={i}
+                className="flex items-center gap-3 bg-background/10 backdrop-blur-md border border-primary-foreground/20 rounded-xl px-5 py-3"
+              >
+                <s.icon className="w-5 h-5 text-secondary" />
+                <div className="text-left">
+                  <p className="text-2xl font-bold leading-none">{s.value}</p>
+                  <p className="text-xs opacity-80">{s.label}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
+
+        {/* Dot Indicators */}
+        {images.length > 1 && (
+          <div className="absolute bottom-4 z-20 flex gap-2">
+            {images.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentSlide(i)}
+                className={`w-2.5 h-2.5 rounded-full transition-all ${
+                  i === currentSlide ? 'bg-primary-foreground w-6' : 'bg-primary-foreground/40'
+                }`}
+                aria-label={`Slide ${i + 1}`}
+              />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Sambutan */}

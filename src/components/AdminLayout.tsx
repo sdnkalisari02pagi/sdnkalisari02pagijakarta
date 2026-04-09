@@ -9,6 +9,7 @@ import { useSchool } from '@/contexts/SchoolContext';
 const menuItems = [
   { title: 'Dashboard', url: '/admin', icon: LayoutDashboard },
   { title: 'Logo', url: '/admin/logo', icon: ImageIcon },
+  { title: 'Hero', url: '/admin/hero', icon: ImageIcon },
   { title: 'Pegawai', url: '/admin/pegawai', icon: Users },
   { title: 'Kegiatan', url: '/admin/kegiatan', icon: Calendar },
   { title: 'Ekstrakurikuler', url: '/admin/ekstrakurikuler', icon: Star },
