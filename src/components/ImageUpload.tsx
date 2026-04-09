@@ -6,7 +6,7 @@ import { toast } from '@/hooks/use-toast';
 interface ImageUploadProps {
   value: string;
   onChange: (url: string) => void;
-  placeholder?: string;
+  placeholder?: boolean;
 }
 
 export default function ImageUpload({ value, onChange, placeholder }: ImageUploadProps) {
