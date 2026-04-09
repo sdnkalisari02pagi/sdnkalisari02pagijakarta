@@ -65,7 +65,39 @@ export default function AdminDokumen() {
             <div className="space-y-4">
               <div><Label>Nama</Label><Input value={form.nama} onChange={e => setForm(f => ({ ...f, nama: e.target.value }))} /></div>
               <div><Label>Tanggal</Label><Input type="date" value={form.tanggal} onChange={e => setForm(f => ({ ...f, tanggal: e.target.value }))} /></div>
-              <div><Label>URL File</Label><Input value={form.url} onChange={e => setForm(f => ({ ...f, url: e.target.value }))} /></div>
+              <div>
+                <Label>File</Label>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.webp"
+                  className="hidden"
+                  onChange={e => { const file = e.target.files?.[0]; if (file) processFile(file); e.target.value = ''; }}
+                />
+                {form.url !== '#' && form.url !== '' ? (
+                  <div className="flex items-center gap-2 p-3 rounded-lg border bg-muted/50">
+                    <FileText className="w-5 h-5 text-primary shrink-0" />
+                    <span className="text-sm truncate flex-1">{fileName || 'File terunggah'}</span>
+                    <button onClick={() => { setForm(f => ({ ...f, url: '#' })); setFileName(''); }} className="text-muted-foreground hover:text-destructive">
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <div
+                    onClick={() => fileInputRef.current?.click()}
+                    onDragOver={e => { e.preventDefault(); setDragOver(true); }}
+                    onDragLeave={() => setDragOver(false)}
+                    onDrop={e => { e.preventDefault(); setDragOver(false); const file = e.dataTransfer.files?.[0]; if (file) processFile(file); }}
+                    className={`w-full min-h-[6rem] rounded-lg border-2 border-dashed flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors ${
+                      dragOver ? 'border-primary bg-primary/5' : 'border-muted-foreground/40 hover:border-primary/60'
+                    }`}
+                  >
+                    <Upload className="w-6 h-6 text-muted-foreground" />
+                    <p className="text-sm text-muted-foreground text-center">Seret file ke sini atau klik untuk unggah</p>
+                    <p className="text-xs text-muted-foreground">PDF, DOC, XLS, JPG, PNG (maks 2MB)</p>
+                  </div>
+                )}
+              </div>
               <Button onClick={handleSave} className="w-full">Simpan</Button>
             </div>
           </DialogContent>
