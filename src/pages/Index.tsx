@@ -19,7 +19,8 @@ export default function Index() {
   const keunggulanRef = useScrollAnimation();
   const kegiatanRef = useScrollAnimation();
 
-  const images = data.hero.images.length > 0 ? data.hero.images : [data.profil.fotoSekolah];
+  const hero = data.hero || { images: [], judul: 'SDN Kalisari 02 Pagi', subtitle: 'Mewujudkan Generasi Cerdas, Berkarakter, dan Berprestasi' };
+  const images = hero.images.length > 0 ? hero.images : [data.profil.fotoSekolah];
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const nextSlide = useCallback(() => {
