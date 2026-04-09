@@ -1,30 +1,23 @@
 
 
-# Add Logo Upload to Admin Dashboard
+# Add Gallery Management to Admin Ekskul
 
 ## Overview
-Currently the website logo is a hardcoded `GraduationCap` icon. Add a `logo` field to the school data and an admin section to upload/change it. The uploaded logo will appear in the Navbar and Admin Sidebar.
+The `Ekstrakurikuler` type already has a `galeri: string[]` field, and the detail page displays it. Add gallery editing to the admin ekskul dialog so admins can add/remove gallery photos.
 
 ## Changes
 
-### 1. `src/contexts/SchoolContext.tsx`
-- Add `logo: string` to `SchoolData` interface (default: empty string)
-- Add `updateLogo` function to context
+### `src/pages/admin/AdminEkskul.tsx`
+- Add `galeri: string[]` to the form state (initialize from edit item or empty array)
+- Below the Deskripsi field in the dialog, add a "Galeri" section:
+  - Show existing gallery images as small thumbnails with a remove (X) button each
+  - Add an `ImageUpload`-style file input button ("Tambah Foto Galeri") that appends new images to the array
+  - Use `FileReader` to convert to base64, same as `ImageUpload`
+- Pass `galeri` through when saving (both add and edit)
 
-### 2. New admin menu item in `AdminLayout.tsx`
-- Add "Logo" menu item linking to `/admin/logo` with an `Image` icon
-
-### 3. New page: `src/pages/admin/AdminLogo.tsx`
-- Simple page with `ImageUpload` component to upload/change the logo
-- Shows current logo preview
-- Save button updates context
-
-### 4. `src/App.tsx`
-- Add route `/admin/logo` → `AdminLogo`
-
-### 5. `src/components/Navbar.tsx`
-- If `data.logo` exists, show `<img>` instead of `GraduationCap` icon
-
-### 6. `src/components/AdminLayout.tsx`
-- If `data.logo` exists, show `<img>` instead of `GraduationCap` icon in sidebar header
+### `src/components/GaleriUpload.tsx` (new)
+- Reusable component accepting `value: string[]` and `onChange: (urls: string[]) => void`
+- Displays thumbnail grid of current images with remove buttons
+- Has an "Tambah Foto" button to add more images (same 2MB limit, JPG/PNG)
+- Shows helper text "Maksimal 2MB per foto, format JPG/PNG"
 
