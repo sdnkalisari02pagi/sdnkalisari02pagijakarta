@@ -53,6 +53,17 @@ export interface KontakInfo {
   mapsEmbed: string;
 }
 
+export interface LastModified {
+  logo?: string;
+  pegawai?: string;
+  kegiatan?: string;
+  ekstrakurikuler?: string;
+  dokumen?: string;
+  profil?: string;
+  sambutan?: string;
+  kontak?: string;
+}
+
 export interface SchoolData {
   logo: string;
   pegawai: Pegawai[];
@@ -62,6 +73,7 @@ export interface SchoolData {
   profil: ProfilSekolah;
   sambutan: Sambutan;
   kontak: KontakInfo;
+  lastModified: LastModified;
 }
 
 const defaultData: SchoolData = {
@@ -126,6 +138,7 @@ const defaultData: SchoolData = {
     youtube: 'https://www.youtube.com/@kalisaritimur2027',
     mapsEmbed: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3965.2!2d106.87!3d-6.33!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwMjAnUyAxMDbCsDUyJ0U!5e0!3m2!1sen!2sid!4v1234567890',
   },
+  lastModified: {},
 };
 
 interface SchoolContextType {
@@ -157,14 +170,15 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('school-data', JSON.stringify(data));
   }, [data]);
 
-  const updateLogo = (logo: string) => setData(d => ({ ...d, logo }));
-  const updatePegawai = (pegawai: Pegawai[]) => setData(d => ({ ...d, pegawai }));
-  const updateKegiatan = (kegiatan: Kegiatan[]) => setData(d => ({ ...d, kegiatan }));
-  const updateEkstrakurikuler = (ekstrakurikuler: Ekstrakurikuler[]) => setData(d => ({ ...d, ekstrakurikuler }));
-  const updateDokumen = (dokumen: Dokumen[]) => setData(d => ({ ...d, dokumen }));
-  const updateProfil = (profil: ProfilSekolah) => setData(d => ({ ...d, profil }));
-  const updateSambutan = (sambutan: Sambutan) => setData(d => ({ ...d, sambutan }));
-  const updateKontak = (kontak: KontakInfo) => setData(d => ({ ...d, kontak }));
+  const now = () => new Date().toISOString();
+  const updateLogo = (logo: string) => setData(d => ({ ...d, logo, lastModified: { ...d.lastModified, logo: now() } }));
+  const updatePegawai = (pegawai: Pegawai[]) => setData(d => ({ ...d, pegawai, lastModified: { ...d.lastModified, pegawai: now() } }));
+  const updateKegiatan = (kegiatan: Kegiatan[]) => setData(d => ({ ...d, kegiatan, lastModified: { ...d.lastModified, kegiatan: now() } }));
+  const updateEkstrakurikuler = (ekstrakurikuler: Ekstrakurikuler[]) => setData(d => ({ ...d, ekstrakurikuler, lastModified: { ...d.lastModified, ekstrakurikuler: now() } }));
+  const updateDokumen = (dokumen: Dokumen[]) => setData(d => ({ ...d, dokumen, lastModified: { ...d.lastModified, dokumen: now() } }));
+  const updateProfil = (profil: ProfilSekolah) => setData(d => ({ ...d, profil, lastModified: { ...d.lastModified, profil: now() } }));
+  const updateSambutan = (sambutan: Sambutan) => setData(d => ({ ...d, sambutan, lastModified: { ...d.lastModified, sambutan: now() } }));
+  const updateKontak = (kontak: KontakInfo) => setData(d => ({ ...d, kontak, lastModified: { ...d.lastModified, kontak: now() } }));
 
   return (
     <SchoolContext.Provider value={{ data, updateLogo, updatePegawai, updateKegiatan, updateEkstrakurikuler, updateDokumen, updateProfil, updateSambutan, updateKontak }}>
