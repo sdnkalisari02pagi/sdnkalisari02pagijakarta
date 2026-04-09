@@ -1,33 +1,46 @@
 
 
-# Add Per-Item "Terakhir Diubah" Timestamps
+# Hero Carousel + Enhanced Stats + Admin Hero Editor
 
 ## Overview
-Instead of one timestamp per section, track last-modified per individual item (each pegawai, kegiatan, ekskul, dokumen). For single-object sections (profil, sambutan, kontak, logo), the existing section-level timestamp is already sufficient.
+1. Add an image carousel to the Hero section with 3 school photos, auto-slide every 5 seconds, and manual left/right arrows
+2. Make the "Tenaga Pendidik & Kependidikan" counter more visually appealing
+3. Add a new Admin Hero page to manage the carousel images
 
 ## Changes
 
-### 1. `src/contexts/SchoolContext.tsx` — Add `lastModified` field to item interfaces
-- Add optional `lastModified?: string` to `Pegawai`, `Kegiatan`, `Ekstrakurikuler`, and `Dokumen` interfaces
-- In each update function, keep the existing section-level timestamp (no change needed there)
+### 1. `src/contexts/SchoolContext.tsx` — Add hero data to model
+- Add `hero` field to `SchoolData`:
+  ```ts
+  hero: {
+    images: string[];  // array of 3+ image URLs
+    judul: string;     // e.g. "SDN Kalisari 02 Pagi"
+    subtitle: string;  // e.g. "Mewujudkan Generasi Cerdas..."
+  }
+  ```
+- Add `updateHero` function
+- Default data: 3 different Unsplash school photos
+- Add `hero?: string` to `LastModified`
 
-### 2. `src/pages/admin/AdminPegawai.tsx` — Set timestamp on save
-- When saving (add or edit), set `lastModified: new Date().toISOString()` on the individual pegawai item
-- Display the timestamp in the table as a small muted text in each row (new column or below the name)
+### 2. `src/pages/Index.tsx` — Hero carousel + enhanced counter
+- Replace single `<img>` with a custom carousel:
+  - State: `currentSlide` index, auto-increment every 5s via `useEffect` + `setInterval`
+  - Render all images absolutely positioned, use opacity/transition for crossfade effect
+  - Left/right arrow buttons (ChevronLeft/ChevronRight) positioned on sides, semi-transparent white bg
+  - Dot indicators at the bottom showing current slide
+- Enhanced "Tenaga Pendidik" section:
+  - Replace single pill with a row of 2-3 stat counters (e.g. Tenaga Pendidik count, Kegiatan count, Ekstrakurikuler count)
+  - Each with an icon and animated number, glassmorphism-style cards (backdrop-blur, semi-transparent bg)
 
-### 3. `src/pages/admin/AdminKegiatan.tsx` — Set timestamp on save
-- Same pattern: stamp each kegiatan item on save
-- Show per-row timestamp in the table
+### 3. `src/pages/admin/AdminHero.tsx` — New admin page
+- Manage hero images (add/remove/reorder using `ImageUpload`)
+- Edit hero title and subtitle text fields
+- Save button updates via `updateHero`
+- Show `LastModifiedInfo` component
 
-### 4. `src/pages/admin/AdminEkskul.tsx` — Set timestamp on save
-- Same pattern for each ekstrakurikuler item
+### 4. `src/App.tsx` — Add route
+- Import `AdminHero` and add `<Route path="hero" element={<AdminHero />} />`
 
-### 5. `src/pages/admin/AdminDokumen.tsx` — Set timestamp on save
-- Same pattern for each dokumen item
-
-### Display format
-Each table row shows a small `text-xs text-muted-foreground` line with the formatted date below the item name, e.g. "Diubah: 9 April 2026, 14:30". Only shown if the item has been modified.
-
-### Pages with single content (no change needed)
-AdminProfil, AdminSambutan, AdminKontak, AdminLogo already show section-level timestamps which is sufficient since they are single-content pages.
+### 5. `src/components/AdminLayout.tsx` — Add sidebar menu item
+- Add "Hero" menu item with `Image` icon, url `/admin/hero`, positioned after "Logo"
 
