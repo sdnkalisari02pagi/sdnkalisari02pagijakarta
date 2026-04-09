@@ -1,19 +1,24 @@
 
 
-# Replace Arrow Buttons with Drag-and-Drop Reordering
+# Add Drag-and-Drop to Image/File Upload Components
 
 ## Overview
-Replace the ArrowUp/ArrowDown buttons with HTML5 drag-and-drop for a more intuitive reordering experience. No new dependencies needed — using native HTML5 drag events.
+Enhance `ImageUpload` and `GaleriUpload` components with drag-and-drop support so admins can drop files directly onto the upload area instead of only clicking the button.
 
 ## Changes
 
-### `src/pages/admin/AdminPegawai.tsx`
-- Add `draggedIndex` state to track which row is being dragged
-- Add drag event handlers: `onDragStart`, `onDragOver`, `onDrop`, `onDragEnd`
-- On each `TableRow`: add `draggable={!isFiltering}`, attach drag handlers
-- Add a `GripVertical` icon (from lucide-react) as the first column (drag handle visual cue)
-- Remove ArrowUp/ArrowDown buttons and their imports
-- On drop: reorder `data.pegawai` array by moving the dragged item to the drop position, call `updatePegawai`
-- Add visual feedback: highlight the row being dragged over (e.g. border-top indicator)
-- Disable drag when filtering is active
+### 1. `src/components/ImageUpload.tsx`
+- Add `dragOver` state for visual feedback
+- Add `onDragOver`, `onDragLeave`, `onDrop` handlers to the main container
+- When no image is set, show a larger drop zone area (dashed border) with text "Seret foto ke sini atau klik untuk unggah"
+- When dragging over, highlight the border (e.g. `border-primary`)
+- Reuse existing file validation logic (2MB limit, format check)
+
+### 2. `src/components/GaleriUpload.tsx`
+- Same drag-and-drop handlers on the container
+- Add a visible drop zone area below the existing thumbnails with dashed border and drop hint text
+- When dragging over, highlight the drop zone
+- On drop, append the new image to the gallery array (same as current click flow)
+
+Both components will accept drops anywhere on their container area, with clear visual feedback during the drag interaction.
 
