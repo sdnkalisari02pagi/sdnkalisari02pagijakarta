@@ -1,16 +1,36 @@
 
 
-# Add Search/Filter to Admin Kegiatan and Ekstrakurikuler
+# Replace Placeholder Images with Real Unsplash Photos
+
+## Overview
+Replace all `placehold.co` and `ui-avatars` dummy images in `SchoolContext.tsx` default data with real Unsplash photos that match each context (school activities, extracurriculars, school building, people portraits).
 
 ## Changes
 
-### 1. `src/pages/admin/AdminKegiatan.tsx`
-- Add search state and filter bar (same style as AdminPegawai)
-- Search by judul, filter results in table
+### `src/contexts/SchoolContext.tsx` — update all image URLs in `defaultData`
 
-### 2. `src/pages/admin/AdminEkskul.tsx`
-- Add search state and filter bar
-- Search by nama, filter results in table
+**Pegawai (staff photos)** — replace `ui-avatars` with Unsplash portrait photos:
+- Use `https://images.unsplash.com/photo-...?w=200&h=200&fit=crop&crop=face` for each staff member
+- Mix of male/female Indonesian-looking professional portraits
 
-Both will use the same layout pattern: a search input with `Search` icon, placed between the header and the table.
+**Kegiatan (activities)** — replace `placehold.co` with relevant Unsplash photos:
+- Upacara → flag ceremony / school assembly image
+- Lomba Mewarnai → children coloring/painting
+- Hari Kartini → traditional costume / cultural event
+- Kunjungan Museum → museum visit / field trip
+- Pentas Seni → school performance / stage show
+- Senam Pagi → morning exercise / kids doing sports
+
+**Ekstrakurikuler** — replace main photos and gallery photos:
+- Pramuka → scouting / outdoor activity
+- Pantomim → mime / theater performance
+- Tari → traditional dance
+- Qasidah / Marawis → music / Islamic art
+- Menggambar → children drawing / art class
+
+**Profil** — fotoSekolah: school building exterior photo
+
+**Sambutan** — professional female portrait for headmaster
+
+All images sourced from Unsplash with appropriate `w=` and `h=` sizing parameters for performance.
 
