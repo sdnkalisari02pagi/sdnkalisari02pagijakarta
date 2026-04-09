@@ -53,7 +53,7 @@ export default function Index() {
             src={img}
             alt={`Slide ${i + 1}`}
             className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out"
-            style={{ opacity: i === currentSlide ? 0.3 : 0 }}
+            style={{ opacity: i === currentSlide ? 0.6 : 0 }}
           />
         ))}
         <div className="absolute inset-0 bg-primary/70" />
