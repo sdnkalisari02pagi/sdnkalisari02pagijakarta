@@ -5,6 +5,7 @@ export interface Pegawai {
   nama: string;
   jabatan: string;
   foto: string;
+  lastModified?: string;
 }
 
 export interface Kegiatan {
@@ -13,6 +14,7 @@ export interface Kegiatan {
   tanggal: string;
   foto: string;
   deskripsi: string;
+  lastModified?: string;
 }
 
 export interface Ekstrakurikuler {
@@ -21,6 +23,7 @@ export interface Ekstrakurikuler {
   foto: string;
   deskripsi: string;
   galeri: string[];
+  lastModified?: string;
 }
 
 export interface Dokumen {
@@ -28,6 +31,7 @@ export interface Dokumen {
   nama: string;
   tanggal: string;
   url: string;
+  lastModified?: string;
 }
 
 export interface ProfilSekolah {

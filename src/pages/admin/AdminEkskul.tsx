@@ -26,10 +26,11 @@ export default function AdminEkskul() {
   const handleSave = () => {
     if (!form.nama) return;
     const foto = form.foto || `https://placehold.co/400x300/2563EB/white?text=${encodeURIComponent(form.nama)}`;
+    const now = new Date().toISOString();
     if (editItem) {
-      updateEkstrakurikuler(data.ekstrakurikuler.map(e => e.id === editItem.id ? { ...e, ...form, foto } : e));
+      updateEkstrakurikuler(data.ekstrakurikuler.map(e => e.id === editItem.id ? { ...e, ...form, foto, lastModified: now } : e));
     } else {
-      updateEkstrakurikuler([...data.ekstrakurikuler, { id: Date.now().toString(), ...form, foto }]);
+      updateEkstrakurikuler([...data.ekstrakurikuler, { id: Date.now().toString(), ...form, foto, lastModified: now }]);
     }
     setDialogOpen(false);
   };
@@ -71,7 +72,10 @@ export default function AdminEkskul() {
             {filtered.map(e => (
               <TableRow key={e.id}>
                 <TableCell><img src={e.foto} alt={e.nama} className="w-10 h-10 rounded object-cover" /></TableCell>
-                <TableCell className="font-medium">{e.nama}</TableCell>
+                <TableCell className="font-medium">
+                  {e.nama}
+                  {e.lastModified && <span className="block text-xs text-muted-foreground">Diubah: {new Date(e.lastModified).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>}
+                </TableCell>
                 <TableCell className="text-right space-x-2">
                   <Button size="sm" variant="outline" onClick={() => openEdit(e)}><Pencil className="w-3 h-3" /></Button>
                   <Button size="sm" variant="destructive" onClick={() => handleDelete(e.id)}><Trash2 className="w-3 h-3" /></Button>

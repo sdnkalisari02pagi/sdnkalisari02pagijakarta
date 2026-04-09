@@ -45,10 +45,11 @@ export default function AdminDokumen() {
 
   const handleSave = () => {
     if (!form.nama || !form.tanggal) return;
+    const now = new Date().toISOString();
     if (editItem) {
-      updateDokumen(data.dokumen.map(d => d.id === editItem.id ? { ...d, ...form } : d));
+      updateDokumen(data.dokumen.map(d => d.id === editItem.id ? { ...d, ...form, lastModified: now } : d));
     } else {
-      updateDokumen([...data.dokumen, { id: Date.now().toString(), ...form }]);
+      updateDokumen([...data.dokumen, { id: Date.now().toString(), ...form, lastModified: now }]);
     }
     setDialogOpen(false);
   };
@@ -112,7 +113,10 @@ export default function AdminDokumen() {
           <TableBody>
             {filtered.map(d => (
               <TableRow key={d.id}>
-                <TableCell>{d.nama}</TableCell>
+                <TableCell>
+                  {d.nama}
+                  {d.lastModified && <span className="block text-xs text-muted-foreground">Diubah: {new Date(d.lastModified).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>}
+                </TableCell>
                 <TableCell>{new Date(d.tanggal).toLocaleDateString('id-ID')}</TableCell>
                 <TableCell className="text-right space-x-2">
                   <Button size="sm" variant="outline" onClick={() => openEdit(d)}><Pencil className="w-3 h-3" /></Button>

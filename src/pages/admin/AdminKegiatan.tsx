@@ -25,10 +25,11 @@ export default function AdminKegiatan() {
   const handleSave = () => {
     if (!form.judul || !form.tanggal) return;
     const foto = form.foto || `https://placehold.co/600x400/2563EB/white?text=${encodeURIComponent(form.judul)}`;
+    const now = new Date().toISOString();
     if (editItem) {
-      updateKegiatan(data.kegiatan.map(k => k.id === editItem.id ? { ...k, ...form, foto } : k));
+      updateKegiatan(data.kegiatan.map(k => k.id === editItem.id ? { ...k, ...form, foto, lastModified: now } : k));
     } else {
-      updateKegiatan([...data.kegiatan, { id: Date.now().toString(), ...form, foto }]);
+      updateKegiatan([...data.kegiatan, { id: Date.now().toString(), ...form, foto, lastModified: now }]);
     }
     setDialogOpen(false);
   };
@@ -71,7 +72,10 @@ export default function AdminKegiatan() {
             {filtered.map(k => (
               <TableRow key={k.id}>
                 <TableCell><img src={k.foto} alt={k.judul} className="w-10 h-10 rounded object-cover" /></TableCell>
-                <TableCell className="font-medium">{k.judul}</TableCell>
+                <TableCell className="font-medium">
+                  {k.judul}
+                  {k.lastModified && <span className="block text-xs text-muted-foreground">Diubah: {new Date(k.lastModified).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>}
+                </TableCell>
                 <TableCell>{new Date(k.tanggal).toLocaleDateString('id-ID')}</TableCell>
                 <TableCell className="text-right space-x-2">
                   <Button size="sm" variant="outline" onClick={() => openEdit(k)}><Pencil className="w-3 h-3" /></Button>
