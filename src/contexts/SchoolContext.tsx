@@ -89,6 +89,15 @@ export interface SchoolData {
 }
 
 const defaultData: SchoolData = {
+  hero: {
+    images: [
+      'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1577896851231-70ef18881754?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1588072432836-e10032774350?w=800&h=400&fit=crop',
+    ],
+    judul: 'SDN Kalisari 02 Pagi',
+    subtitle: 'Mewujudkan Generasi Cerdas, Berkarakter, dan Berprestasi',
+  },
   logo: '',
   pegawai: [
     { id: '1', nama: 'Nuroyanah, M.Pd', jabatan: 'Kepala Sekolah', foto: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=face' },
@@ -156,6 +165,7 @@ const defaultData: SchoolData = {
 interface SchoolContextType {
   data: SchoolData;
   updateLogo: (logo: string) => void;
+  updateHero: (hero: HeroData) => void;
   updatePegawai: (pegawai: Pegawai[]) => void;
   updateKegiatan: (kegiatan: Kegiatan[]) => void;
   updateEkstrakurikuler: (ekskul: Ekstrakurikuler[]) => void;
