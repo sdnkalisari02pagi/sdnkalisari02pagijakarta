@@ -62,10 +62,11 @@ export default function AdminPegawai() {
   const handleSave = () => {
     if (!form.nama || !form.jabatan) return;
     const foto = form.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(form.nama)}&background=2563EB&color=fff&size=200`;
+    const now = new Date().toISOString();
     if (editItem) {
-      updatePegawai(data.pegawai.map(p => p.id === editItem.id ? { ...p, ...form, foto } : p));
+      updatePegawai(data.pegawai.map(p => p.id === editItem.id ? { ...p, ...form, foto, lastModified: now } : p));
     } else {
-      updatePegawai([...data.pegawai, { id: Date.now().toString(), ...form, foto }]);
+      updatePegawai([...data.pegawai, { id: Date.now().toString(), ...form, foto, lastModified: now }]);
     }
     setDialogOpen(false);
   };
@@ -126,7 +127,10 @@ export default function AdminPegawai() {
                   )}
                   <TableCell>{realIndex + 1}</TableCell>
                   <TableCell><img src={p.foto} alt={p.nama} className="w-10 h-10 rounded-full object-cover" /></TableCell>
-                  <TableCell className="font-medium">{p.nama}</TableCell>
+                  <TableCell className="font-medium">
+                    {p.nama}
+                    {p.lastModified && <span className="block text-xs text-muted-foreground">Diubah: {new Date(p.lastModified).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>}
+                  </TableCell>
                   <TableCell>{p.jabatan}</TableCell>
                   <TableCell className="text-right space-x-1">
                     <Button size="sm" variant="outline" onClick={() => openEdit(p)}><Pencil className="w-3 h-3" /></Button>
