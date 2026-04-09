@@ -1,24 +1,27 @@
 
 
-# Add Drag-and-Drop to Image/File Upload Components
+# Drag-and-Drop Upload — Current Status & Remaining Work
 
-## Overview
-Enhance `ImageUpload` and `GaleriUpload` components with drag-and-drop support so admins can drop files directly onto the upload area instead of only clicking the button.
+## Already Done
+The `ImageUpload` and `GaleriUpload` components were already updated with drag-and-drop support. This means the following admin pages **already have drag-and-drop**:
+- **Logo** — uses `ImageUpload` ✅
+- **Pegawai** — uses `ImageUpload` ✅
+- **Kegiatan** — uses `ImageUpload` ✅
+- **Ekstrakurikuler** — uses `ImageUpload` + `GaleriUpload` ✅
+- **Sambutan** — uses `ImageUpload` ✅
+- **Profil Sekolah** — uses `ImageUpload` ✅
 
-## Changes
+## Remaining: AdminDokumen
+The Dokumen page currently only has a plain text input for "URL File" — no file upload at all. We need to replace it with a proper file upload component.
 
-### 1. `src/components/ImageUpload.tsx`
-- Add `dragOver` state for visual feedback
-- Add `onDragOver`, `onDragLeave`, `onDrop` handlers to the main container
-- When no image is set, show a larger drop zone area (dashed border) with text "Seret foto ke sini atau klik untuk unggah"
-- When dragging over, highlight the border (e.g. `border-primary`)
-- Reuse existing file validation logic (2MB limit, format check)
+### Changes
 
-### 2. `src/components/GaleriUpload.tsx`
-- Same drag-and-drop handlers on the container
-- Add a visible drop zone area below the existing thumbnails with dashed border and drop hint text
-- When dragging over, highlight the drop zone
-- On drop, append the new image to the gallery array (same as current click flow)
-
-Both components will accept drops anywhere on their container area, with clear visual feedback during the drag interaction.
+#### `src/pages/admin/AdminDokumen.tsx`
+- Replace the "URL File" text input with a new drag-and-drop file upload zone
+- Add a drop zone with dashed border, `Upload` icon, and text "Seret file ke sini atau klik untuk unggah"
+- Accept document files (PDF, DOC, DOCX, XLS, XLSX) in addition to images
+- On file drop/select, convert to base64 data URL and store in `form.url`
+- Show the uploaded file name after upload
+- Max file size: 2MB
+- Visual feedback on drag-over (highlighted border)
 
