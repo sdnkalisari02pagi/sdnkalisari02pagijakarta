@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useSchool } from '@/contexts/SchoolContext';
-import { Users, BookOpen, Star, Shield, ArrowRight, ChevronLeft, ChevronRight, Award } from 'lucide-react';
+import { Users, BookOpen, Star, Shield, ArrowRight, ChevronLeft, ChevronRight, Award, Quote } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
@@ -118,14 +118,17 @@ export default function Index() {
       </section>
 
       {/* Sambutan */}
-      <section className="py-16 bg-muted" ref={sambutanRef}>
+      <section className="py-20 bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10" ref={sambutanRef}>
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-10 text-foreground scroll-animate">Sambutan Kepala Sekolah</h2>
-          <div className="flex flex-col md:flex-row items-center gap-8 max-w-4xl mx-auto scroll-animate delay-200">
-            <img src={data.sambutan.foto} alt={data.sambutan.nama} className="w-40 h-40 rounded-full object-cover shadow-lg border-4 border-secondary" />
-            <div>
-              <h3 className="text-xl font-semibold text-foreground mb-1">{data.sambutan.nama}</h3>
-              <p className="text-sm text-muted-foreground mb-4">Kepala Sekolah</p>
+          <h2 className="text-3xl font-bold text-center mb-12 text-foreground scroll-animate">Sambutan Kepala Sekolah</h2>
+          <div className="flex flex-col md:flex-row items-center gap-10 max-w-4xl mx-auto scroll-animate delay-200">
+            <div className="w-56 h-64 rounded-xl overflow-hidden shadow-xl border-4 border-background shrink-0">
+              <img src={data.sambutan.foto} alt={data.sambutan.nama} className="w-full h-full object-cover" />
+            </div>
+            <div className="border-l-4 border-primary pl-6">
+              <Quote className="w-8 h-8 text-secondary mb-3" />
+              <h3 className="text-xl font-semibold text-primary mb-1">{data.sambutan.nama}</h3>
+              <span className="inline-block bg-primary/15 text-primary text-xs font-medium px-3 py-1 rounded-full mb-4">Kepala Sekolah</span>
               <p className="text-muted-foreground whitespace-pre-line leading-relaxed">{data.sambutan.teks.substring(0, 300)}...</p>
             </div>
           </div>
