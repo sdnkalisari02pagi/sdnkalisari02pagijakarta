@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
-import { Search, Plus, Pencil, Trash2, ArrowUp, ArrowDown } from 'lucide-react';
+import { Search, Plus, Pencil, Trash2, GripVertical } from 'lucide-react';
 import ImageUpload from '@/components/ImageUpload';
 
 export default function AdminPegawai() {
@@ -16,6 +16,8 @@ export default function AdminPegawai() {
   const [editItem, setEditItem] = useState<Pegawai | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [form, setForm] = useState({ nama: '', jabatan: '', foto: '' });
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
   const isFiltering = search !== '' || filterJabatan !== 'all';
   const jabatanList = [...new Set(data.pegawai.map(p => p.jabatan))];
@@ -25,16 +27,32 @@ export default function AdminPegawai() {
     return ms && mf;
   });
 
-  const moveUp = (index: number) => {
-    const arr = [...data.pegawai];
-    [arr[index - 1], arr[index]] = [arr[index], arr[index - 1]];
-    updatePegawai(arr);
+  const handleDragStart = (index: number) => {
+    setDraggedIndex(index);
   };
 
-  const moveDown = (index: number) => {
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    setDragOverIndex(index);
+  };
+
+  const handleDrop = (dropIndex: number) => {
+    if (draggedIndex === null || draggedIndex === dropIndex) {
+      setDraggedIndex(null);
+      setDragOverIndex(null);
+      return;
+    }
     const arr = [...data.pegawai];
-    [arr[index], arr[index + 1]] = [arr[index + 1], arr[index]];
+    const [moved] = arr.splice(draggedIndex, 1);
+    arr.splice(dropIndex, 0, moved);
     updatePegawai(arr);
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
   };
 
   const openAdd = () => { setEditItem(null); setForm({ nama: '', jabatan: '', foto: '' }); setDialogOpen(true); };
@@ -78,7 +96,8 @@ export default function AdminPegawai() {
         <Table>
           <TableHeader>
             <TableRow>
-             <TableHead>No.</TableHead>
+              {!isFiltering && <TableHead className="w-10"></TableHead>}
+              <TableHead>No.</TableHead>
               <TableHead>Foto</TableHead>
               <TableHead>Nama</TableHead>
               <TableHead>Jabatan</TableHead>
@@ -89,18 +108,25 @@ export default function AdminPegawai() {
             {filtered.map((p, idx) => {
               const realIndex = data.pegawai.findIndex(x => x.id === p.id);
               return (
-                <TableRow key={p.id}>
+                <TableRow
+                  key={p.id}
+                  draggable={!isFiltering}
+                  onDragStart={() => handleDragStart(realIndex)}
+                  onDragOver={(e) => handleDragOver(e, realIndex)}
+                  onDrop={() => handleDrop(realIndex)}
+                  onDragEnd={handleDragEnd}
+                  className={`${!isFiltering ? 'cursor-grab active:cursor-grabbing' : ''} ${draggedIndex === realIndex ? 'opacity-50' : ''} ${dragOverIndex === realIndex && draggedIndex !== realIndex ? 'border-t-2 border-t-primary' : ''}`}
+                >
+                  {!isFiltering && (
+                    <TableCell className="w-10 text-muted-foreground">
+                      <GripVertical className="w-4 h-4" />
+                    </TableCell>
+                  )}
                   <TableCell>{realIndex + 1}</TableCell>
                   <TableCell><img src={p.foto} alt={p.nama} className="w-10 h-10 rounded-full object-cover" /></TableCell>
                   <TableCell className="font-medium">{p.nama}</TableCell>
                   <TableCell>{p.jabatan}</TableCell>
                   <TableCell className="text-right space-x-1">
-                    {!isFiltering && (
-                      <>
-                        <Button size="sm" variant="ghost" onClick={() => moveUp(realIndex)} disabled={realIndex === 0}><ArrowUp className="w-3 h-3" /></Button>
-                        <Button size="sm" variant="ghost" onClick={() => moveDown(realIndex)} disabled={realIndex === data.pegawai.length - 1}><ArrowDown className="w-3 h-3" /></Button>
-                      </>
-                    )}
                     <Button size="sm" variant="outline" onClick={() => openEdit(p)}><Pencil className="w-3 h-3" /></Button>
                     <Button size="sm" variant="destructive" onClick={() => handleDelete(p.id)}><Trash2 className="w-3 h-3" /></Button>
                   </TableCell>
