@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, GraduationCap } from 'lucide-react';
+import { useSchool } from '@/contexts/SchoolContext';
 import { Button } from '@/components/ui/button';
 
 const menuItems = [
@@ -14,14 +15,19 @@ const menuItems = [
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
+  const { data } = useSchool();
 
   return (
     <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b shadow-sm">
       <div className="container mx-auto px-4 flex items-center justify-between h-16">
         <Link to="/" className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
-            <GraduationCap className="w-6 h-6 text-primary-foreground" />
-          </div>
+          {data.logo ? (
+            <img src={data.logo} alt="Logo" className="w-10 h-10 rounded-full object-cover" />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+              <GraduationCap className="w-6 h-6 text-primary-foreground" />
+            </div>
+          )}
           <span className="font-bold text-sm md:text-base text-foreground hidden sm:block">SDN Kalisari 02 Pagi</span>
         </Link>
 

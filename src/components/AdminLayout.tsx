@@ -3,10 +3,12 @@ import { useAuth } from '@/contexts/AuthContext';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import { NavLink } from '@/components/NavLink';
-import { LayoutDashboard, Users, Calendar, Star, FileText, School, MessageSquare, Phone, LogOut, GraduationCap } from 'lucide-react';
+import { LayoutDashboard, Users, Calendar, Star, FileText, School, MessageSquare, Phone, LogOut, GraduationCap, ImageIcon } from 'lucide-react';
+import { useSchool } from '@/contexts/SchoolContext';
 
 const menuItems = [
   { title: 'Dashboard', url: '/admin', icon: LayoutDashboard },
+  { title: 'Logo', url: '/admin/logo', icon: ImageIcon },
   { title: 'Pegawai', url: '/admin/pegawai', icon: Users },
   { title: 'Kegiatan', url: '/admin/kegiatan', icon: Calendar },
   { title: 'Ekstrakurikuler', url: '/admin/ekstrakurikuler', icon: Star },
@@ -19,14 +21,19 @@ const menuItems = [
 function AdminSidebar() {
   const { logout } = useAuth();
   const location = useLocation();
+  const { data } = useSchool();
 
   return (
     <Sidebar collapsible="icon">
       <SidebarContent>
         <div className="p-4 flex items-center gap-2 border-b border-sidebar-border">
-          <div className="w-8 h-8 rounded-full bg-sidebar-primary flex items-center justify-center shrink-0">
-            <GraduationCap className="w-5 h-5 text-sidebar-primary-foreground" />
-          </div>
+          {data.logo ? (
+            <img src={data.logo} alt="Logo" className="w-8 h-8 rounded-full object-cover shrink-0" />
+          ) : (
+            <div className="w-8 h-8 rounded-full bg-sidebar-primary flex items-center justify-center shrink-0">
+              <GraduationCap className="w-5 h-5 text-sidebar-primary-foreground" />
+            </div>
+          )}
           <span className="font-bold text-sm text-sidebar-foreground truncate">Admin Panel</span>
         </div>
         <SidebarGroup>
