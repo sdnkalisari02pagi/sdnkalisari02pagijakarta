@@ -57,6 +57,12 @@ export interface KontakInfo {
   mapsEmbed: string;
 }
 
+export interface HeroData {
+  images: string[];
+  judul: string;
+  subtitle: string;
+}
+
 export interface LastModified {
   logo?: string;
   pegawai?: string;
@@ -66,10 +72,12 @@ export interface LastModified {
   profil?: string;
   sambutan?: string;
   kontak?: string;
+  hero?: string;
 }
 
 export interface SchoolData {
   logo: string;
+  hero: HeroData;
   pegawai: Pegawai[];
   kegiatan: Kegiatan[];
   ekstrakurikuler: Ekstrakurikuler[];
