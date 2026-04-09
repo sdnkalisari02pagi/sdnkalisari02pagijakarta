@@ -54,6 +54,7 @@ export interface KontakInfo {
 }
 
 export interface SchoolData {
+  logo: string;
   pegawai: Pegawai[];
   kegiatan: Kegiatan[];
   ekstrakurikuler: Ekstrakurikuler[];
@@ -64,6 +65,7 @@ export interface SchoolData {
 }
 
 const defaultData: SchoolData = {
+  logo: '',
   pegawai: [
     { id: '1', nama: 'Nuroyanah, M.Pd', jabatan: 'Kepala Sekolah', foto: 'https://ui-avatars.com/api/?name=Nuroyanah&background=2563EB&color=fff&size=200' },
     { id: '2', nama: 'Siti Aminah, S.Pd', jabatan: 'Guru Kelas 1', foto: 'https://ui-avatars.com/api/?name=Siti+Aminah&background=F59E0B&color=fff&size=200' },
@@ -128,6 +130,7 @@ const defaultData: SchoolData = {
 
 interface SchoolContextType {
   data: SchoolData;
+  updateLogo: (logo: string) => void;
   updatePegawai: (pegawai: Pegawai[]) => void;
   updateKegiatan: (kegiatan: Kegiatan[]) => void;
   updateEkstrakurikuler: (ekskul: Ekstrakurikuler[]) => void;
@@ -154,6 +157,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('school-data', JSON.stringify(data));
   }, [data]);
 
+  const updateLogo = (logo: string) => setData(d => ({ ...d, logo }));
   const updatePegawai = (pegawai: Pegawai[]) => setData(d => ({ ...d, pegawai }));
   const updateKegiatan = (kegiatan: Kegiatan[]) => setData(d => ({ ...d, kegiatan }));
   const updateEkstrakurikuler = (ekstrakurikuler: Ekstrakurikuler[]) => setData(d => ({ ...d, ekstrakurikuler }));
@@ -163,7 +167,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   const updateKontak = (kontak: KontakInfo) => setData(d => ({ ...d, kontak }));
 
   return (
-    <SchoolContext.Provider value={{ data, updatePegawai, updateKegiatan, updateEkstrakurikuler, updateDokumen, updateProfil, updateSambutan, updateKontak }}>
+    <SchoolContext.Provider value={{ data, updateLogo, updatePegawai, updateKegiatan, updateEkstrakurikuler, updateDokumen, updateProfil, updateSambutan, updateKontak }}>
       {children}
     </SchoolContext.Provider>
   );

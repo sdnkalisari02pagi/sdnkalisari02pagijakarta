@@ -27,6 +27,7 @@ import AdminDokumen from "./pages/admin/AdminDokumen";
 import AdminProfil from "./pages/admin/AdminProfil";
 import AdminSambutan from "./pages/admin/AdminSambutan";
 import AdminKontak from "./pages/admin/AdminKontak";
+import AdminLogo from "./pages/admin/AdminLogo";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,7 @@ const App = () => (
               </Route>
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
+                <Route path="logo" element={<AdminLogo />} />
                 <Route path="pegawai" element={<AdminPegawai />} />
                 <Route path="kegiatan" element={<AdminKegiatan />} />
                 <Route path="ekstrakurikuler" element={<AdminEkskul />} />
