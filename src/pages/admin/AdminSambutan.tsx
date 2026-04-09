@@ -22,7 +22,7 @@ export default function AdminSambutan() {
       <div className="space-y-6 max-w-2xl">
         <Card><CardHeader><CardTitle className="text-lg">Data Kepala Sekolah</CardTitle></CardHeader><CardContent className="space-y-4">
           <div><Label>Nama</Label><Input value={form.nama} onChange={e => setForm(f => ({ ...f, nama: e.target.value }))} /></div>
-          <div><Label>URL Foto</Label><Input value={form.foto} onChange={e => setForm(f => ({ ...f, foto: e.target.value }))} /></div>
+          <div><Label>Foto</Label><ImageUpload value={form.foto} onChange={url => setForm(f => ({ ...f, foto: url }))} placeholder /></div>
           <div><Label>Teks Sambutan</Label><Textarea rows={10} value={form.teks} onChange={e => setForm(f => ({ ...f, teks: e.target.value }))} /></div>
         </CardContent></Card>
         <Button onClick={handleSave}>Simpan Perubahan</Button>

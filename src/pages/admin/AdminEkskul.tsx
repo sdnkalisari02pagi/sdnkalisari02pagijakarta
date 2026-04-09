@@ -40,7 +40,7 @@ export default function AdminEkskul() {
             <DialogHeader><DialogTitle>{editItem ? 'Edit' : 'Tambah'} Ekskul</DialogTitle></DialogHeader>
             <div className="space-y-4">
               <div><Label>Nama</Label><Input value={form.nama} onChange={e => setForm(f => ({ ...f, nama: e.target.value }))} /></div>
-              <div><Label>URL Foto</Label><Input value={form.foto} onChange={e => setForm(f => ({ ...f, foto: e.target.value }))} /></div>
+              <div><Label>Foto</Label><ImageUpload value={form.foto} onChange={url => setForm(f => ({ ...f, foto: url }))} placeholder /></div>
               <div><Label>Deskripsi</Label><Textarea value={form.deskripsi} onChange={e => setForm(f => ({ ...f, deskripsi: e.target.value }))} /></div>
               <Button onClick={handleSave} className="w-full">Simpan</Button>
             </div>

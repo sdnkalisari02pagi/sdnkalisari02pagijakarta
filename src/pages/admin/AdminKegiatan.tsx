@@ -41,7 +41,7 @@ export default function AdminKegiatan() {
             <div className="space-y-4">
               <div><Label>Judul</Label><Input value={form.judul} onChange={e => setForm(f => ({ ...f, judul: e.target.value }))} /></div>
               <div><Label>Tanggal</Label><Input type="date" value={form.tanggal} onChange={e => setForm(f => ({ ...f, tanggal: e.target.value }))} /></div>
-              <div><Label>URL Foto</Label><Input value={form.foto} onChange={e => setForm(f => ({ ...f, foto: e.target.value }))} placeholder="Kosongkan untuk auto" /></div>
+              <div><Label>Foto</Label><ImageUpload value={form.foto} onChange={url => setForm(f => ({ ...f, foto: url }))} placeholder /></div>
               <div><Label>Deskripsi</Label><Textarea value={form.deskripsi} onChange={e => setForm(f => ({ ...f, deskripsi: e.target.value }))} /></div>
               <Button onClick={handleSave} className="w-full">Simpan</Button>
             </div>

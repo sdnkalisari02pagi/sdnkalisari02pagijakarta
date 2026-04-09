@@ -50,7 +50,7 @@ export default function AdminPegawai() {
             <div className="space-y-4">
               <div><Label>Nama</Label><Input value={form.nama} onChange={e => setForm(f => ({ ...f, nama: e.target.value }))} /></div>
               <div><Label>Jabatan</Label><Input value={form.jabatan} onChange={e => setForm(f => ({ ...f, jabatan: e.target.value }))} /></div>
-              <div><Label>URL Foto</Label><Input value={form.foto} onChange={e => setForm(f => ({ ...f, foto: e.target.value }))} placeholder="Kosongkan untuk auto-generate" /></div>
+              <div><Label>Foto</Label><ImageUpload value={form.foto} onChange={url => setForm(f => ({ ...f, foto: url }))} placeholder /></div>
               <Button onClick={handleSave} className="w-full">Simpan</Button>
             </div>
           </DialogContent>
