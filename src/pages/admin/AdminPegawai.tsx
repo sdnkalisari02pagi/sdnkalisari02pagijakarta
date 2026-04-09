@@ -78,6 +78,7 @@ export default function AdminPegawai() {
         <Table>
           <TableHeader>
             <TableRow>
+             <TableHead>No.</TableHead>
               <TableHead>Foto</TableHead>
               <TableHead>Nama</TableHead>
               <TableHead>Jabatan</TableHead>
@@ -85,17 +86,27 @@ export default function AdminPegawai() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filtered.map(p => (
-              <TableRow key={p.id}>
-                <TableCell><img src={p.foto} alt={p.nama} className="w-10 h-10 rounded-full object-cover" /></TableCell>
-                <TableCell className="font-medium">{p.nama}</TableCell>
-                <TableCell>{p.jabatan}</TableCell>
-                <TableCell className="text-right space-x-2">
-                  <Button size="sm" variant="outline" onClick={() => openEdit(p)}><Pencil className="w-3 h-3" /></Button>
-                  <Button size="sm" variant="destructive" onClick={() => handleDelete(p.id)}><Trash2 className="w-3 h-3" /></Button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {filtered.map((p, idx) => {
+              const realIndex = data.pegawai.findIndex(x => x.id === p.id);
+              return (
+                <TableRow key={p.id}>
+                  <TableCell>{realIndex + 1}</TableCell>
+                  <TableCell><img src={p.foto} alt={p.nama} className="w-10 h-10 rounded-full object-cover" /></TableCell>
+                  <TableCell className="font-medium">{p.nama}</TableCell>
+                  <TableCell>{p.jabatan}</TableCell>
+                  <TableCell className="text-right space-x-1">
+                    {!isFiltering && (
+                      <>
+                        <Button size="sm" variant="ghost" onClick={() => moveUp(realIndex)} disabled={realIndex === 0}><ArrowUp className="w-3 h-3" /></Button>
+                        <Button size="sm" variant="ghost" onClick={() => moveDown(realIndex)} disabled={realIndex === data.pegawai.length - 1}><ArrowDown className="w-3 h-3" /></Button>
+                      </>
+                    )}
+                    <Button size="sm" variant="outline" onClick={() => openEdit(p)}><Pencil className="w-3 h-3" /></Button>
+                    <Button size="sm" variant="destructive" onClick={() => handleDelete(p.id)}><Trash2 className="w-3 h-3" /></Button>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>
