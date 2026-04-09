@@ -1,23 +1,24 @@
 
 
-# Add Gallery Management to Admin Ekskul
+# Change Admin Lists from Cards to Tables
 
 ## Overview
-The `Ekstrakurikuler` type already has a `galeri: string[]` field, and the detail page displays it. Add gallery editing to the admin ekskul dialog so admins can add/remove gallery photos.
+Replace the card grid layout in AdminPegawai, AdminKegiatan, and AdminEkskul with table layouts similar to AdminDokumen.
 
 ## Changes
 
-### `src/pages/admin/AdminEkskul.tsx`
-- Add `galeri: string[]` to the form state (initialize from edit item or empty array)
-- Below the Deskripsi field in the dialog, add a "Galeri" section:
-  - Show existing gallery images as small thumbnails with a remove (X) button each
-  - Add an `ImageUpload`-style file input button ("Tambah Foto Galeri") that appends new images to the array
-  - Use `FileReader` to convert to base64, same as `ImageUpload`
-- Pass `galeri` through when saving (both add and edit)
+### 1. `src/pages/admin/AdminPegawai.tsx`
+- Remove card grid, replace with `<Table>` component
+- Columns: Foto (small thumbnail), Nama, Jabatan, Aksi (edit/delete buttons aligned right)
+- Keep search and filter functionality as-is
 
-### `src/components/GaleriUpload.tsx` (new)
-- Reusable component accepting `value: string[]` and `onChange: (urls: string[]) => void`
-- Displays thumbnail grid of current images with remove buttons
-- Has an "Tambah Foto" button to add more images (same 2MB limit, JPG/PNG)
-- Shows helper text "Maksimal 2MB per foto, format JPG/PNG"
+### 2. `src/pages/admin/AdminKegiatan.tsx`
+- Remove card grid, replace with `<Table>`
+- Columns: Foto (small thumbnail), Judul, Tanggal, Aksi
+
+### 3. `src/pages/admin/AdminEkskul.tsx`
+- Remove card grid, replace with `<Table>`
+- Columns: Foto (small thumbnail), Nama, Aksi
+
+Each table will show the photo as a small rounded thumbnail (e.g. 40x40px) in the first column, keeping the layout compact and consistent with the Dokumen page style.
 
