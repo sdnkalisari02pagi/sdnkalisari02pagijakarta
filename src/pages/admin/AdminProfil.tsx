@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/hooks/use-toast';
+import ImageUpload from '@/components/ImageUpload';
 
 export default function AdminProfil() {
   const { data, updateProfil } = useSchool();
@@ -34,8 +35,8 @@ export default function AdminProfil() {
           <Textarea rows={3} value={form.tujuan} onChange={e => setForm(f => ({ ...f, tujuan: e.target.value }))} />
         </CardContent></Card>
         <Card><CardHeader><CardTitle className="text-lg">Foto Sekolah</CardTitle></CardHeader><CardContent>
-          <Label>URL Foto</Label>
-          <Input value={form.fotoSekolah} onChange={e => setForm(f => ({ ...f, fotoSekolah: e.target.value }))} />
+          <Label>Foto Sekolah</Label>
+          <ImageUpload value={form.fotoSekolah} onChange={url => setForm(f => ({ ...f, fotoSekolah: url }))} placeholder />
         </CardContent></Card>
         <Button onClick={handleSave}>Simpan Perubahan</Button>
       </div>
