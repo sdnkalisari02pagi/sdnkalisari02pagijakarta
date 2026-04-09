@@ -6,14 +6,17 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { Search, Plus, Pencil, Trash2 } from 'lucide-react';
 import ImageUpload from '@/components/ImageUpload';
 
 export default function AdminKegiatan() {
   const { data, updateKegiatan } = useSchool();
+  const [search, setSearch] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editItem, setEditItem] = useState<Kegiatan | null>(null);
   const [form, setForm] = useState({ judul: '', tanggal: '', foto: '', deskripsi: '' });
+
+  const filtered = data.kegiatan.filter(k => k.judul.toLowerCase().includes(search.toLowerCase()));
 
   const openAdd = () => { setEditItem(null); setForm({ judul: '', tanggal: '', foto: '', deskripsi: '' }); setDialogOpen(true); };
   const openEdit = (k: Kegiatan) => { setEditItem(k); setForm({ judul: k.judul, tanggal: k.tanggal, foto: k.foto, deskripsi: k.deskripsi }); setDialogOpen(true); };
@@ -49,6 +52,9 @@ export default function AdminKegiatan() {
           </DialogContent>
         </Dialog>
       </div>
+      <div className="flex gap-4 mb-6">
+        <div className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" /><Input placeholder="Cari judul kegiatan..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10" /></div>
+      </div>
       <div className="rounded-lg border bg-background">
         <Table>
           <TableHeader>
@@ -60,7 +66,7 @@ export default function AdminKegiatan() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.kegiatan.map(k => (
+            {filtered.map(k => (
               <TableRow key={k.id}>
                 <TableCell><img src={k.foto} alt={k.judul} className="w-10 h-10 rounded object-cover" /></TableCell>
                 <TableCell className="font-medium">{k.judul}</TableCell>

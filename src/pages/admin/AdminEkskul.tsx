@@ -6,15 +6,18 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { Search, Plus, Pencil, Trash2 } from 'lucide-react';
 import ImageUpload from '@/components/ImageUpload';
 import GaleriUpload from '@/components/GaleriUpload';
 
 export default function AdminEkskul() {
   const { data, updateEkstrakurikuler } = useSchool();
+  const [search, setSearch] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editItem, setEditItem] = useState<Ekstrakurikuler | null>(null);
   const [form, setForm] = useState({ nama: '', foto: '', deskripsi: '', galeri: [] as string[] });
+
+  const filtered = data.ekstrakurikuler.filter(e => e.nama.toLowerCase().includes(search.toLowerCase()));
 
   const openAdd = () => { setEditItem(null); setForm({ nama: '', foto: '', deskripsi: '', galeri: [] }); setDialogOpen(true); };
   const openEdit = (e: Ekstrakurikuler) => { setEditItem(e); setForm({ nama: e.nama, foto: e.foto, deskripsi: e.deskripsi, galeri: e.galeri || [] }); setDialogOpen(true); };
@@ -50,6 +53,9 @@ export default function AdminEkskul() {
           </DialogContent>
         </Dialog>
       </div>
+      <div className="flex gap-4 mb-6">
+        <div className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" /><Input placeholder="Cari nama ekskul..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10" /></div>
+      </div>
       <div className="rounded-lg border bg-background">
         <Table>
           <TableHeader>
@@ -60,7 +66,7 @@ export default function AdminEkskul() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.ekstrakurikuler.map(e => (
+            {filtered.map(e => (
               <TableRow key={e.id}>
                 <TableCell><img src={e.foto} alt={e.nama} className="w-10 h-10 rounded object-cover" /></TableCell>
                 <TableCell className="font-medium">{e.nama}</TableCell>
