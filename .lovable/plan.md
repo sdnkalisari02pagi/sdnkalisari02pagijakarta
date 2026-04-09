@@ -1,27 +1,41 @@
 
 
-# Drag-and-Drop Upload — Current Status & Remaining Work
+# Add "Terakhir Diubah" (Last Modified) Timestamps to Admin
 
-## Already Done
-The `ImageUpload` and `GaleriUpload` components were already updated with drag-and-drop support. This means the following admin pages **already have drag-and-drop**:
-- **Logo** — uses `ImageUpload` ✅
-- **Pegawai** — uses `ImageUpload` ✅
-- **Kegiatan** — uses `ImageUpload` ✅
-- **Ekstrakurikuler** — uses `ImageUpload` + `GaleriUpload` ✅
-- **Sambutan** — uses `ImageUpload` ✅
-- **Profil Sekolah** — uses `ImageUpload` ✅
+## Overview
+Track and display the last modified date/time for each content section in the admin panel, so it's clear when content was last changed.
 
-## Remaining: AdminDokumen
-The Dokumen page currently only has a plain text input for "URL File" — no file upload at all. We need to replace it with a proper file upload component.
+## Changes
 
-### Changes
+### 1. `src/contexts/SchoolContext.tsx` — Add timestamps to data model
+- Add a `lastModified` object to `SchoolData`:
+  ```ts
+  lastModified: {
+    logo?: string;
+    pegawai?: string;
+    kegiatan?: string;
+    ekstrakurikuler?: string;
+    dokumen?: string;
+    profil?: string;
+    sambutan?: string;
+    kontak?: string;
+  }
+  ```
+- Each update function (e.g. `updateKontak`, `updateProfil`, etc.) also sets the corresponding `lastModified` timestamp to `new Date().toISOString()`
+- Default value: all fields undefined (no timestamp shown until first save)
 
-#### `src/pages/admin/AdminDokumen.tsx`
-- Replace the "URL File" text input with a new drag-and-drop file upload zone
-- Add a drop zone with dashed border, `Upload` icon, and text "Seret file ke sini atau klik untuk unggah"
-- Accept document files (PDF, DOC, DOCX, XLS, XLSX) in addition to images
-- On file drop/select, convert to base64 data URL and store in `form.url`
-- Show the uploaded file name after upload
-- Max file size: 2MB
-- Visual feedback on drag-over (highlighted border)
+### 2. All admin pages — Display timestamp
+Add a small muted text below the page title or above the save button showing "Terakhir diubah: [formatted date/time]" when a timestamp exists. Pages affected:
+- `AdminLogo.tsx` — shows `lastModified.logo`
+- `AdminPegawai.tsx` — shows `lastModified.pegawai`
+- `AdminKegiatan.tsx` — shows `lastModified.kegiatan`
+- `AdminEkskul.tsx` — shows `lastModified.ekstrakurikuler`
+- `AdminDokumen.tsx` — shows `lastModified.dokumen`
+- `AdminProfil.tsx` — shows `lastModified.profil`
+- `AdminSambutan.tsx` — shows `lastModified.sambutan`
+- `AdminKontak.tsx` — shows `lastModified.kontak`
+
+Format: Indonesian locale date+time, e.g. "9 April 2026, 14:30"
+
+Display as a subtle line with a `Clock` icon: `🕐 Terakhir diubah: 9 April 2026, 14:30` below the `<h1>` title on each page.
 
