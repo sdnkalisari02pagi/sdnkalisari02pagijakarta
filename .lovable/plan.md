@@ -1,41 +1,33 @@
 
 
-# Add "Terakhir Diubah" (Last Modified) Timestamps to Admin
+# Add Per-Item "Terakhir Diubah" Timestamps
 
 ## Overview
-Track and display the last modified date/time for each content section in the admin panel, so it's clear when content was last changed.
+Instead of one timestamp per section, track last-modified per individual item (each pegawai, kegiatan, ekskul, dokumen). For single-object sections (profil, sambutan, kontak, logo), the existing section-level timestamp is already sufficient.
 
 ## Changes
 
-### 1. `src/contexts/SchoolContext.tsx` — Add timestamps to data model
-- Add a `lastModified` object to `SchoolData`:
-  ```ts
-  lastModified: {
-    logo?: string;
-    pegawai?: string;
-    kegiatan?: string;
-    ekstrakurikuler?: string;
-    dokumen?: string;
-    profil?: string;
-    sambutan?: string;
-    kontak?: string;
-  }
-  ```
-- Each update function (e.g. `updateKontak`, `updateProfil`, etc.) also sets the corresponding `lastModified` timestamp to `new Date().toISOString()`
-- Default value: all fields undefined (no timestamp shown until first save)
+### 1. `src/contexts/SchoolContext.tsx` — Add `lastModified` field to item interfaces
+- Add optional `lastModified?: string` to `Pegawai`, `Kegiatan`, `Ekstrakurikuler`, and `Dokumen` interfaces
+- In each update function, keep the existing section-level timestamp (no change needed there)
 
-### 2. All admin pages — Display timestamp
-Add a small muted text below the page title or above the save button showing "Terakhir diubah: [formatted date/time]" when a timestamp exists. Pages affected:
-- `AdminLogo.tsx` — shows `lastModified.logo`
-- `AdminPegawai.tsx` — shows `lastModified.pegawai`
-- `AdminKegiatan.tsx` — shows `lastModified.kegiatan`
-- `AdminEkskul.tsx` — shows `lastModified.ekstrakurikuler`
-- `AdminDokumen.tsx` — shows `lastModified.dokumen`
-- `AdminProfil.tsx` — shows `lastModified.profil`
-- `AdminSambutan.tsx` — shows `lastModified.sambutan`
-- `AdminKontak.tsx` — shows `lastModified.kontak`
+### 2. `src/pages/admin/AdminPegawai.tsx` — Set timestamp on save
+- When saving (add or edit), set `lastModified: new Date().toISOString()` on the individual pegawai item
+- Display the timestamp in the table as a small muted text in each row (new column or below the name)
 
-Format: Indonesian locale date+time, e.g. "9 April 2026, 14:30"
+### 3. `src/pages/admin/AdminKegiatan.tsx` — Set timestamp on save
+- Same pattern: stamp each kegiatan item on save
+- Show per-row timestamp in the table
 
-Display as a subtle line with a `Clock` icon: `🕐 Terakhir diubah: 9 April 2026, 14:30` below the `<h1>` title on each page.
+### 4. `src/pages/admin/AdminEkskul.tsx` — Set timestamp on save
+- Same pattern for each ekstrakurikuler item
+
+### 5. `src/pages/admin/AdminDokumen.tsx` — Set timestamp on save
+- Same pattern for each dokumen item
+
+### Display format
+Each table row shows a small `text-xs text-muted-foreground` line with the formatted date below the item name, e.g. "Diubah: 9 April 2026, 14:30". Only shown if the item has been modified.
+
+### Pages with single content (no change needed)
+AdminProfil, AdminSambutan, AdminKontak, AdminLogo already show section-level timestamps which is sufficient since they are single-content pages.
 
