@@ -8,15 +8,16 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
 import ImageUpload from '@/components/ImageUpload';
+import GaleriUpload from '@/components/GaleriUpload';
 
 export default function AdminEkskul() {
   const { data, updateEkstrakurikuler } = useSchool();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editItem, setEditItem] = useState<Ekstrakurikuler | null>(null);
-  const [form, setForm] = useState({ nama: '', foto: '', deskripsi: '' });
+  const [form, setForm] = useState({ nama: '', foto: '', deskripsi: '', galeri: [] as string[] });
 
-  const openAdd = () => { setEditItem(null); setForm({ nama: '', foto: '', deskripsi: '' }); setDialogOpen(true); };
-  const openEdit = (e: Ekstrakurikuler) => { setEditItem(e); setForm({ nama: e.nama, foto: e.foto, deskripsi: e.deskripsi }); setDialogOpen(true); };
+  const openAdd = () => { setEditItem(null); setForm({ nama: '', foto: '', deskripsi: '', galeri: [] }); setDialogOpen(true); };
+  const openEdit = (e: Ekstrakurikuler) => { setEditItem(e); setForm({ nama: e.nama, foto: e.foto, deskripsi: e.deskripsi, galeri: e.galeri || [] }); setDialogOpen(true); };
 
   const handleSave = () => {
     if (!form.nama) return;
@@ -24,7 +25,7 @@ export default function AdminEkskul() {
     if (editItem) {
       updateEkstrakurikuler(data.ekstrakurikuler.map(e => e.id === editItem.id ? { ...e, ...form, foto } : e));
     } else {
-      updateEkstrakurikuler([...data.ekstrakurikuler, { id: Date.now().toString(), ...form, foto, galeri: [] }]);
+      updateEkstrakurikuler([...data.ekstrakurikuler, { id: Date.now().toString(), ...form, foto }]);
     }
     setDialogOpen(false);
   };
@@ -43,6 +44,7 @@ export default function AdminEkskul() {
               <div><Label>Nama</Label><Input value={form.nama} onChange={e => setForm(f => ({ ...f, nama: e.target.value }))} /></div>
               <div><Label>Foto</Label><ImageUpload value={form.foto} onChange={url => setForm(f => ({ ...f, foto: url }))} placeholder /></div>
               <div><Label>Deskripsi</Label><Textarea value={form.deskripsi} onChange={e => setForm(f => ({ ...f, deskripsi: e.target.value }))} /></div>
+              <div><Label>Galeri</Label><GaleriUpload value={form.galeri} onChange={galeri => setForm(f => ({ ...f, galeri }))} /></div>
               <Button onClick={handleSave} className="w-full">Simpan</Button>
             </div>
           </DialogContent>
