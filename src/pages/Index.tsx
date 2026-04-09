@@ -38,8 +38,7 @@ export default function Index() {
   }, [nextSlide, images.length]);
 
   const stats = [
-    { icon: Users, label: 'Tenaga Pendidik', value: data.pegawai.length },
-    { icon: Calendar, label: 'Kegiatan', value: data.kegiatan.length },
+    { icon: Users, label: 'Pegawai', value: data.pegawai.length },
     { icon: Award, label: 'Ekstrakurikuler', value: data.ekstrakurikuler.length },
   ];
 
