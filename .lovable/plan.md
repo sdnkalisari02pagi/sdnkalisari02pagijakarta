@@ -1,36 +1,21 @@
 
 
-# Replace Placeholder Images with Real Unsplash Photos
+# Add Detail Popup to Kegiatan Cards
 
 ## Overview
-Replace all `placehold.co` and `ui-avatars` dummy images in `SchoolContext.tsx` default data with real Unsplash photos that match each context (school activities, extracurriculars, school building, people portraits).
+Make each kegiatan card clickable to open a scrollable dialog/modal popup showing the full detail, instead of navigating to a new page.
 
 ## Changes
 
-### `src/contexts/SchoolContext.tsx` — update all image URLs in `defaultData`
-
-**Pegawai (staff photos)** — replace `ui-avatars` with Unsplash portrait photos:
-- Use `https://images.unsplash.com/photo-...?w=200&h=200&fit=crop&crop=face` for each staff member
-- Mix of male/female Indonesian-looking professional portraits
-
-**Kegiatan (activities)** — replace `placehold.co` with relevant Unsplash photos:
-- Upacara → flag ceremony / school assembly image
-- Lomba Mewarnai → children coloring/painting
-- Hari Kartini → traditional costume / cultural event
-- Kunjungan Museum → museum visit / field trip
-- Pentas Seni → school performance / stage show
-- Senam Pagi → morning exercise / kids doing sports
-
-**Ekstrakurikuler** — replace main photos and gallery photos:
-- Pramuka → scouting / outdoor activity
-- Pantomim → mime / theater performance
-- Tari → traditional dance
-- Qasidah / Marawis → music / Islamic art
-- Menggambar → children drawing / art class
-
-**Profil** — fotoSekolah: school building exterior photo
-
-**Sambutan** — professional female portrait for headmaster
-
-All images sourced from Unsplash with appropriate `w=` and `h=` sizing parameters for performance.
+### `src/pages/KegiatanPage.tsx`
+- Add state `selectedKegiatan` to track which item is clicked
+- Wrap page with a `Dialog` component controlled by this state
+- Make each `Card` clickable (`cursor-pointer`, `onClick` sets selected item)
+- Dialog content shows:
+  - Large image at top
+  - Date (formatted in Indonesian)
+  - Title (larger font)
+  - Full description text
+- Use `ScrollArea` inside `DialogContent` for scrollable content when text is long
+- Import `Dialog`, `DialogContent`, `DialogHeader`, `DialogTitle` and `ScrollArea`
 
