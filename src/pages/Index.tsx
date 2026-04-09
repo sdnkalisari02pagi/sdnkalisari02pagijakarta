@@ -19,7 +19,8 @@ export default function Index() {
   const keunggulanRef = useScrollAnimation();
   const kegiatanRef = useScrollAnimation();
 
-  const images = data.hero.images.length > 0 ? data.hero.images : [data.profil.fotoSekolah];
+  const hero = data.hero || { images: [], judul: 'SDN Kalisari 02 Pagi', subtitle: 'Mewujudkan Generasi Cerdas, Berkarakter, dan Berprestasi' };
+  const images = hero.images.length > 0 ? hero.images : [data.profil.fotoSekolah];
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const nextSlide = useCallback(() => {
@@ -80,8 +81,8 @@ export default function Index() {
 
         {/* Content */}
         <div className="relative z-10 text-center text-primary-foreground px-4 animate-fade-in-up">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">{data.hero.judul}</h1>
-          <p className="text-lg md:text-xl mb-8 opacity-90">{data.hero.subtitle}</p>
+          <h1 className="text-4xl md:text-6xl font-bold mb-4">{hero.judul}</h1>
+          <p className="text-lg md:text-xl mb-8 opacity-90">{hero.subtitle}</p>
 
           {/* Stats */}
           <div className="flex flex-wrap justify-center gap-4">

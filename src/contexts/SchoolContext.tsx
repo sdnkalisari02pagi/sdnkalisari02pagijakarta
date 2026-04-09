@@ -180,7 +180,10 @@ const SchoolContext = createContext<SchoolContextType | undefined>(undefined);
 function loadData(): SchoolData {
   try {
     const saved = localStorage.getItem('school-data');
-    if (saved) return JSON.parse(saved);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return { ...defaultData, ...parsed, hero: parsed.hero || defaultData.hero };
+    }
   } catch {}
   return defaultData;
 }
