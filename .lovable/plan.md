@@ -1,18 +1,20 @@
 
 
-# Add Scroll Animations to Kegiatan and Ekstrakurikuler Pages
+# Add Reorder Functionality to Admin Pegawai
+
+## Overview
+Add up/down arrow buttons to each row in the pegawai table so admins can reorder staff. The order in admin will be reflected on the public website since both read from the same `data.pegawai` array.
 
 ## Changes
 
-### 1. `src/pages/KegiatanPage.tsx`
-- Import `useScrollAnimation` hook
-- Apply scroll animation ref to the card grid container
-- Add `scroll-animate` class with staggered delays to each card
+### `src/pages/admin/AdminPegawai.tsx`
+- Import `ArrowUp` and `ArrowDown` icons from lucide-react
+- Add a "No." (number) column as the first column showing the row index
+- Add up/down arrow buttons in the Aksi column (before edit/delete)
+- `moveUp(index)`: swaps item at `index` with `index-1`, calls `updatePegawai`
+- `moveDown(index)`: swaps item at `index` with `index+1`, calls `updatePegawai`
+- Disable up button on first row, down button on last row
+- Reorder buttons only work on the unfiltered full list — when search/filter is active, hide reorder buttons (since reordering a filtered subset would be confusing)
 
-### 2. `src/pages/EkstrakurikulerPage.tsx`
-- Import `useScrollAnimation` hook
-- Apply scroll animation ref to the card grid container
-- Add `scroll-animate` class with staggered delays to each card
-
-Both pages will use the same pattern as the homepage: cards fade-in and slide-up as they scroll into view, with staggered timing.
+No other files need changes — the public pages already render `data.pegawai` in array order.
 
