@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useSchool } from '@/contexts/SchoolContext';
-import { Users, BookOpen, Star, Shield, ArrowRight, ChevronLeft, ChevronRight, Calendar, Award } from 'lucide-react';
+import { Users, BookOpen, Star, Shield, ArrowRight, ChevronLeft, ChevronRight, Award } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
@@ -38,8 +38,7 @@ export default function Index() {
   }, [nextSlide, images.length]);
 
   const stats = [
-    { icon: Users, label: 'Tenaga Pendidik', value: data.pegawai.length },
-    { icon: Calendar, label: 'Kegiatan', value: data.kegiatan.length },
+    { icon: Users, label: 'Pegawai', value: data.pegawai.length },
     { icon: Award, label: 'Ekstrakurikuler', value: data.ekstrakurikuler.length },
   ];
 
@@ -54,10 +53,10 @@ export default function Index() {
             src={img}
             alt={`Slide ${i + 1}`}
             className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out"
-            style={{ opacity: i === currentSlide ? 0.3 : 0 }}
+            style={{ opacity: i === currentSlide ? 0.6 : 0 }}
           />
         ))}
-        <div className="absolute inset-0 bg-primary/70" />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/40 via-primary/50 to-primary/70" />
 
         {/* Arrows */}
         {images.length > 1 && (
