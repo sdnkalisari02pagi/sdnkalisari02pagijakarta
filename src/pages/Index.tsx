@@ -81,8 +81,8 @@ export default function Index() {
 
         {/* Content */}
         <div className="relative z-10 text-center text-primary-foreground px-4 animate-fade-in-up">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">{data.hero.judul}</h1>
-          <p className="text-lg md:text-xl mb-8 opacity-90">{data.hero.subtitle}</p>
+          <h1 className="text-4xl md:text-6xl font-bold mb-4">{hero.judul}</h1>
+          <p className="text-lg md:text-xl mb-8 opacity-90">{hero.subtitle}</p>
 
           {/* Stats */}
           <div className="flex flex-wrap justify-center gap-4">
