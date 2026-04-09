@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/hooks/use-toast';
+import ImageUpload from '@/components/ImageUpload';
 
 export default function AdminSambutan() {
   const { data, updateSambutan } = useSchool();
