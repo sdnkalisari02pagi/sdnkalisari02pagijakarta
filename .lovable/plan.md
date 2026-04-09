@@ -1,71 +1,35 @@
 
 
-# Website SDN Kalisari 02 Pagi
+# Replace URL Photo Inputs with File Upload in Admin Dashboard
 
 ## Overview
-Website sekolah dasar modern, colorful, dan responsif dengan halaman publik dan dashboard admin. Data disimpan menggunakan React state dengan localStorage untuk persistensi (dapat di-upgrade ke Supabase nanti).
+Replace all "URL Foto" text inputs across admin pages with a file upload button. Since there's no backend/storage service connected, uploaded images will be converted to base64 data URLs and stored in localStorage via the existing SchoolContext.
 
-## Design System
-- **Warna**: Kuning (#F59E0B), Biru (#2563EB), Putih — sebagai tema utama
-- **Style**: Card modern dengan shadow, rounded corners, animasi hover
-- **Responsive**: Mobile-first design
+## What Changes
 
-## Halaman Publik
+### 1. Create a reusable `ImageUpload` component
+- `src/components/ImageUpload.tsx`
+- Accepts `value` (current image URL/base64), `onChange` callback, and optional `placeholder`
+- Shows a file input styled as a button ("Unggah Foto") with an Upload icon
+- Shows image preview if a value exists, with a remove/clear button
+- Accepts image files only (jpg, png, webp)
+- Converts selected file to base64 data URL via `FileReader`
+- Limits file size (e.g. 2MB) with a toast warning if exceeded
 
-### 1. Landing Page (Home)
-- **Navbar**: Logo, nama sekolah, menu navigasi (Profil, Kegiatan, Ekstrakurikuler, Layanan, Kontak), tombol Login
-- **Hero Section**: Background dengan overlay gelap, judul besar, jumlah pegawai dinamis
-- **Sambutan Kepala Sekolah**: Foto placeholder berhijab, nama Ibu Nuroyanah M.Pd, paragraf sambutan
-- **Kenapa Memilih Kami**: 4 poin keunggulan dengan icon
-- **Kegiatan Terbaru**: 3-6 card kegiatan, tombol "Lihat Semua"
-- **Footer**: Alamat, email, link Instagram & YouTube
-- **Floating email button**: Icon email di pojok kanan bawah, klik → mailto:kalisari02pagi@gmail.com
+### 2. Update 5 admin pages to use `ImageUpload` instead of URL Input
 
-### 2. Profil
-- Sub-halaman: Sejarah (dengan foto), Visi Misi Tujuan, Daftar Pegawai
-- Pegawai: Card grid (foto, nama, jabatan), search & filter jabatan
+| Page | Field replaced |
+|------|---------------|
+| `AdminPegawai.tsx` | "URL Foto" for staff photo |
+| `AdminKegiatan.tsx` | "URL Foto" for activity photo |
+| `AdminEkskul.tsx` | "URL Foto" for extracurricular photo |
+| `AdminSambutan.tsx` | "URL Foto" for headmaster photo |
+| `AdminProfil.tsx` | "URL Foto" for school photo |
 
-### 3. Kegiatan
-- List kegiatan/berita dengan judul, tanggal, foto
-- Search & filter tanggal
+Each page: replace the `<Label>URL Foto</Label><Input .../>` block with `<ImageUpload value={form.foto} onChange={url => setForm(f => ({...f, foto: url}))} />`.
 
-### 4. Ekstrakurikuler
-- Grid 3 kolom: Pramuka, Pantomim, Tari, Qasidah, Marawis, Menggambar
-- Card dengan foto & nama, klik → halaman detail (galeri + deskripsi)
-
-### 5. Layanan
-- List dokumen downloadable (nama file, tanggal)
-- Search & filter tanggal
-
-### 6. Kontak
-- Google Maps embed, alamat, telepon, email, Instagram
-
-### 7. Login
-- Form username & password, link forgot password, redirect ke dashboard
-
-## Dashboard Admin (setelah login)
-
-### Layout
-- Sidebar dengan menu: Dashboard, Pegawai, Kegiatan, Ekstrakurikuler, Dokumen, Profil Sekolah, Sambutan, Kontak, Logout
-
-### Fitur CRUD
-- **Dashboard**: Statistik ringkasan (jumlah pegawai, kegiatan, ekskul, dokumen)
-- **Pegawai**: CRUD (foto, nama, jabatan) + search/filter
-- **Kegiatan**: CRUD (judul, tanggal, foto, deskripsi)
-- **Ekstrakurikuler**: CRUD (judul, foto, deskripsi)
-- **Dokumen**: CRUD + search/filter
-- **Profil**: Edit sejarah, visi misi
-- **Sambutan**: Edit teks & foto kepala sekolah
-- **Kontak**: Edit maps embed, alamat, email, sosmed
-
-## Data
-- Dummy data lengkap untuk semua section
-- Data management via React Context + localStorage
-- Login sederhana dengan hardcoded credentials (admin/admin123)
-
-## Teknologi
-- React + TypeScript + Tailwind CSS
-- React Router untuk navigasi
-- Lucide icons
-- shadcn/ui components
+## Technical Notes
+- Base64 storage in localStorage is fine for this scale (small number of images)
+- Existing fallback URLs (ui-avatars, placehold.co) remain as defaults when no image is uploaded
+- No backend or external storage needed
 
