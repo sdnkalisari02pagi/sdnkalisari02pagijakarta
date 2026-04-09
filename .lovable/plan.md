@@ -1,21 +1,16 @@
 
 
-# Add Detail Popup to Kegiatan Cards
+# Add "Read More" Icon Button to Kegiatan Cards
 
 ## Overview
-Make each kegiatan card clickable to open a scrollable dialog/modal popup showing the full detail, instead of navigating to a new page.
+Add a small icon button at the bottom-right corner of each kegiatan card that visually indicates "read more". Clicking it (or the card) opens the detail popup.
 
 ## Changes
 
 ### `src/pages/KegiatanPage.tsx`
-- Add state `selectedKegiatan` to track which item is clicked
-- Wrap page with a `Dialog` component controlled by this state
-- Make each `Card` clickable (`cursor-pointer`, `onClick` sets selected item)
-- Dialog content shows:
-  - Large image at top
-  - Date (formatted in Indonesian)
-  - Title (larger font)
-  - Full description text
-- Use `ScrollArea` inside `DialogContent` for scrollable content when text is long
-- Import `Dialog`, `DialogContent`, `DialogHeader`, `DialogTitle` and `ScrollArea`
+- Import `ArrowRight` (or `ExternalLink` / `Eye`) icon from `lucide-react` and `Button` component
+- Inside each `Card`'s `CardContent`, add a flex container at the bottom with a small icon button aligned to the right
+- The button uses `variant="ghost"` or `variant="outline"` with `size="icon"` styling
+- Button has `onClick` with `stopPropagation` to avoid double-triggering (card also opens popup)
+- Use `ArrowRight` icon to indicate "selengkapnya"
 
