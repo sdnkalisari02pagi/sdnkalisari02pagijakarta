@@ -10,6 +10,7 @@ export default function Profil() {
   const { data } = useSchool();
   const [search, setSearch] = useState('');
   const [filterJabatan, setFilterJabatan] = useState('all');
+  const [selectedPegawai, setSelectedPegawai] = useState<any>(null);
 
   const jabatanList = [...new Set(data.pegawai.map(p => p.jabatan))];
   const filtered = data.pegawai.filter(p => {
