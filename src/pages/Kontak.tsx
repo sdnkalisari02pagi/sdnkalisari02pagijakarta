@@ -24,8 +24,8 @@ export default function Kontak() {
               <div><h3 className="font-semibold text-foreground">Email</h3><p className="text-sm text-muted-foreground">{data.kontak.email}</p></div>
             </CardContent></Card>
             <Card><CardContent className="pt-6 flex items-center gap-4">
-              <a href={data.sosialMedia.instagram} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline"><Instagram className="w-5 h-5" /> Instagram</a>
-              <a href={data.sosialMedia.youtube} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline"><Youtube className="w-5 h-5" /> YouTube</a>
+              <a href={data.kontak.instagram} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline"><Instagram className="w-5 h-5" /> Instagram</a>
+              <a href={data.kontak.youtube} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline"><Youtube className="w-5 h-5" /> YouTube</a>
             </CardContent></Card>
           </div>
           <div className="rounded-lg overflow-hidden border h-[300px] md:h-full min-h-[300px]">

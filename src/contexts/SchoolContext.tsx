@@ -199,7 +199,7 @@ function loadData(): SchoolData {
     const saved = localStorage.getItem('school-data');
     if (saved) {
       const parsed = JSON.parse(saved);
-      return { ...defaultData, ...parsed, hero: parsed.hero || defaultData.hero, jabatanList: parsed.jabatanList || defaultData.jabatanList, sosialMedia: parsed.sosialMedia || defaultData.sosialMedia };
+      return { ...defaultData, ...parsed, hero: parsed.hero || defaultData.hero, jabatanList: parsed.jabatanList || defaultData.jabatanList, sosialMedia: { ...defaultData.sosialMedia, ...(parsed.sosialMedia || {}) } };
     }
   } catch {}
   return defaultData;
