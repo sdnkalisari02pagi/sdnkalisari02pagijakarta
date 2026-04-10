@@ -63,6 +63,12 @@ export interface HeroData {
   subtitle: string;
 }
 
+export interface SosialMedia {
+  instagram: string;
+  youtube: string;
+  email: string;
+}
+
 export interface LastModified {
   logo?: string;
   pegawai?: string;
@@ -73,6 +79,7 @@ export interface LastModified {
   sambutan?: string;
   kontak?: string;
   hero?: string;
+  sosialMedia?: string;
 }
 
 export interface SchoolData {
@@ -86,6 +93,7 @@ export interface SchoolData {
   profil: ProfilSekolah;
   sambutan: Sambutan;
   kontak: KontakInfo;
+  sosialMedia: SosialMedia;
   lastModified: LastModified;
 }
 
@@ -161,6 +169,11 @@ const defaultData: SchoolData = {
     youtube: 'https://www.youtube.com/@kalisaritimur2027',
     mapsEmbed: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3965.2!2d106.87!3d-6.33!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwMjAnUyAxMDbCsDUyJ0U!5e0!3m2!1sen!2sid!4v1234567890',
   },
+  sosialMedia: {
+    instagram: 'https://www.instagram.com/sdnegerikalisari02pagi/',
+    youtube: 'https://www.youtube.com/@kalisaritimur2027',
+    email: 'kalisari02pagi@gmail.com',
+  },
   lastModified: {},
 };
 
@@ -175,6 +188,7 @@ interface SchoolContextType {
   updateProfil: (profil: ProfilSekolah) => void;
   updateSambutan: (sambutan: Sambutan) => void;
   updateKontak: (kontak: KontakInfo) => void;
+  updateSosialMedia: (sosialMedia: SosialMedia) => void;
   updateJabatanList: (jabatanList: string[]) => void;
 }
 
@@ -185,7 +199,7 @@ function loadData(): SchoolData {
     const saved = localStorage.getItem('school-data');
     if (saved) {
       const parsed = JSON.parse(saved);
-      return { ...defaultData, ...parsed, hero: parsed.hero || defaultData.hero, jabatanList: parsed.jabatanList || defaultData.jabatanList };
+      return { ...defaultData, ...parsed, hero: parsed.hero || defaultData.hero, jabatanList: parsed.jabatanList || defaultData.jabatanList, sosialMedia: parsed.sosialMedia || defaultData.sosialMedia };
     }
   } catch {}
   return defaultData;
@@ -208,10 +222,11 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   const updateProfil = (profil: ProfilSekolah) => setData(d => ({ ...d, profil, lastModified: { ...d.lastModified, profil: now() } }));
   const updateSambutan = (sambutan: Sambutan) => setData(d => ({ ...d, sambutan, lastModified: { ...d.lastModified, sambutan: now() } }));
   const updateKontak = (kontak: KontakInfo) => setData(d => ({ ...d, kontak, lastModified: { ...d.lastModified, kontak: now() } }));
+  const updateSosialMedia = (sosialMedia: SosialMedia) => setData(d => ({ ...d, sosialMedia, lastModified: { ...d.lastModified, sosialMedia: now() } }));
   const updateJabatanList = (jabatanList: string[]) => setData(d => ({ ...d, jabatanList, lastModified: { ...d.lastModified, jabatan: now() } }));
 
   return (
-    <SchoolContext.Provider value={{ data, updateLogo, updateHero, updatePegawai, updateKegiatan, updateEkstrakurikuler, updateDokumen, updateProfil, updateSambutan, updateKontak, updateJabatanList }}>
+    <SchoolContext.Provider value={{ data, updateLogo, updateHero, updatePegawai, updateKegiatan, updateEkstrakurikuler, updateDokumen, updateProfil, updateSambutan, updateKontak, updateSosialMedia, updateJabatanList }}>
       {children}
     </SchoolContext.Provider>
   );
