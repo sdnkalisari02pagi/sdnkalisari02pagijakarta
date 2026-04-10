@@ -1,15 +1,12 @@
 
 
-# Pegawai Photo Cards with Popup Detail
+# Make Pegawai Cards Portrait-Oriented
 
-## Changes in `src/pages/Profil.tsx`
+## Change in `src/pages/Profil.tsx`
 
-1. **Change photo shape**: Replace `w-20 h-20 rounded-full` with a rectangular portrait style (e.g. `w-full h-48 rounded-lg object-cover`)
-2. **Make cards clickable**: Add `cursor-pointer` and `onClick` to set a selected pegawai state
-3. **Add popup dialog**: Import `Dialog` components, show selected pegawai's foto (larger), nama, and jabatan when clicked
-4. **State**: Add `selectedPegawai` state (null or pegawai object)
+The photo container aspect ratio needs to change from landscape (`h-48`) to portrait to match 3x4 / 4x6 photo ratios.
 
-### Layout change
-- Photo moves from small circle inside CardContent to a full-width rectangle at top of card (above CardContent)
-- Name and jabatan remain below the photo
+1. Change the image container from `h-48` to `aspect-[3/4]` so photos display in portrait orientation
+2. Optionally adjust grid columns to fit more cards since they'll be narrower: e.g. `grid-cols-2 sm:grid-cols-3 lg:grid-cols-4`
+3. Same change in the dialog popup photo container
 
