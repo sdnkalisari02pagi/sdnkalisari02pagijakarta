@@ -1,13 +1,8 @@
 
 
-# Change "Tambah Jabatan" Button from Icon to Text
+# Change Tambah Button in Kelola Jabatan Dialog
 
-## Change in `src/pages/admin/AdminPegawai.tsx`
+## Change in `src/pages/admin/AdminPegawai.tsx` (line 101)
 
-Replace the `+` icon button next to the jabatan input with a text button saying "Tambah".
-
-- Find: `<Button onClick={handleAddJabatan}><Plus className="w-4 h-4" /></Button>`
-- Replace with: `<Button onClick={handleAddJabatan}>Tambah</Button>`
-
-Single line change, one file.
+Replace `<Button onClick={handleAddJabatan}><Plus className="w-4 h-4" /></Button>` with `<Button onClick={handleAddJabatan}>Tambah</Button>`.
 
