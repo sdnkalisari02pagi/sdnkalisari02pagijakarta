@@ -160,7 +160,51 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Kegiatan Terbaru */}
+      {/* Ekstrakurikuler */}
+      <section className="py-16 bg-gradient-to-br from-secondary/10 via-accent/10 to-primary/10" ref={ekstrakurikulerRef}>
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-10 text-foreground scroll-animate">Ekstrakurikuler</h2>
+          <div className="relative scroll-animate delay-200">
+            {totalEkskulPages > 1 && (
+              <>
+                <button
+                  onClick={() => setEkskulPage(p => (p - 1 + totalEkskulPages) % totalEkskulPages)}
+                  className="absolute -left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
+                  aria-label="Previous"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+                <button
+                  onClick={() => setEkskulPage(p => (p + 1) % totalEkskulPages)}
+                  className="absolute -right-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
+                  aria-label="Next"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+              </>
+            )}
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 px-8">
+              {visibleEkskul.map((e) => (
+                <Link key={e.id} to={`/ekstrakurikuler/${e.id}`}>
+                  <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full">
+                    <img src={e.foto} alt={e.nama} className="w-full h-48 object-cover" />
+                    <CardContent className="pt-4">
+                      <h3 className="font-semibold text-foreground mb-2">{e.nama}</h3>
+                      <p className="text-sm text-muted-foreground line-clamp-2">{e.deskripsi}</p>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          </div>
+          <div className="text-center mt-8 scroll-animate delay-300">
+            <Link to="/ekstrakurikuler">
+              <Button variant="outline" className="gap-2">Lihat Semua <ArrowRight className="w-4 h-4" /></Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <section className="py-16 bg-muted" ref={kegiatanRef}>
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-10 text-foreground scroll-animate">Kegiatan Terbaru</h2>
