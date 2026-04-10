@@ -4,12 +4,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Search } from 'lucide-react';
 
 export default function Profil() {
   const { data } = useSchool();
   const [search, setSearch] = useState('');
   const [filterJabatan, setFilterJabatan] = useState('all');
+  const [selectedPegawai, setSelectedPegawai] = useState<any>(null);
 
   const jabatanList = [...new Set(data.pegawai.map(p => p.jabatan))];
   const filtered = data.pegawai.filter(p => {
@@ -68,15 +70,31 @@ export default function Profil() {
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {filtered.map(p => (
-                <Card key={p.id} className="text-center hover:shadow-lg transition-shadow">
-                  <CardContent className="pt-6">
-                    <img src={p.foto} alt={p.nama} className="w-20 h-20 rounded-full mx-auto mb-3 object-cover" />
+                <Card key={p.id} className="text-center hover:shadow-lg transition-shadow cursor-pointer overflow-hidden" onClick={() => setSelectedPegawai(p)}>
+                  <div className="h-48 w-full overflow-hidden">
+                    <img src={p.foto} alt={p.nama} className="w-full h-full object-cover" />
+                  </div>
+                  <CardContent className="p-4">
                     <h4 className="font-semibold text-foreground">{p.nama}</h4>
                     <p className="text-sm text-muted-foreground">{p.jabatan}</p>
                   </CardContent>
                 </Card>
               ))}
             </div>
+
+            <Dialog open={!!selectedPegawai} onOpenChange={(open) => !open && setSelectedPegawai(null)}>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="text-center">{selectedPegawai?.nama}</DialogTitle>
+                </DialogHeader>
+                <div className="flex flex-col items-center gap-4">
+                  <div className="w-full h-64 overflow-hidden rounded-lg">
+                    <img src={selectedPegawai?.foto} alt={selectedPegawai?.nama} className="w-full h-full object-cover" />
+                  </div>
+                  <p className="text-muted-foreground">{selectedPegawai?.jabatan}</p>
+                </div>
+              </DialogContent>
+            </Dialog>
           </TabsContent>
         </Tabs>
       </div>
