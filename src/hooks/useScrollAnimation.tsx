@@ -7,26 +7,35 @@ export function useScrollAnimation() {
     const el = ref.current;
     if (!el) return;
 
-    const observer = new IntersectionObserver(
+    const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('animate-visible');
-            observer.unobserve(entry.target);
+            io.unobserve(entry.target);
           }
         });
       },
       { threshold: 0.15 }
     );
 
-    // Observe the container and all scroll-animate children
-    const children = el.querySelectorAll('.scroll-animate');
-    children.forEach((child) => observer.observe(child));
-    if (el.classList.contains('scroll-animate')) {
-      observer.observe(el);
-    }
+    const observeElements = () => {
+      const children = el.querySelectorAll('.scroll-animate:not(.animate-visible)');
+      children.forEach((child) => io.observe(child));
+      if (el.classList.contains('scroll-animate') && !el.classList.contains('animate-visible')) {
+        io.observe(el);
+      }
+    };
 
-    return () => observer.disconnect();
+    observeElements();
+
+    const mo = new MutationObserver(() => observeElements());
+    mo.observe(el, { childList: true, subtree: true });
+
+    return () => {
+      io.disconnect();
+      mo.disconnect();
+    };
   }, []);
 
   return ref;
