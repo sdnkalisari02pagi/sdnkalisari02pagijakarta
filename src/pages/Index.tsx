@@ -17,7 +17,12 @@ export default function Index() {
   const { data } = useSchool();
   const sambutanRef = useScrollAnimation();
   const keunggulanRef = useScrollAnimation();
+  const ekstrakurikulerRef = useScrollAnimation();
   const kegiatanRef = useScrollAnimation();
+  const [ekskulPage, setEkskulPage] = useState(0);
+
+  const totalEkskulPages = Math.ceil(data.ekstrakurikuler.length / 3);
+  const visibleEkskul = data.ekstrakurikuler.slice(ekskulPage * 3, (ekskulPage + 1) * 3);
 
   const hero = data.hero || { images: [], judul: 'SDN Kalisari 02 Pagi', subtitle: 'Mewujudkan Generasi Cerdas, Berkarakter, dan Berprestasi' };
   const images = hero.images.length > 0 ? hero.images : [data.profil.fotoSekolah];
