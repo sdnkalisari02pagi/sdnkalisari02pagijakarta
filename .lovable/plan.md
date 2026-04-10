@@ -1,43 +1,27 @@
 
 
-# Floating Email Popup + Admin Sosial Media
+# Pisahkan Admin Sosmed dari Halaman Kontak
 
-## Overview
-1. Convert the floating email button into a popup contact form with yellow background
-2. Add a dedicated Admin Sosial Media page to manage Instagram, YouTube, and Email
-3. Connect social media data from admin to all public-facing icons (Footer, Kontak page, FloatingEmail)
+## Masalah
+Halaman Kontak di website utama saat ini mengambil data sosial media dari `data.sosialMedia` (admin sosmed), padahal seharusnya menggunakan data dari `data.kontak` (admin kontak) yang sudah punya field instagram dan youtube sendiri.
 
-## Detailed Changes
+Selain itu, ada error runtime karena localStorage lama belum punya field `sosialMedia`.
 
-### 1. Add `sosialMedia` to SchoolContext (`src/contexts/SchoolContext.tsx`)
-- Add new interface `SosialMedia` with fields: `instagram`, `youtube`, `email`
-- Add `sosialMedia` to `SchoolData` with defaults from current `kontak` values
-- Add `updateSosialMedia` function
-- Add `sosialMedia` to `LastModified`
+## Perubahan
 
-### 2. Update FloatingEmail (`src/components/FloatingEmail.tsx`)
-- Replace simple `<a>` with a button that toggles a Dialog popup
-- Popup has **yellow background** (`bg-yellow-400` or similar)
-- Form fields: Nama, Email Pengirim, Judul, Deskripsi (textarea)
-- Send button creates a `mailto:` link with the fields pre-filled (subject = Judul, body = "Dari: Nama\nEmail: email\n\nDeskripsi")
-- The target email comes from `data.sosialMedia.email` via `useSchool()`
+### 1. `src/pages/Kontak.tsx`
+- Ubah `data.sosialMedia.instagram` → `data.kontak.instagram`
+- Ubah `data.sosialMedia.youtube` → `data.kontak.youtube`
+- Halaman Kontak sepenuhnya hanya pakai data dari Admin Kontak
 
-### 3. Create Admin Sosial Media page (`src/pages/admin/AdminSosialMedia.tsx`)
-- Simple form with 3 fields: Instagram URL, YouTube URL, Email
-- Save button calls `updateSosialMedia()`
-- Shows LastModifiedInfo
+### 2. `src/contexts/SchoolContext.tsx`
+- Tambahkan fallback saat load dari localStorage: jika `sosialMedia` undefined, gunakan default agar tidak error
 
-### 4. Register Admin Sosial Media route
-- Add to `App.tsx`: `<Route path="sosial-media" element={<AdminSosialMedia />} />`
-- Add to `AdminLayout.tsx` sidebar menu: `{ title: 'Sosial Media', url: '/admin/sosial-media', icon: Share2 }`
+### 3. Tidak diubah
+- **Footer** tetap pakai `data.sosialMedia` (terhubung ke admin sosmed) — sesuai permintaan
+- **FloatingEmail** tetap pakai `data.sosialMedia.email` (terhubung ke admin sosmed)
 
-### 5. Update public components to use `sosialMedia`
-- **Footer**: change `data.kontak.instagram` → `data.sosialMedia.instagram`, same for YouTube
-- **Kontak page**: change social media links to use `data.sosialMedia`
-- Optionally remove instagram/youtube/email from AdminKontak (since they now live in AdminSosialMedia)
-
-### Technical Notes
-- No backend needed; data stored in localStorage via existing SchoolContext pattern
-- The mailto approach works without any email service — clicking Send opens the user's email client with pre-filled fields
-- All social media icons across the site (Footer, Kontak, FloatingEmail) will dynamically reflect admin changes
+## Ringkasan
+- Admin Kontak → mengatur data di halaman Kontak (alamat, telepon, email, instagram, youtube, maps)
+- Admin Sosial Media → mengatur icon di Footer & email di FloatingEmail
 
