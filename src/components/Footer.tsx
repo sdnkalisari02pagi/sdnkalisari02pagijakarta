@@ -25,8 +25,8 @@ export default function Footer() {
         <div>
           <h3 className="font-semibold mb-4">Sosial Media</h3>
           <div className="flex gap-4">
-            <a href={data.kontak.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors"><Instagram className="w-6 h-6" /></a>
-            <a href={data.kontak.youtube} target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors"><Youtube className="w-6 h-6" /></a>
+            <a href={data.sosialMedia.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors"><Instagram className="w-6 h-6" /></a>
+            <a href={data.sosialMedia.youtube} target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors"><Youtube className="w-6 h-6" /></a>
           </div>
         </div>
       </div>

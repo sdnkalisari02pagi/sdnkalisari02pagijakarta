@@ -29,6 +29,7 @@ import AdminSambutan from "./pages/admin/AdminSambutan";
 import AdminKontak from "./pages/admin/AdminKontak";
 import AdminLogo from "./pages/admin/AdminLogo";
 import AdminHero from "./pages/admin/AdminHero";
+import AdminSosialMedia from "./pages/admin/AdminSosialMedia";
 
 const queryClient = new QueryClient();
 
@@ -62,6 +63,7 @@ const App = () => (
                 <Route path="profil" element={<AdminProfil />} />
                 <Route path="sambutan" element={<AdminSambutan />} />
                 <Route path="kontak" element={<AdminKontak />} />
+                <Route path="sosial-media" element={<AdminSosialMedia />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>
