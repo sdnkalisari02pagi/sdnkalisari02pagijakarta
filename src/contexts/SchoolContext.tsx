@@ -79,6 +79,7 @@ export interface SchoolData {
   logo: string;
   hero: HeroData;
   pegawai: Pegawai[];
+  jabatanList: string[];
   kegiatan: Kegiatan[];
   ekstrakurikuler: Ekstrakurikuler[];
   dokumen: Dokumen[];
@@ -99,6 +100,7 @@ const defaultData: SchoolData = {
     subtitle: 'Mewujudkan Generasi Cerdas, Berkarakter, dan Berprestasi',
   },
   logo: '',
+  jabatanList: ['Kepala Sekolah', 'Guru Kelas 1', 'Guru Kelas 2', 'Guru Kelas 3', 'Guru Kelas 4', 'Guru Kelas 5', 'Guru Kelas 6', 'Tata Usaha', 'Penjaga Sekolah', 'Guru Agama'],
   pegawai: [
     { id: '1', nama: 'Nuroyanah, M.Pd', jabatan: 'Kepala Sekolah', foto: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=face' },
     { id: '2', nama: 'Siti Aminah, S.Pd', jabatan: 'Guru Kelas 1', foto: 'https://images.unsplash.com/photo-1580894732444-8ecded7900cd?w=200&h=200&fit=crop&crop=face' },
@@ -173,6 +175,7 @@ interface SchoolContextType {
   updateProfil: (profil: ProfilSekolah) => void;
   updateSambutan: (sambutan: Sambutan) => void;
   updateKontak: (kontak: KontakInfo) => void;
+  updateJabatanList: (jabatanList: string[]) => void;
 }
 
 const SchoolContext = createContext<SchoolContextType | undefined>(undefined);
@@ -182,7 +185,7 @@ function loadData(): SchoolData {
     const saved = localStorage.getItem('school-data');
     if (saved) {
       const parsed = JSON.parse(saved);
-      return { ...defaultData, ...parsed, hero: parsed.hero || defaultData.hero };
+      return { ...defaultData, ...parsed, hero: parsed.hero || defaultData.hero, jabatanList: parsed.jabatanList || defaultData.jabatanList };
     }
   } catch {}
   return defaultData;
@@ -205,9 +208,10 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   const updateProfil = (profil: ProfilSekolah) => setData(d => ({ ...d, profil, lastModified: { ...d.lastModified, profil: now() } }));
   const updateSambutan = (sambutan: Sambutan) => setData(d => ({ ...d, sambutan, lastModified: { ...d.lastModified, sambutan: now() } }));
   const updateKontak = (kontak: KontakInfo) => setData(d => ({ ...d, kontak, lastModified: { ...d.lastModified, kontak: now() } }));
+  const updateJabatanList = (jabatanList: string[]) => setData(d => ({ ...d, jabatanList, lastModified: { ...d.lastModified, jabatan: now() } }));
 
   return (
-    <SchoolContext.Provider value={{ data, updateLogo, updateHero, updatePegawai, updateKegiatan, updateEkstrakurikuler, updateDokumen, updateProfil, updateSambutan, updateKontak }}>
+    <SchoolContext.Provider value={{ data, updateLogo, updateHero, updatePegawai, updateKegiatan, updateEkstrakurikuler, updateDokumen, updateProfil, updateSambutan, updateKontak, updateJabatanList }}>
       {children}
     </SchoolContext.Provider>
   );
