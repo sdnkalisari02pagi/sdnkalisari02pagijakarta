@@ -19,7 +19,7 @@ export default function EkstrakurikulerDetail() {
         <h1 className="text-3xl font-bold mb-4 text-foreground">{ekskul.nama}</h1>
         <p className="text-muted-foreground mb-8 leading-relaxed">{ekskul.deskripsi}</p>
         <h2 className="text-xl font-semibold mb-4 text-foreground">Galeri</h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {ekskul.galeri.map((foto, i) => (
             <img key={i} src={foto} alt={`${ekskul.nama} ${i + 1}`} className="w-full h-48 object-cover rounded-lg" />
           ))}
