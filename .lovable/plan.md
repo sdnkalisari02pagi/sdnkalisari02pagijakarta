@@ -1,34 +1,25 @@
 
 
-# Add Ekstrakurikuler Carousel Section
+# Add Jabatan (Position) Management to Admin Pegawai
 
-## Changes to `src/pages/Index.tsx`
+## Overview
+Add a jabatan management feature so admins can maintain a list of positions, then select from that list when adding/editing pegawai (instead of free-text input).
 
-### Insert new section between Keunggulan (line 156) and Kegiatan Terbaru (line 158)
+## Changes
 
-- Add a new `ekstrakurikulerRef` using `useScrollAnimation()`
-- Add state `ekskulPage` (0-based) to track which group of 3 cards is shown
-- Show 3 cards at a time from `data.ekstrakurikuler`, with left/right arrow buttons to navigate between pages (page 0: items 0-2, page 1: items 3-5)
-- Each card: photo (`h-48 object-cover`), nama as title, deskripsi truncated (2-line clamp)
-- Link each card to `/ekstrakurikuler/{id}`
-- Section background: light gradient or white to contrast with surrounding sections
-- Arrow buttons positioned on the sides of the carousel, styled similar to the hero arrows
-- Add a "Lihat Semua" button linking to `/ekstrakurikuler`
+### 1. `src/contexts/SchoolContext.tsx`
+- Add `jabatanList: string[]` to `SchoolData` interface with default values extracted from existing pegawai data (e.g. "Kepala Sekolah", "Guru Kelas 1", etc.)
+- Add `updateJabatanList` function to context
+- Add `lastModified.jabatan` tracking
 
-### Structure
-```
-<section py-16 bg-gradient>
-  <h2>Ekstrakurikuler</h2>
-  <div relative>
-    <button left arrow />
-    <div grid 3 cols>
-      [Card 1] [Card 2] [Card 3]
-    </div>
-    <button right arrow />
-  </div>
-  <Link to /ekstrakurikuler>Lihat Semua</Link>
-</section>
-```
+### 2. `src/pages/admin/AdminPegawai.tsx`
+- Add a "Kelola Jabatan" button (next to "Tambah" button) that opens a Dialog
+- In the dialog: show list of all jabatan with delete button on each, plus an input + "Tambah" button to add new jabatan
+- Prevent deleting a jabatan that is currently used by a pegawai (show warning)
+- Change the jabatan field in the add/edit pegawai form from free-text `Input` to a `Select` dropdown populated from `data.jabatanList`
 
-No new files needed — all changes in `src/pages/Index.tsx`.
+## Technical Details
+- Jabatan list stored in `SchoolData.jabatanList` and persisted via localStorage (same as other data)
+- Default jabatan list: unique values from existing default pegawai data
+- The filter dropdown in the pegawai table will also use `data.jabatanList` instead of deriving from current pegawai
 
