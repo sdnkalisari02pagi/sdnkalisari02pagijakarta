@@ -87,6 +87,7 @@ export default function Index() {
               <div className="flex flex-wrap gap-4 pt-4">
                 {[
                   { icon: Users, label: 'Guru & Staff', value: data.pegawai.length },
+                  { icon: GraduationCap, label: 'Siswa', value: '350+' },
                   { icon: Award, label: 'Ekstrakurikuler', value: data.ekstrakurikuler.length },
                   { icon: Calendar, label: 'Tahun Berdiri', value: '1985' },
                 ].map((s, i) => (
