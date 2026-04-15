@@ -1,17 +1,11 @@
 
 
-# Tambah Field Copyright di Admin Footer
+# Ubah Maksimal Size Dokumen ke 10MB
 
 ## Perubahan
 
-### 1. `src/contexts/SchoolContext.tsx`
-- Tambah field `copyright` (string) di interface `FooterData`
-- Default value: `"© {tahun} SDN Kalisari 02 Pagi. All rights reserved."`
-
-### 2. `src/pages/admin/AdminFooter.tsx`
-- Tambah input field "Teks Copyright" di form
-
-### 3. `src/components/Footer.tsx`
-- Ganti baris copyright hardcoded dengan `data.footer.copyright`
-- Jika kosong, fallback ke format lama `© {tahun} {namaSekolah}. All rights reserved.`
+### `src/pages/admin/AdminDokumen.tsx`
+- Ubah `2 * 1024 * 1024` → `10 * 1024 * 1024` di validasi `processFile`
+- Ubah teks error dari "2MB" → "10MB"
+- Ubah teks petunjuk UI dari "maks 2MB" → "maks 10MB"
 
