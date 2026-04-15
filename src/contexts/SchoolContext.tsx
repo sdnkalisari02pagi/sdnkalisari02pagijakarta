@@ -188,7 +188,7 @@ interface SchoolContextType {
   updateProfil: (profil: ProfilSekolah) => void;
   updateSambutan: (sambutan: Sambutan) => void;
   updateKontak: (kontak: KontakInfo) => void;
-  updateSosialMedia: (sosialMedia: SosialMedia) => void;
+  
   updateJabatanList: (jabatanList: string[]) => void;
 }
 
@@ -222,11 +222,11 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   const updateProfil = (profil: ProfilSekolah) => setData(d => ({ ...d, profil, lastModified: { ...d.lastModified, profil: now() } }));
   const updateSambutan = (sambutan: Sambutan) => setData(d => ({ ...d, sambutan, lastModified: { ...d.lastModified, sambutan: now() } }));
   const updateKontak = (kontak: KontakInfo) => setData(d => ({ ...d, kontak, lastModified: { ...d.lastModified, kontak: now() } }));
-  const updateSosialMedia = (sosialMedia: SosialMedia) => setData(d => ({ ...d, sosialMedia, lastModified: { ...d.lastModified, sosialMedia: now() } }));
+  
   const updateJabatanList = (jabatanList: string[]) => setData(d => ({ ...d, jabatanList, lastModified: { ...d.lastModified, jabatan: now() } }));
 
   return (
-    <SchoolContext.Provider value={{ data, updateLogo, updateHero, updatePegawai, updateKegiatan, updateEkstrakurikuler, updateDokumen, updateProfil, updateSambutan, updateKontak, updateSosialMedia, updateJabatanList }}>
+    <SchoolContext.Provider value={{ data, updateLogo, updateHero, updatePegawai, updateKegiatan, updateEkstrakurikuler, updateDokumen, updateProfil, updateSambutan, updateKontak, updateJabatanList }}>
       {children}
     </SchoolContext.Provider>
   );
