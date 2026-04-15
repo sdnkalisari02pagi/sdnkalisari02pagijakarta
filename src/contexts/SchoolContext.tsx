@@ -128,6 +128,12 @@ const defaultData: SchoolData = {
     subtitle: 'Mewujudkan Generasi Cerdas, Berkarakter, dan Berprestasi',
   },
   logo: '',
+  keunggulan: [
+    { id: '1', icon: 'BookOpen', title: 'Kurikulum Berkualitas', desc: 'Menerapkan kurikulum merdeka yang inovatif dan menyenangkan.' },
+    { id: '2', icon: 'Users', title: 'Guru Profesional', desc: 'Tenaga pendidik berpengalaman dan bersertifikasi.' },
+    { id: '3', icon: 'Star', title: 'Prestasi Gemilang', desc: 'Siswa berprestasi di berbagai kompetisi akademik dan non-akademik.' },
+    { id: '4', icon: 'Shield', title: 'Lingkungan Aman', desc: 'Lingkungan sekolah yang aman, bersih, dan nyaman.' },
+  ],
   jabatanList: ['Kepala Sekolah', 'Guru Kelas 1', 'Guru Kelas 2', 'Guru Kelas 3', 'Guru Kelas 4', 'Guru Kelas 5', 'Guru Kelas 6', 'Tata Usaha', 'Penjaga Sekolah', 'Guru Agama'],
   pegawai: [
     { id: '1', nama: 'Nuroyanah, M.Pd', jabatan: 'Kepala Sekolah', foto: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=face' },
