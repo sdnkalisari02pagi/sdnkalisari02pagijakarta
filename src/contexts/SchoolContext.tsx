@@ -232,19 +232,6 @@ function loadData(): SchoolData {
   return defaultData;
 }
 
-const SchoolContext = createContext<SchoolContextType | undefined>(undefined);
-
-function loadData(): SchoolData {
-  try {
-    const saved = localStorage.getItem('school-data');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      return { ...defaultData, ...parsed, hero: parsed.hero || defaultData.hero, jabatanList: parsed.jabatanList || defaultData.jabatanList, sosialMedia: { ...defaultData.sosialMedia, ...(parsed.sosialMedia || {}) } };
-    }
-  } catch {}
-  return defaultData;
-}
-
 export function SchoolProvider({ children }: { children: ReactNode }) {
   const [data, setData] = useState<SchoolData>(loadData);
 
@@ -262,11 +249,12 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   const updateProfil = (profil: ProfilSekolah) => setData(d => ({ ...d, profil, lastModified: { ...d.lastModified, profil: now() } }));
   const updateSambutan = (sambutan: Sambutan) => setData(d => ({ ...d, sambutan, lastModified: { ...d.lastModified, sambutan: now() } }));
   const updateKontak = (kontak: KontakInfo) => setData(d => ({ ...d, kontak, lastModified: { ...d.lastModified, kontak: now() } }));
-  
+  const updateFloatingEmail = (floatingEmail: string) => setData(d => ({ ...d, floatingEmail, lastModified: { ...d.lastModified, floatingEmail: now() } }));
+  const updateFooter = (footer: FooterData) => setData(d => ({ ...d, footer, lastModified: { ...d.lastModified, footer: now() } }));
   const updateJabatanList = (jabatanList: string[]) => setData(d => ({ ...d, jabatanList, lastModified: { ...d.lastModified, jabatan: now() } }));
 
   return (
-    <SchoolContext.Provider value={{ data, updateLogo, updateHero, updatePegawai, updateKegiatan, updateEkstrakurikuler, updateDokumen, updateProfil, updateSambutan, updateKontak, updateJabatanList }}>
+    <SchoolContext.Provider value={{ data, updateLogo, updateHero, updatePegawai, updateKegiatan, updateEkstrakurikuler, updateDokumen, updateProfil, updateSambutan, updateKontak, updateFloatingEmail, updateFooter, updateJabatanList }}>
       {children}
     </SchoolContext.Provider>
   );
