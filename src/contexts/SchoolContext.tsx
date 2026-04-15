@@ -34,6 +34,13 @@ export interface Dokumen {
   lastModified?: string;
 }
 
+export interface Keunggulan {
+  id: string;
+  icon: string;
+  title: string;
+  desc: string;
+}
+
 export interface ProfilSekolah {
   sejarah: string;
   visi: string;
@@ -95,6 +102,7 @@ export interface LastModified {
 export interface SchoolData {
   logo: string;
   hero: HeroData;
+  keunggulan: Keunggulan[];
   pegawai: Pegawai[];
   jabatanList: string[];
   kegiatan: Kegiatan[];
