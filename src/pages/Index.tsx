@@ -1,18 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useSchool } from '@/contexts/SchoolContext';
-import { Users, BookOpen, Star, Shield, ArrowRight, ChevronLeft, ChevronRight, Award, Quote, GraduationCap, Calendar } from 'lucide-react';
+import { Users, BookOpen, Star, Shield, ArrowRight, ChevronLeft, ChevronRight, Award, Quote, GraduationCap, Calendar, Heart, Lightbulb, Target, Smile, Globe, Sparkles, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
-const keunggulan = [
-  { icon: BookOpen, title: 'Kurikulum Berkualitas', desc: 'Menerapkan kurikulum merdeka yang inovatif dan menyenangkan.' },
-  { icon: Users, title: 'Guru Profesional', desc: 'Tenaga pendidik berpengalaman dan bersertifikasi.' },
-  { icon: Star, title: 'Prestasi Gemilang', desc: 'Siswa berprestasi di berbagai kompetisi akademik dan non-akademik.' },
-  { icon: Shield, title: 'Lingkungan Aman', desc: 'Lingkungan sekolah yang aman, bersih, dan nyaman.' },
-];
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  BookOpen, Users, Star, Shield, Award, Heart, Lightbulb, Target, Smile, Globe, Sparkles, Zap,
+};
 
 export default function Index() {
   const { data } = useSchool();
@@ -177,17 +173,20 @@ export default function Index() {
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-10 text-foreground scroll-animate">Kenapa Memilih Kami?</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {keunggulan.map((item, i) => (
-              <Card key={i} className={`text-center hover:shadow-lg transition-shadow border-none bg-muted scroll-animate delay-${(i + 1) * 100}`}>
+            {data.keunggulan.map((item, i) => {
+              const IconComp = iconMap[item.icon] || Star;
+              return (
+              <Card key={item.id} className={`text-center hover:shadow-lg transition-shadow border-none bg-muted scroll-animate delay-${(i + 1) * 100}`}>
                 <CardContent className="pt-6">
                   <div className="w-14 h-14 rounded-full bg-primary mx-auto mb-4 flex items-center justify-center">
-                    <item.icon className="w-7 h-7 text-primary-foreground" />
+                    <IconComp className="w-7 h-7 text-primary-foreground" />
                   </div>
                   <h3 className="font-semibold text-foreground mb-2">{item.title}</h3>
                   <p className="text-sm text-muted-foreground">{item.desc}</p>
                 </CardContent>
               </Card>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

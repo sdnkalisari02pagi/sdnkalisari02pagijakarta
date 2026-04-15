@@ -3,13 +3,14 @@ import { useAuth } from '@/contexts/AuthContext';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import { NavLink } from '@/components/NavLink';
-import { LayoutDashboard, Users, Calendar, Star, FileText, School, MessageSquare, Phone, LogOut, GraduationCap, ImageIcon, Mail, LayoutTemplate } from 'lucide-react';
+import { LayoutDashboard, Users, Calendar, Star, FileText, School, MessageSquare, Phone, LogOut, GraduationCap, ImageIcon, Mail, LayoutTemplate, Award } from 'lucide-react';
 import { useSchool } from '@/contexts/SchoolContext';
 
 const menuItems = [
   { title: 'Dashboard', url: '/admin', icon: LayoutDashboard },
   { title: 'Logo', url: '/admin/logo', icon: ImageIcon },
   { title: 'Hero', url: '/admin/hero', icon: ImageIcon },
+  { title: 'Keunggulan', url: '/admin/keunggulan', icon: Award },
   { title: 'Pegawai', url: '/admin/pegawai', icon: Users },
   { title: 'Kegiatan', url: '/admin/kegiatan', icon: Calendar },
   { title: 'Ekstrakurikuler', url: '/admin/ekstrakurikuler', icon: Star },

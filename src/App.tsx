@@ -29,6 +29,7 @@ import AdminSambutan from "./pages/admin/AdminSambutan";
 import AdminKontak from "./pages/admin/AdminKontak";
 import AdminLogo from "./pages/admin/AdminLogo";
 import AdminHero from "./pages/admin/AdminHero";
+import AdminKeunggulan from "./pages/admin/AdminKeunggulan";
 import AdminFloatingEmail from "./pages/admin/AdminFloatingEmail";
 import AdminFooter from "./pages/admin/AdminFooter";
 
@@ -58,6 +59,7 @@ const App = () => (
                 <Route index element={<AdminDashboard />} />
                 <Route path="logo" element={<AdminLogo />} />
                 <Route path="hero" element={<AdminHero />} />
+                <Route path="keunggulan" element={<AdminKeunggulan />} />
                 <Route path="pegawai" element={<AdminPegawai />} />
                 <Route path="kegiatan" element={<AdminKegiatan />} />
                 <Route path="ekstrakurikuler" element={<AdminEkskul />} />

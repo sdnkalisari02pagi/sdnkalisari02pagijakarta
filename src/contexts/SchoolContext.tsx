@@ -34,6 +34,13 @@ export interface Dokumen {
   lastModified?: string;
 }
 
+export interface Keunggulan {
+  id: string;
+  icon: string;
+  title: string;
+  desc: string;
+}
+
 export interface ProfilSekolah {
   sejarah: string;
   visi: string;
@@ -89,12 +96,14 @@ export interface LastModified {
   hero?: string;
   sosialMedia?: string;
   floatingEmail?: string;
+  keunggulan?: string;
   footer?: string;
 }
 
 export interface SchoolData {
   logo: string;
   hero: HeroData;
+  keunggulan: Keunggulan[];
   pegawai: Pegawai[];
   jabatanList: string[];
   kegiatan: Kegiatan[];
@@ -120,6 +129,12 @@ const defaultData: SchoolData = {
     subtitle: 'Mewujudkan Generasi Cerdas, Berkarakter, dan Berprestasi',
   },
   logo: '',
+  keunggulan: [
+    { id: '1', icon: 'BookOpen', title: 'Kurikulum Berkualitas', desc: 'Menerapkan kurikulum merdeka yang inovatif dan menyenangkan.' },
+    { id: '2', icon: 'Users', title: 'Guru Profesional', desc: 'Tenaga pendidik berpengalaman dan bersertifikasi.' },
+    { id: '3', icon: 'Star', title: 'Prestasi Gemilang', desc: 'Siswa berprestasi di berbagai kompetisi akademik dan non-akademik.' },
+    { id: '4', icon: 'Shield', title: 'Lingkungan Aman', desc: 'Lingkungan sekolah yang aman, bersih, dan nyaman.' },
+  ],
   jabatanList: ['Kepala Sekolah', 'Guru Kelas 1', 'Guru Kelas 2', 'Guru Kelas 3', 'Guru Kelas 4', 'Guru Kelas 5', 'Guru Kelas 6', 'Tata Usaha', 'Penjaga Sekolah', 'Guru Agama'],
   pegawai: [
     { id: '1', nama: 'Nuroyanah, M.Pd', jabatan: 'Kepala Sekolah', foto: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=face' },
@@ -200,6 +215,7 @@ const defaultData: SchoolData = {
 interface SchoolContextType {
   data: SchoolData;
   updateLogo: (logo: string) => void;
+  updateKeunggulan: (keunggulan: Keunggulan[]) => void;
   updateHero: (hero: HeroData) => void;
   updatePegawai: (pegawai: Pegawai[]) => void;
   updateKegiatan: (kegiatan: Kegiatan[]) => void;
@@ -224,6 +240,7 @@ function loadData(): SchoolData {
         ...defaultData,
         ...parsed,
         hero: parsed.hero || defaultData.hero,
+        keunggulan: parsed.keunggulan || defaultData.keunggulan,
         jabatanList: parsed.jabatanList || defaultData.jabatanList,
         sosialMedia: { ...defaultData.sosialMedia, ...(parsed.sosialMedia || {}) },
         floatingEmail: parsed.floatingEmail || defaultData.floatingEmail,
@@ -244,6 +261,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   const now = () => new Date().toISOString();
   const updateLogo = (logo: string) => setData(d => ({ ...d, logo, lastModified: { ...d.lastModified, logo: now() } }));
   const updateHero = (hero: HeroData) => setData(d => ({ ...d, hero, lastModified: { ...d.lastModified, hero: now() } }));
+  const updateKeunggulan = (keunggulan: Keunggulan[]) => setData(d => ({ ...d, keunggulan, lastModified: { ...d.lastModified, keunggulan: now() } }));
   const updatePegawai = (pegawai: Pegawai[]) => setData(d => ({ ...d, pegawai, lastModified: { ...d.lastModified, pegawai: now() } }));
   const updateKegiatan = (kegiatan: Kegiatan[]) => setData(d => ({ ...d, kegiatan, lastModified: { ...d.lastModified, kegiatan: now() } }));
   const updateEkstrakurikuler = (ekstrakurikuler: Ekstrakurikuler[]) => setData(d => ({ ...d, ekstrakurikuler, lastModified: { ...d.lastModified, ekstrakurikuler: now() } }));
@@ -256,7 +274,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   const updateJabatanList = (jabatanList: string[]) => setData(d => ({ ...d, jabatanList, lastModified: { ...d.lastModified, jabatan: now() } }));
 
   return (
-    <SchoolContext.Provider value={{ data, updateLogo, updateHero, updatePegawai, updateKegiatan, updateEkstrakurikuler, updateDokumen, updateProfil, updateSambutan, updateKontak, updateFloatingEmail, updateFooter, updateJabatanList }}>
+    <SchoolContext.Provider value={{ data, updateLogo, updateHero, updateKeunggulan, updatePegawai, updateKegiatan, updateEkstrakurikuler, updateDokumen, updateProfil, updateSambutan, updateKontak, updateFloatingEmail, updateFooter, updateJabatanList }}>
       {children}
     </SchoolContext.Provider>
   );
