@@ -22,8 +22,8 @@ export default function AdminDokumen() {
   const ACCEPTED_TYPES = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'image/jpeg', 'image/png', 'image/webp'];
 
   const processFile = (file: File) => {
-    if (file.size > 2 * 1024 * 1024) {
-      toast({ title: 'Gagal', description: 'Ukuran file maksimal 2MB.', variant: 'destructive' });
+    if (file.size > 10 * 1024 * 1024) {
+      toast({ title: 'Gagal', description: 'Ukuran file maksimal 10MB.', variant: 'destructive' });
       return;
     }
     if (!ACCEPTED_TYPES.includes(file.type)) {
@@ -96,7 +96,7 @@ export default function AdminDokumen() {
                   >
                     <Upload className="w-6 h-6 text-muted-foreground" />
                     <p className="text-sm text-muted-foreground text-center">Seret file ke sini atau klik untuk unggah</p>
-                    <p className="text-xs text-muted-foreground">PDF, DOC, XLS, JPG, PNG (maks 2MB)</p>
+                    <p className="text-xs text-muted-foreground">PDF, DOC, XLS, JPG, PNG (maks 10MB)</p>
                   </div>
                 )}
               </div>
