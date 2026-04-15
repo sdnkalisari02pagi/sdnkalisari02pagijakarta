@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useSchool } from '@/contexts/SchoolContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -8,12 +9,24 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Search } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
+const VALID_TABS = ['sejarah', 'visimisi', 'pegawai'];
+
 export default function Profil() {
   const { data } = useSchool();
+  const [searchParams] = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  const initialTab = tabParam && VALID_TABS.includes(tabParam) ? tabParam : 'sejarah';
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [search, setSearch] = useState('');
   const [filterJabatan, setFilterJabatan] = useState('all');
   const [selectedPegawai, setSelectedPegawai] = useState<any>(null);
   const scrollRef = useScrollAnimation();
+
+  useEffect(() => {
+    if (tabParam && VALID_TABS.includes(tabParam)) {
+      setActiveTab(tabParam);
+    }
+  }, [tabParam]);
 
   const jabatanList = [...new Set(data.pegawai.map(p => p.jabatan))];
   const filtered = data.pegawai.filter(p => {
@@ -27,7 +40,7 @@ export default function Profil() {
       <div className="container mx-auto px-4">
         <h1 className="text-3xl font-bold text-center mb-10 text-foreground scroll-animate">Profil Sekolah</h1>
 
-        <Tabs defaultValue="sejarah" className="max-w-4xl mx-auto">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="max-w-4xl mx-auto">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="sejarah">Sejarah</TabsTrigger>
             <TabsTrigger value="visimisi">Visi & Misi</TabsTrigger>
