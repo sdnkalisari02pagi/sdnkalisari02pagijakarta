@@ -74,6 +74,7 @@ export interface FooterData {
   deskripsi: string;
   instagram: string;
   youtube: string;
+  copyright: string;
 }
 
 export interface LastModified {
@@ -191,6 +192,7 @@ const defaultData: SchoolData = {
     deskripsi: 'Mewujudkan generasi cerdas, berkarakter, dan berprestasi.',
     instagram: 'https://www.instagram.com/sdnegerikalisari02pagi/',
     youtube: 'https://www.youtube.com/@kalisaritimur2027',
+    copyright: `© ${new Date().getFullYear()} SDN Kalisari 02 Pagi. All rights reserved.`,
   },
   lastModified: {},
 };
