@@ -52,7 +52,12 @@ export default function Index() {
     <div>
       {/* Hero */}
       <section className="relative py-16 md:py-24 overflow-hidden hero-gradient">
-        <div className="container mx-auto px-4">
+        {/* Decorative blobs */}
+        <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-primary/10 blur-3xl animate-pulse" />
+        <div className="absolute top-1/2 -right-32 w-80 h-80 rounded-full bg-secondary/10 blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute -bottom-16 left-1/3 w-64 h-64 rounded-full bg-primary/5 blur-2xl animate-pulse" style={{ animationDelay: '2s' }} />
+
+        <div className="container mx-auto px-4 relative z-10">
           <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
             {/* Left Column */}
             <div className="space-y-6 animate-fade-in-up">
