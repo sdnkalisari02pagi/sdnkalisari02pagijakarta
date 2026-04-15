@@ -17,7 +17,7 @@ export default function FloatingEmail() {
 
   const handleSend = () => {
     const body = `Dari: ${nama}\nEmail: ${emailPengirim}\n\n${deskripsi}`;
-    const mailtoLink = `mailto:${data.sosialMedia.email}?subject=${encodeURIComponent(judul)}&body=${encodeURIComponent(body)}`;
+    const mailtoLink = `mailto:${data.floatingEmail}?subject=${encodeURIComponent(judul)}&body=${encodeURIComponent(body)}`;
     window.location.href = mailtoLink;
     setOpen(false);
     setNama('');

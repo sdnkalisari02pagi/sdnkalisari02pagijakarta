@@ -69,6 +69,13 @@ export interface SosialMedia {
   email: string;
 }
 
+export interface FooterData {
+  namaSekolah: string;
+  deskripsi: string;
+  instagram: string;
+  youtube: string;
+}
+
 export interface LastModified {
   logo?: string;
   pegawai?: string;
@@ -80,6 +87,8 @@ export interface LastModified {
   kontak?: string;
   hero?: string;
   sosialMedia?: string;
+  floatingEmail?: string;
+  footer?: string;
 }
 
 export interface SchoolData {
@@ -94,6 +103,8 @@ export interface SchoolData {
   sambutan: Sambutan;
   kontak: KontakInfo;
   sosialMedia: SosialMedia;
+  floatingEmail: string;
+  footer: FooterData;
   lastModified: LastModified;
 }
 
@@ -174,6 +185,13 @@ const defaultData: SchoolData = {
     youtube: 'https://www.youtube.com/@kalisaritimur2027',
     email: 'kalisari02pagi@gmail.com',
   },
+  floatingEmail: 'kalisari02pagi@gmail.com',
+  footer: {
+    namaSekolah: 'SDN Kalisari 02 Pagi',
+    deskripsi: 'Mewujudkan generasi cerdas, berkarakter, dan berprestasi.',
+    instagram: 'https://www.instagram.com/sdnegerikalisari02pagi/',
+    youtube: 'https://www.youtube.com/@kalisaritimur2027',
+  },
   lastModified: {},
 };
 
@@ -188,7 +206,8 @@ interface SchoolContextType {
   updateProfil: (profil: ProfilSekolah) => void;
   updateSambutan: (sambutan: Sambutan) => void;
   updateKontak: (kontak: KontakInfo) => void;
-  
+  updateFloatingEmail: (email: string) => void;
+  updateFooter: (footer: FooterData) => void;
   updateJabatanList: (jabatanList: string[]) => void;
 }
 
@@ -199,7 +218,15 @@ function loadData(): SchoolData {
     const saved = localStorage.getItem('school-data');
     if (saved) {
       const parsed = JSON.parse(saved);
-      return { ...defaultData, ...parsed, hero: parsed.hero || defaultData.hero, jabatanList: parsed.jabatanList || defaultData.jabatanList, sosialMedia: { ...defaultData.sosialMedia, ...(parsed.sosialMedia || {}) } };
+      return {
+        ...defaultData,
+        ...parsed,
+        hero: parsed.hero || defaultData.hero,
+        jabatanList: parsed.jabatanList || defaultData.jabatanList,
+        sosialMedia: { ...defaultData.sosialMedia, ...(parsed.sosialMedia || {}) },
+        floatingEmail: parsed.floatingEmail || defaultData.floatingEmail,
+        footer: { ...defaultData.footer, ...(parsed.footer || {}) },
+      };
     }
   } catch {}
   return defaultData;
@@ -222,11 +249,12 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   const updateProfil = (profil: ProfilSekolah) => setData(d => ({ ...d, profil, lastModified: { ...d.lastModified, profil: now() } }));
   const updateSambutan = (sambutan: Sambutan) => setData(d => ({ ...d, sambutan, lastModified: { ...d.lastModified, sambutan: now() } }));
   const updateKontak = (kontak: KontakInfo) => setData(d => ({ ...d, kontak, lastModified: { ...d.lastModified, kontak: now() } }));
-  
+  const updateFloatingEmail = (floatingEmail: string) => setData(d => ({ ...d, floatingEmail, lastModified: { ...d.lastModified, floatingEmail: now() } }));
+  const updateFooter = (footer: FooterData) => setData(d => ({ ...d, footer, lastModified: { ...d.lastModified, footer: now() } }));
   const updateJabatanList = (jabatanList: string[]) => setData(d => ({ ...d, jabatanList, lastModified: { ...d.lastModified, jabatan: now() } }));
 
   return (
-    <SchoolContext.Provider value={{ data, updateLogo, updateHero, updatePegawai, updateKegiatan, updateEkstrakurikuler, updateDokumen, updateProfil, updateSambutan, updateKontak, updateJabatanList }}>
+    <SchoolContext.Provider value={{ data, updateLogo, updateHero, updatePegawai, updateKegiatan, updateEkstrakurikuler, updateDokumen, updateProfil, updateSambutan, updateKontak, updateFloatingEmail, updateFooter, updateJabatanList }}>
       {children}
     </SchoolContext.Provider>
   );
