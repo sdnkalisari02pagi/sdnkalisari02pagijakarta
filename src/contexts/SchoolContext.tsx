@@ -185,6 +185,13 @@ const defaultData: SchoolData = {
     youtube: 'https://www.youtube.com/@kalisaritimur2027',
     email: 'kalisari02pagi@gmail.com',
   },
+  floatingEmail: 'kalisari02pagi@gmail.com',
+  footer: {
+    namaSekolah: 'SDN Kalisari 02 Pagi',
+    deskripsi: 'Mewujudkan generasi cerdas, berkarakter, dan berprestasi.',
+    instagram: 'https://www.instagram.com/sdnegerikalisari02pagi/',
+    youtube: 'https://www.youtube.com/@kalisaritimur2027',
+  },
   lastModified: {},
 };
 
