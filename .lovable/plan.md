@@ -1,21 +1,21 @@
 
-
-# Hubungkan Logo Admin ke Login & Footer
-
-## Masalah
-- **Navbar**: ✅ Sudah terhubung ke `data.logo`
-- **Footer**: ❌ Masih hardcoded ikon GraduationCap
-- **Login**: ❌ Masih hardcoded ikon GraduationCap
+# Tambah Dropdown Menu pada "Profil" di Navbar
 
 ## Perubahan
 
-### 1. `src/components/Footer.tsx`
-- Ganti `<GraduationCap>` di baris 11-13 dengan conditional: jika `data.logo` ada, tampilkan `<img>`, jika tidak fallback ke ikon GraduationCap
+### `src/components/Navbar.tsx`
+- Import `ChevronDown` dari lucide-react
+- Import `NavigationMenu`, `NavigationMenuContent`, `NavigationMenuItem`, `NavigationMenuLink`, `NavigationMenuList`, `NavigationMenuTrigger` dari `@/components/ui/navigation-menu`
+- Ubah item "Profil" dari `<Link>` biasa menjadi dropdown menggunakan NavigationMenu dengan 3 sub-menu:
+  - **Sejarah** → `/profil?tab=sejarah`
+  - **Visi & Misi** → `/profil?tab=visimisi`
+  - **Pegawai** → `/profil?tab=pegawai`
+- Menu item lainnya (Kegiatan, Ekstrakurikuler, dll) tetap `<Link>` biasa
+- Mobile menu: tambahkan 3 sub-link di bawah "Profil" dengan indentasi
 
-### 2. `src/pages/Login.tsx`
-- Import `useSchool` dari SchoolContext
-- Ambil `data.logo` via `useSchool()`
-- Ganti `<GraduationCap>` di baris 31-33 dengan conditional: jika `data.logo` ada, tampilkan `<img>`, jika tidak fallback ke ikon GraduationCap
+### `src/pages/Profil.tsx`
+- Import `useSearchParams` dari react-router-dom
+- Baca query param `tab` untuk menentukan `defaultValue` pada `<Tabs>`
+- Jika `?tab=visimisi` → buka tab Visi Misi, dst. Default: `sejarah`
 
-Setelah ini, logo yang diupload di Admin Logo akan otomatis muncul di navbar, footer, dan halaman login.
-
+Hasilnya: klik "Profil" di navbar akan muncul dropdown dengan 3 pilihan, dan langsung membuka tab yang sesuai di halaman Profil.
