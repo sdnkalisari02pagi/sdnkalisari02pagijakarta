@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useSchool } from '@/contexts/SchoolContext';
-import { Users, BookOpen, Star, Shield, ArrowRight, ChevronLeft, ChevronRight, Award, Quote } from 'lucide-react';
+import { Users, BookOpen, Star, Shield, ArrowRight, ChevronLeft, ChevronRight, Award, Quote, GraduationCap, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 const keunggulan = [
@@ -50,76 +51,87 @@ export default function Index() {
   return (
     <div>
       {/* Hero */}
-      <section className="relative h-[70vh] min-h-[400px] flex items-center justify-center bg-primary overflow-hidden">
-        {/* Carousel Images */}
-        {images.map((img, i) => (
-          <img
-            key={i}
-            src={img}
-            alt={`Slide ${i + 1}`}
-            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out"
-            style={{ opacity: i === currentSlide ? 0.75 : 0 }}
-          />
-        ))}
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/20 via-primary/30 to-primary/50" />
+      <section className="relative py-16 md:py-24 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 overflow-hidden">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
+            {/* Left Column */}
+            <div className="space-y-6 animate-fade-in-up">
+              <Badge className="gap-1.5 px-3 py-1.5 bg-primary/10 text-primary border-primary/20 hover:bg-primary/15">
+                <GraduationCap className="w-3.5 h-3.5" />
+                Sekolah Unggulan Jakarta Timur
+              </Badge>
 
-        {/* Arrows */}
-        {images.length > 1 && (
-          <>
-            <button
-              onClick={prevSlide}
-              className="absolute left-4 z-20 p-2 rounded-full bg-background/20 backdrop-blur-sm text-primary-foreground hover:bg-background/40 transition-colors"
-              aria-label="Previous"
-            >
-              <ChevronLeft className="w-6 h-6" />
-            </button>
-            <button
-              onClick={nextSlide}
-              className="absolute right-4 z-20 p-2 rounded-full bg-background/20 backdrop-blur-sm text-primary-foreground hover:bg-background/40 transition-colors"
-              aria-label="Next"
-            >
-              <ChevronRight className="w-6 h-6" />
-            </button>
-          </>
-        )}
-
-        {/* Content */}
-        <div className="relative z-10 text-center text-primary-foreground px-4 animate-fade-in-up">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">{hero.judul}</h1>
-          <p className="text-lg md:text-xl mb-8 opacity-90">{hero.subtitle}</p>
-
-          {/* Stats */}
-          <div className="flex flex-wrap justify-center gap-4">
-            {stats.map((s, i) => (
-              <div
-                key={i}
-                className="flex items-center gap-3 bg-background/10 backdrop-blur-md border border-primary-foreground/20 rounded-xl px-5 py-3"
-              >
-                <s.icon className="w-5 h-5 text-secondary" />
-                <div className="text-left">
-                  <p className="text-2xl font-bold leading-none">{s.value}</p>
-                  <p className="text-xs opacity-80">{s.label}</p>
-                </div>
+              <div>
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-gradient mb-4">
+                  {hero.judul}
+                </h1>
+                <p className="text-lg text-muted-foreground leading-relaxed max-w-lg">
+                  {hero.subtitle}
+                </p>
               </div>
-            ))}
+
+              <div className="flex flex-wrap gap-3 pt-2">
+                <Link to="/kontak">
+                  <Button size="lg" className="gap-2">
+                    Kirim Masukan Anda <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </Link>
+                <Link to="/profil?tab=pegawai">
+                  <Button size="lg" variant="outline" className="gap-2">
+                    <Users className="w-4 h-4" /> Lihat Guru & Staff
+                  </Button>
+                </Link>
+              </div>
+
+              <div className="flex flex-wrap gap-4 pt-4">
+                {[
+                  { icon: Users, label: 'Guru & Staff', value: data.pegawai.length },
+                  { icon: Award, label: 'Ekstrakurikuler', value: data.ekstrakurikuler.length },
+                  { icon: Calendar, label: 'Tahun Berdiri', value: '1985' },
+                ].map((s, i) => (
+                  <div key={i} className="flex items-center gap-3 bg-background rounded-xl px-4 py-3 shadow-sm border border-border">
+                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <s.icon className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-xl font-bold leading-none text-foreground">{s.value}</p>
+                      <p className="text-xs text-muted-foreground">{s.label}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right Column — Image Carousel */}
+            <div className="relative animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+              <div className="relative rounded-2xl overflow-hidden shadow-xl aspect-[4/3]">
+                {images.map((img, i) => (
+                  <img
+                    key={i}
+                    src={img}
+                    alt={`Slide ${i + 1}`}
+                    className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out"
+                    style={{ opacity: i === currentSlide ? 1 : 0 }}
+                  />
+                ))}
+              </div>
+              {images.length > 1 && (
+                <div className="flex justify-center gap-2 mt-4">
+                  {images.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setCurrentSlide(i)}
+                      className={`w-2.5 h-2.5 rounded-full transition-all ${
+                        i === currentSlide ? 'bg-primary w-6' : 'bg-primary/30'
+                      }`}
+                      aria-label={`Slide ${i + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
-
-        {/* Dot Indicators */}
-        {images.length > 1 && (
-          <div className="absolute bottom-4 z-20 flex gap-2">
-            {images.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentSlide(i)}
-                className={`w-2.5 h-2.5 rounded-full transition-all ${
-                  i === currentSlide ? 'bg-primary-foreground w-6' : 'bg-primary-foreground/40'
-                }`}
-                aria-label={`Slide ${i + 1}`}
-              />
-            ))}
-          </div>
-        )}
       </section>
 
       {/* Sambutan */}
