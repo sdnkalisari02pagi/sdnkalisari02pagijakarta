@@ -46,7 +46,7 @@ export default function Login() {
             </div>
             <Button type="submit" className="w-full">Login</Button>
             <p className="text-center text-sm text-muted-foreground">
-              <a href="#" className="text-primary hover:underline">Forgot Password?</a>
+              <button type="button" onClick={() => toast('Silakan hubungi administrator untuk mereset password Anda.')} className="text-primary hover:underline">Forgot Password?</button>
             </p>
           </form>
         </CardContent>
