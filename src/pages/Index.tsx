@@ -173,18 +173,20 @@ export default function Index() {
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-10 text-foreground scroll-animate">Kenapa Memilih Kami?</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {keunggulan.map((item, i) => (
-              <Card key={i} className={`text-center hover:shadow-lg transition-shadow border-none bg-muted scroll-animate delay-${(i + 1) * 100}`}>
+            {data.keunggulan.map((item, i) => {
+              const IconComp = iconMap[item.icon] || Star;
+              return (
+              <Card key={item.id} className={`text-center hover:shadow-lg transition-shadow border-none bg-muted scroll-animate delay-${(i + 1) * 100}`}>
                 <CardContent className="pt-6">
                   <div className="w-14 h-14 rounded-full bg-primary mx-auto mb-4 flex items-center justify-center">
-                    <item.icon className="w-7 h-7 text-primary-foreground" />
+                    <IconComp className="w-7 h-7 text-primary-foreground" />
                   </div>
                   <h3 className="font-semibold text-foreground mb-2">{item.title}</h3>
                   <p className="text-sm text-muted-foreground">{item.desc}</p>
                 </CardContent>
               </Card>
-            ))}
-          </div>
+              );
+            })}
         </div>
       </section>
 

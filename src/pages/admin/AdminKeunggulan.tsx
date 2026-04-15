@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Plus, Trash2, GripVertical, BookOpen, Users, Star, Shield, Award, Heart, Lightbulb, Target, Smile, Globe, Sparkles, Zap } from 'lucide-react';
-import { LastModifiedInfo } from '@/components/LastModifiedInfo';
+import LastModifiedInfo from '@/components/LastModifiedInfo';
 
 const iconOptions = [
   { value: 'BookOpen', label: 'Buku', Icon: BookOpen },
