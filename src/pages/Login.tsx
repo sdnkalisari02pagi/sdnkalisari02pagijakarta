@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { GraduationCap } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function Login() {
   const [username, setUsername] = useState('');
