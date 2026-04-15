@@ -1,27 +1,20 @@
 
 
-# Pisahkan Admin Sosmed dari Halaman Kontak
+# Forgot Password — Options
 
-## Masalah
-Halaman Kontak di website utama saat ini mengambil data sosial media dari `data.sosialMedia` (admin sosmed), padahal seharusnya menggunakan data dari `data.kontak` (admin kontak) yang sudah punya field instagram dan youtube sendiri.
+Since the login system uses hardcoded credentials (`admin` / `admin123`) with no backend or database, a real "forgot password" flow isn't possible.
 
-Selain itu, ada error runtime karena localStorage lama belum punya field `sosialMedia`.
+## Two options:
 
-## Perubahan
+### Option A: Remove the link
+Simply remove the "Forgot Password?" link since it serves no purpose with hardcoded credentials.
 
-### 1. `src/pages/Kontak.tsx`
-- Ubah `data.sosialMedia.instagram` → `data.kontak.instagram`
-- Ubah `data.sosialMedia.youtube` → `data.kontak.youtube`
-- Halaman Kontak sepenuhnya hanya pakai data dari Admin Kontak
+### Option B: Show a helpful message
+When clicked, show a toast/dialog saying something like "Hubungi administrator untuk reset password" (Contact the administrator to reset your password).
 
-### 2. `src/contexts/SchoolContext.tsx`
-- Tambahkan fallback saat load dari localStorage: jika `sosialMedia` undefined, gunakan default agar tidak error
+## Recommendation
+**Option B** — it's friendlier. When the link is clicked, show a toast notification with a message like "Silakan hubungi administrator untuk mereset password Anda."
 
-### 3. Tidak diubah
-- **Footer** tetap pakai `data.sosialMedia` (terhubung ke admin sosmed) — sesuai permintaan
-- **FloatingEmail** tetap pakai `data.sosialMedia.email` (terhubung ke admin sosmed)
-
-## Ringkasan
-- Admin Kontak → mengatur data di halaman Kontak (alamat, telepon, email, instagram, youtube, maps)
-- Admin Sosial Media → mengatur icon di Footer & email di FloatingEmail
+### Changes
+- **`src/pages/Login.tsx`**: Replace the `<a href="#">` with a button that triggers a toast notification using the existing `useToast` hook.
 
