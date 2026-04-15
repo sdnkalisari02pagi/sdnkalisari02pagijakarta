@@ -29,6 +29,8 @@ import AdminSambutan from "./pages/admin/AdminSambutan";
 import AdminKontak from "./pages/admin/AdminKontak";
 import AdminLogo from "./pages/admin/AdminLogo";
 import AdminHero from "./pages/admin/AdminHero";
+import AdminFloatingEmail from "./pages/admin/AdminFloatingEmail";
+import AdminFooter from "./pages/admin/AdminFooter";
 
 
 const queryClient = new QueryClient();
@@ -63,7 +65,8 @@ const App = () => (
                 <Route path="profil" element={<AdminProfil />} />
                 <Route path="sambutan" element={<AdminSambutan />} />
                 <Route path="kontak" element={<AdminKontak />} />
-                
+                <Route path="floating-email" element={<AdminFloatingEmail />} />
+                <Route path="footer" element={<AdminFooter />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>

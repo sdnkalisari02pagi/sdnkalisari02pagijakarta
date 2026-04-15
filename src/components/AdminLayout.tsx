@@ -3,7 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import { NavLink } from '@/components/NavLink';
-import { LayoutDashboard, Users, Calendar, Star, FileText, School, MessageSquare, Phone, LogOut, GraduationCap, ImageIcon } from 'lucide-react';
+import { LayoutDashboard, Users, Calendar, Star, FileText, School, MessageSquare, Phone, LogOut, GraduationCap, ImageIcon, Mail, LayoutTemplate } from 'lucide-react';
 import { useSchool } from '@/contexts/SchoolContext';
 
 const menuItems = [
@@ -17,7 +17,8 @@ const menuItems = [
   { title: 'Profil Sekolah', url: '/admin/profil', icon: School },
   { title: 'Sambutan', url: '/admin/sambutan', icon: MessageSquare },
   { title: 'Kontak', url: '/admin/kontak', icon: Phone },
-  
+  { title: 'Floating Email', url: '/admin/floating-email', icon: Mail },
+  { title: 'Footer', url: '/admin/footer', icon: LayoutTemplate },
 ];
 
 function AdminSidebar() {
