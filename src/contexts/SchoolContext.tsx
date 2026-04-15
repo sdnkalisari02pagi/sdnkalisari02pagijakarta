@@ -206,8 +206,30 @@ interface SchoolContextType {
   updateProfil: (profil: ProfilSekolah) => void;
   updateSambutan: (sambutan: Sambutan) => void;
   updateKontak: (kontak: KontakInfo) => void;
-  
+  updateFloatingEmail: (email: string) => void;
+  updateFooter: (footer: FooterData) => void;
   updateJabatanList: (jabatanList: string[]) => void;
+}
+
+const SchoolContext = createContext<SchoolContextType | undefined>(undefined);
+
+function loadData(): SchoolData {
+  try {
+    const saved = localStorage.getItem('school-data');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return {
+        ...defaultData,
+        ...parsed,
+        hero: parsed.hero || defaultData.hero,
+        jabatanList: parsed.jabatanList || defaultData.jabatanList,
+        sosialMedia: { ...defaultData.sosialMedia, ...(parsed.sosialMedia || {}) },
+        floatingEmail: parsed.floatingEmail || defaultData.floatingEmail,
+        footer: { ...defaultData.footer, ...(parsed.footer || {}) },
+      };
+    }
+  } catch {}
+  return defaultData;
 }
 
 const SchoolContext = createContext<SchoolContextType | undefined>(undefined);
