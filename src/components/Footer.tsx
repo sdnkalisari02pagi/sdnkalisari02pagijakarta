@@ -31,7 +31,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="container mx-auto px-4 mt-8 pt-4 border-t border-primary-foreground/20 text-center text-sm opacity-60">
-        © {new Date().getFullYear()} {data.footer.namaSekolah}. All rights reserved.
+        {data.footer.copyright || `© ${new Date().getFullYear()} ${data.footer.namaSekolah}. All rights reserved.`}
       </div>
     </footer>
   );

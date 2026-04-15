@@ -49,6 +49,10 @@ export default function AdminFooter() {
             <Label>Link YouTube</Label>
             <Input value={form.youtube} onChange={e => setForm({ ...form, youtube: e.target.value })} placeholder="https://youtube.com/..." />
           </div>
+          <div>
+            <Label>Teks Copyright</Label>
+            <Input value={form.copyright} onChange={e => setForm({ ...form, copyright: e.target.value })} placeholder="© 2024 Nama Sekolah. All rights reserved." />
+          </div>
           <Button onClick={handleSave}>Simpan</Button>
         </CardContent>
       </Card>
