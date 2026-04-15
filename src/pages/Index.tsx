@@ -56,10 +56,6 @@ export default function Index() {
           <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
             {/* Left Column */}
             <div className="space-y-6 animate-fade-in-up">
-              <Badge className="gap-1.5 px-3 py-1.5 bg-primary/10 text-primary border-primary/20 hover:bg-primary/15">
-                <GraduationCap className="w-3.5 h-3.5" />
-                Sekolah Unggulan Jakarta Timur
-              </Badge>
 
               <div>
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-gradient mb-4">
