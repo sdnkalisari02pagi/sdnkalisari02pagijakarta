@@ -8,9 +8,13 @@ export default function Footer() {
       <div className="container mx-auto px-4 grid md:grid-cols-3 gap-8">
         <div>
          <div className="flex items-center gap-2 mb-4">
-            <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
-              <GraduationCap className="w-6 h-6 text-secondary-foreground" />
-            </div>
+            {data.logo ? (
+              <img src={data.logo} alt="Logo" className="w-10 h-10 rounded-full object-cover" />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
+                <GraduationCap className="w-6 h-6 text-secondary-foreground" />
+              </div>
+            )}
             <span className="font-bold text-lg">{data.footer.namaSekolah}</span>
           </div>
           <p className="text-sm opacity-80">{data.footer.deskripsi}</p>
