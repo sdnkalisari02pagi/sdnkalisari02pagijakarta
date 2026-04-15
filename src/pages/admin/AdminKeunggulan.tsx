@@ -61,7 +61,7 @@ export default function AdminKeunggulan() {
         <div>
           <h1 className="text-2xl font-bold text-foreground">Kenapa Memilih Kami</h1>
           <p className="text-sm text-muted-foreground">Kelola keunggulan sekolah yang ditampilkan di halaman utama</p>
-          <LastModifiedInfo section="keunggulan" />
+          <LastModifiedInfo timestamp={data.lastModified.keunggulan} />
         </div>
         <Button onClick={addItem} className="gap-2"><Plus className="w-4 h-4" /> Tambah</Button>
       </div>
