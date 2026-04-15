@@ -110,6 +110,24 @@ export default function Index() {
                     style={{ opacity: i === currentSlide ? 1 : 0 }}
                   />
                 ))}
+                {images.length > 1 && (
+                  <>
+                    <button
+                      onClick={prevSlide}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-background/60 backdrop-blur-sm text-foreground hover:bg-background/80 transition-colors shadow-md"
+                      aria-label="Previous"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <button
+                      onClick={nextSlide}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-background/60 backdrop-blur-sm text-foreground hover:bg-background/80 transition-colors shadow-md"
+                      aria-label="Next"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </>
+                )}
               </div>
               {images.length > 1 && (
                 <div className="flex justify-center gap-2 mt-4">
