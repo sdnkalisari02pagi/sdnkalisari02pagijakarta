@@ -1,18 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useSchool } from '@/contexts/SchoolContext';
-import { Users, BookOpen, Star, Shield, ArrowRight, ChevronLeft, ChevronRight, Award, Quote, GraduationCap, Calendar } from 'lucide-react';
+import { Users, BookOpen, Star, Shield, ArrowRight, ChevronLeft, ChevronRight, Award, Quote, GraduationCap, Calendar, Heart, Lightbulb, Target, Smile, Globe, Sparkles, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
-const keunggulan = [
-  { icon: BookOpen, title: 'Kurikulum Berkualitas', desc: 'Menerapkan kurikulum merdeka yang inovatif dan menyenangkan.' },
-  { icon: Users, title: 'Guru Profesional', desc: 'Tenaga pendidik berpengalaman dan bersertifikasi.' },
-  { icon: Star, title: 'Prestasi Gemilang', desc: 'Siswa berprestasi di berbagai kompetisi akademik dan non-akademik.' },
-  { icon: Shield, title: 'Lingkungan Aman', desc: 'Lingkungan sekolah yang aman, bersih, dan nyaman.' },
-];
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  BookOpen, Users, Star, Shield, Award, Heart, Lightbulb, Target, Smile, Globe, Sparkles, Zap,
+};
 
 export default function Index() {
   const { data } = useSchool();
