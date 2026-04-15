@@ -96,6 +96,7 @@ export interface LastModified {
   hero?: string;
   sosialMedia?: string;
   floatingEmail?: string;
+  keunggulan?: string;
   footer?: string;
 }
 
