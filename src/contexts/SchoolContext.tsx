@@ -69,6 +69,13 @@ export interface SosialMedia {
   email: string;
 }
 
+export interface FooterData {
+  namaSekolah: string;
+  deskripsi: string;
+  instagram: string;
+  youtube: string;
+}
+
 export interface LastModified {
   logo?: string;
   pegawai?: string;
@@ -80,6 +87,8 @@ export interface LastModified {
   kontak?: string;
   hero?: string;
   sosialMedia?: string;
+  floatingEmail?: string;
+  footer?: string;
 }
 
 export interface SchoolData {
@@ -94,6 +103,8 @@ export interface SchoolData {
   sambutan: Sambutan;
   kontak: KontakInfo;
   sosialMedia: SosialMedia;
+  floatingEmail: string;
+  footer: FooterData;
   lastModified: LastModified;
 }
 
