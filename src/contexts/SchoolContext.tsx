@@ -214,6 +214,7 @@ const defaultData: SchoolData = {
 interface SchoolContextType {
   data: SchoolData;
   updateLogo: (logo: string) => void;
+  updateKeunggulan: (keunggulan: Keunggulan[]) => void;
   updateHero: (hero: HeroData) => void;
   updatePegawai: (pegawai: Pegawai[]) => void;
   updateKegiatan: (kegiatan: Kegiatan[]) => void;
@@ -238,6 +239,7 @@ function loadData(): SchoolData {
         ...defaultData,
         ...parsed,
         hero: parsed.hero || defaultData.hero,
+        keunggulan: parsed.keunggulan || defaultData.keunggulan,
         jabatanList: parsed.jabatanList || defaultData.jabatanList,
         sosialMedia: { ...defaultData.sosialMedia, ...(parsed.sosialMedia || {}) },
         floatingEmail: parsed.floatingEmail || defaultData.floatingEmail,
@@ -258,6 +260,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   const now = () => new Date().toISOString();
   const updateLogo = (logo: string) => setData(d => ({ ...d, logo, lastModified: { ...d.lastModified, logo: now() } }));
   const updateHero = (hero: HeroData) => setData(d => ({ ...d, hero, lastModified: { ...d.lastModified, hero: now() } }));
+  const updateKeunggulan = (keunggulan: Keunggulan[]) => setData(d => ({ ...d, keunggulan, lastModified: { ...d.lastModified, keunggulan: now() } }));
   const updatePegawai = (pegawai: Pegawai[]) => setData(d => ({ ...d, pegawai, lastModified: { ...d.lastModified, pegawai: now() } }));
   const updateKegiatan = (kegiatan: Kegiatan[]) => setData(d => ({ ...d, kegiatan, lastModified: { ...d.lastModified, kegiatan: now() } }));
   const updateEkstrakurikuler = (ekstrakurikuler: Ekstrakurikuler[]) => setData(d => ({ ...d, ekstrakurikuler, lastModified: { ...d.lastModified, ekstrakurikuler: now() } }));
@@ -270,7 +273,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   const updateJabatanList = (jabatanList: string[]) => setData(d => ({ ...d, jabatanList, lastModified: { ...d.lastModified, jabatan: now() } }));
 
   return (
-    <SchoolContext.Provider value={{ data, updateLogo, updateHero, updatePegawai, updateKegiatan, updateEkstrakurikuler, updateDokumen, updateProfil, updateSambutan, updateKontak, updateFloatingEmail, updateFooter, updateJabatanList }}>
+    <SchoolContext.Provider value={{ data, updateLogo, updateHero, updateKeunggulan, updatePegawai, updateKegiatan, updateEkstrakurikuler, updateDokumen, updateProfil, updateSambutan, updateKontak, updateFloatingEmail, updateFooter, updateJabatanList }}>
       {children}
     </SchoolContext.Provider>
   );
