@@ -1,24 +1,42 @@
 
 
-# Hapus Section Sosial Media di Admin
+# Admin Floating Email + Admin Footer
+
+## Overview
+Buat 2 admin page baru:
+1. **Admin Floating Email** — untuk mengatur email tujuan floating email (default: kalisari02pagi@gmail.com)
+2. **Admin Footer** — untuk mengatur konten footer (nama sekolah, deskripsi, link Instagram, link YouTube)
 
 ## Perubahan
 
-### 1. Hapus file `src/pages/admin/AdminSosialMedia.tsx`
+### 1. SchoolContext — tambah data & update functions
+- Tambah interface `FooterData` dengan field: `namaSekolah`, `deskripsi`, `instagram`, `youtube`
+- Tambah field `floatingEmail` (string) dan `footer` (FooterData) di `SchoolData`
+- Tambah default values
+- Tambah `updateFloatingEmail` dan `updateFooter` functions
+- Tambah `floatingEmail` dan `footer` di `LastModified`
 
-### 2. `src/App.tsx`
-- Hapus import `AdminSosialMedia`
-- Hapus route `<Route path="sosial-media" ... />`
+### 2. Buat `src/pages/admin/AdminFloatingEmail.tsx`
+- Form sederhana dengan 1 input field: Email Sekolah
+- Tombol Simpan yang memanggil `updateFloatingEmail`
+- Tampilkan LastModifiedInfo
 
-### 3. `src/components/AdminLayout.tsx`
-- Hapus menu item `{ title: 'Sosial Media', url: '/admin/sosial-media', icon: Share2 }` dari sidebar
-- Hapus import `Share2` jika tidak dipakai lagi
+### 3. Buat `src/pages/admin/AdminFooter.tsx`
+- Form dengan field: Nama Sekolah, Deskripsi, Link Instagram, Link YouTube
+- Tombol Simpan yang memanggil `updateFooter`
+- Tampilkan LastModifiedInfo
 
-### 4. `src/contexts/SchoolContext.tsx`
-- Hapus `updateSosialMedia` function dan dari Provider value
-- Data `sosialMedia` tetap ada sebagai data default (masih dipakai oleh Footer dan FloatingEmail)
+### 4. Update `FloatingEmail.tsx`
+- Ganti `data.sosialMedia.email` → `data.floatingEmail`
 
-### Yang tidak berubah
-- **Footer** tetap menampilkan icon sosial media dari data default
-- **FloatingEmail** tetap menggunakan email default
+### 5. Update `Footer.tsx`
+- Ganti hardcoded "SDN Kalisari 02 Pagi" → `data.footer.namaSekolah`
+- Ganti hardcoded deskripsi → `data.footer.deskripsi`
+- Ganti `data.sosialMedia.instagram/youtube` → `data.footer.instagram/youtube`
+
+### 6. Update `AdminLayout.tsx`
+- Tambah 2 menu item: "Floating Email" dan "Footer" di sidebar
+
+### 7. Update `App.tsx`
+- Tambah 2 route: `/admin/floating-email` dan `/admin/footer`
 
