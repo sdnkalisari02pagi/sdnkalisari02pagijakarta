@@ -14,6 +14,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const { login } = useAuth();
+  const { data } = useSchool();
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -29,9 +30,13 @@ export default function Login() {
     <div className="min-h-[70vh] flex items-center justify-center py-10">
       <Card className="w-full max-w-md mx-4">
         <CardHeader className="text-center">
-          <div className="w-16 h-16 rounded-full bg-primary mx-auto mb-4 flex items-center justify-center">
-            <GraduationCap className="w-8 h-8 text-primary-foreground" />
-          </div>
+          {data.logo ? (
+            <img src={data.logo} alt="Logo" className="w-16 h-16 rounded-full object-cover mx-auto mb-4" />
+          ) : (
+            <div className="w-16 h-16 rounded-full bg-primary mx-auto mb-4 flex items-center justify-center">
+              <GraduationCap className="w-8 h-8 text-primary-foreground" />
+            </div>
+          )}
           <CardTitle className="text-2xl">Login Admin</CardTitle>
         </CardHeader>
         <CardContent>
