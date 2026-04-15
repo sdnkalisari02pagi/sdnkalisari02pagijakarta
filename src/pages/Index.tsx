@@ -187,6 +187,7 @@ export default function Index() {
               </Card>
               );
             })}
+          </div>
         </div>
       </section>
 
