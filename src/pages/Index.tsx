@@ -84,20 +84,20 @@ export default function Index() {
                 </Link>
               </div>
 
-              <div className="flex flex-wrap gap-4 pt-4">
+              <div className="grid grid-cols-4 gap-3 pt-4">
                 {[
                   { icon: Users, label: 'Guru & Staff', value: data.pegawai.length },
                   { icon: GraduationCap, label: 'Siswa', value: '350+' },
-                  { icon: Award, label: 'Ekstrakurikuler', value: data.ekstrakurikuler.length },
-                  { icon: Calendar, label: 'Tahun Berdiri', value: '1985' },
+                  { icon: Award, label: 'Ekskul', value: data.ekstrakurikuler.length },
+                  { icon: Calendar, label: 'Berdiri', value: '1985' },
                 ].map((s, i) => (
-                  <div key={i} className="flex items-center gap-3 bg-background rounded-xl px-4 py-3 shadow-sm border border-border">
-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <s.icon className="w-5 h-5 text-primary" />
+                  <div key={i} className="flex items-center gap-2 bg-background rounded-xl px-3 py-3 shadow-sm border border-border">
+                    <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                      <s.icon className="w-4 h-4 text-primary" />
                     </div>
-                    <div>
-                      <p className="text-xl font-bold leading-none text-foreground">{s.value}</p>
-                      <p className="text-xs text-muted-foreground">{s.label}</p>
+                    <div className="min-w-0">
+                      <p className="text-lg font-bold leading-none text-foreground">{s.value}</p>
+                      <p className="text-[10px] text-muted-foreground truncate">{s.label}</p>
                     </div>
                   </div>
                 ))}
