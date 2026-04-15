@@ -51,7 +51,7 @@ export default function Index() {
   return (
     <div>
       {/* Hero */}
-      <section className="relative py-16 md:py-24 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 overflow-hidden">
+      <section className="relative py-16 md:py-24 overflow-hidden hero-gradient">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
             {/* Left Column */}
