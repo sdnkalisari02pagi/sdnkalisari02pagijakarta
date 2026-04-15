@@ -1,20 +1,24 @@
 
 
-# Forgot Password — Options
+# Hapus Section Sosial Media di Admin
 
-Since the login system uses hardcoded credentials (`admin` / `admin123`) with no backend or database, a real "forgot password" flow isn't possible.
+## Perubahan
 
-## Two options:
+### 1. Hapus file `src/pages/admin/AdminSosialMedia.tsx`
 
-### Option A: Remove the link
-Simply remove the "Forgot Password?" link since it serves no purpose with hardcoded credentials.
+### 2. `src/App.tsx`
+- Hapus import `AdminSosialMedia`
+- Hapus route `<Route path="sosial-media" ... />`
 
-### Option B: Show a helpful message
-When clicked, show a toast/dialog saying something like "Hubungi administrator untuk reset password" (Contact the administrator to reset your password).
+### 3. `src/components/AdminLayout.tsx`
+- Hapus menu item `{ title: 'Sosial Media', url: '/admin/sosial-media', icon: Share2 }` dari sidebar
+- Hapus import `Share2` jika tidak dipakai lagi
 
-## Recommendation
-**Option B** — it's friendlier. When the link is clicked, show a toast notification with a message like "Silakan hubungi administrator untuk mereset password Anda."
+### 4. `src/contexts/SchoolContext.tsx`
+- Hapus `updateSosialMedia` function dan dari Provider value
+- Data `sosialMedia` tetap ada sebagai data default (masih dipakai oleh Footer dan FloatingEmail)
 
-### Changes
-- **`src/pages/Login.tsx`**: Replace the `<a href="#">` with a button that triggers a toast notification using the existing `useToast` hook.
+### Yang tidak berubah
+- **Footer** tetap menampilkan icon sosial media dari data default
+- **FloatingEmail** tetap menggunakan email default
 
