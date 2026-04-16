@@ -1,11 +1,13 @@
 import { useParams, Link } from 'react-router-dom';
 import { useSchool } from '@/contexts/SchoolContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 
 export default function EkstrakurikulerDetail() {
   const { id } = useParams();
   const { data } = useSchool();
+  const { t } = useLanguage();
   const ekskul = data.ekstrakurikuler.find(e => e.id === id);
 
   if (!ekskul) return <div className="py-20 text-center text-muted-foreground">Ekstrakurikuler tidak ditemukan.</div>;
@@ -14,11 +16,11 @@ export default function EkstrakurikulerDetail() {
     <div className="py-10">
       <div className="container mx-auto px-4 max-w-4xl">
         <Link to="/ekstrakurikuler">
-          <Button variant="ghost" className="mb-6 gap-2"><ArrowLeft className="w-4 h-4" /> Kembali</Button>
+          <Button variant="ghost" className="mb-6 gap-2"><ArrowLeft className="w-4 h-4" /> {t('btn_kembali')}</Button>
         </Link>
         <h1 className="text-3xl font-bold mb-4 text-foreground">{ekskul.nama}</h1>
         <p className="text-muted-foreground mb-8 leading-relaxed">{ekskul.deskripsi}</p>
-        <h2 className="text-xl font-semibold mb-4 text-foreground">Galeri</h2>
+        <h2 className="text-xl font-semibold mb-4 text-foreground">{t('galeri')}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {ekskul.galeri.map((foto, i) => (
             <img key={i} src={foto} alt={`${ekskul.nama} ${i + 1}`} className="w-full h-48 object-cover rounded-lg" />

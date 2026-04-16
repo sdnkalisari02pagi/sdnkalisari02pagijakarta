@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { useSchool } from '@/contexts/SchoolContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -10,6 +11,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 
 export default function KegiatanPage() {
   const { data } = useSchool();
+  const { t } = useLanguage();
   const scrollRef = useScrollAnimation();
   const [search, setSearch] = useState('');
   const [filterDate, setFilterDate] = useState('');
@@ -24,11 +26,11 @@ export default function KegiatanPage() {
   return (
     <div className="py-10">
       <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-bold text-center mb-10 text-foreground">Kegiatan Sekolah</h1>
+        <h1 className="text-3xl font-bold text-center mb-10 text-foreground">{t('page_kegiatan')}</h1>
         <div className="flex flex-col sm:flex-row gap-4 mb-6 max-w-2xl mx-auto">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input placeholder="Cari kegiatan..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10" />
+            <Input placeholder={t('search_kegiatan')} value={search} onChange={e => setSearch(e.target.value)} className="pl-10" />
           </div>
           <Input type="month" value={filterDate} onChange={e => setFilterDate(e.target.value)} className="w-full sm:w-48" />
         </div>
@@ -48,7 +50,7 @@ export default function KegiatanPage() {
               </CardContent>
             </Card>
           ))}
-          {filtered.length === 0 && <p className="col-span-full text-center text-muted-foreground">Tidak ada kegiatan ditemukan.</p>}
+          {filtered.length === 0 && <p className="col-span-full text-center text-muted-foreground">{t('no_kegiatan')}</p>}
         </div>
       </div>
 

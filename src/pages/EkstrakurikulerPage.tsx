@@ -1,16 +1,18 @@
 import { Link } from 'react-router-dom';
 import { useSchool } from '@/contexts/SchoolContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 export default function EkstrakurikulerPage() {
   const { data } = useSchool();
+  const { t } = useLanguage();
   const scrollRef = useScrollAnimation();
 
   return (
     <div className="py-10">
       <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-bold text-center mb-10 text-foreground">Ekstrakurikuler</h1>
+        <h1 className="text-3xl font-bold text-center mb-10 text-foreground">{t('page_ekstrakurikuler')}</h1>
         <div ref={scrollRef} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {data.ekstrakurikuler.map((e, index) => (
             <Link key={e.id} to={`/ekstrakurikuler/${e.id}`}>
