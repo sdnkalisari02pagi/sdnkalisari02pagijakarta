@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useSchool } from '@/contexts/SchoolContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Users, BookOpen, Star, Shield, ArrowRight, ChevronLeft, ChevronRight, Award, Quote, GraduationCap, Calendar, Heart, Lightbulb, Target, Smile, Globe, Sparkles, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -12,6 +13,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 
 export default function Index() {
   const { data } = useSchool();
+  const { t } = useLanguage();
   const sambutanRef = useScrollAnimation();
   const keunggulanRef = useScrollAnimation();
   const ekstrakurikulerRef = useScrollAnimation();
@@ -39,25 +41,17 @@ export default function Index() {
     return () => clearInterval(timer);
   }, [nextSlide, images.length]);
 
-  const stats = [
-    { icon: Users, label: 'Pegawai', value: data.pegawai.length },
-    { icon: Award, label: 'Ekstrakurikuler', value: data.ekstrakurikuler.length },
-  ];
-
   return (
     <div>
       {/* Hero */}
       <section className="relative py-16 md:py-24 overflow-hidden hero-gradient">
-        {/* Decorative blobs */}
         <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-primary/10 blur-3xl animate-pulse" />
         <div className="absolute top-1/2 -right-32 w-80 h-80 rounded-full bg-secondary/10 blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
         <div className="absolute -bottom-16 left-1/3 w-64 h-64 rounded-full bg-primary/5 blur-2xl animate-pulse" style={{ animationDelay: '2s' }} />
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
-            {/* Left Column */}
             <div className="space-y-6 animate-fade-in-up">
-
               <div>
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-gradient mb-4">
                   {hero.judul}
@@ -70,22 +64,22 @@ export default function Index() {
               <div className="flex flex-wrap gap-3 pt-2">
                 <Link to="/kontak">
                   <Button size="lg" className="gap-2">
-                    Kirim Masukan Anda <ArrowRight className="w-4 h-4" />
+                    {t('hero_cta_feedback')} <ArrowRight className="w-4 h-4" />
                   </Button>
                 </Link>
                 <Link to="/profil?tab=pegawai">
                   <Button size="lg" variant="outline" className="gap-2">
-                    <Users className="w-4 h-4" /> Lihat Guru & Staff
+                    <Users className="w-4 h-4" /> {t('hero_cta_staff')}
                   </Button>
                 </Link>
               </div>
 
               <div className="grid grid-cols-4 gap-3 pt-4">
                 {[
-                  { icon: Users, label: 'Guru & Staff', value: data.pegawai.length },
-                  { icon: GraduationCap, label: 'Siswa', value: '350+' },
-                  { icon: Award, label: 'Ekskul', value: data.ekstrakurikuler.length },
-                  { icon: Calendar, label: 'Berdiri', value: '1985' },
+                  { icon: Users, label: t('hero_stat_staff'), value: data.pegawai.length },
+                  { icon: GraduationCap, label: t('hero_stat_students'), value: '350+' },
+                  { icon: Award, label: t('hero_stat_ekskul'), value: data.ekstrakurikuler.length },
+                  { icon: Calendar, label: t('hero_stat_founded'), value: '1985' },
                 ].map((s, i) => (
                   <div key={i} className="flex items-center gap-2 bg-background rounded-xl px-3 py-3 shadow-sm border border-border">
                     <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
@@ -100,32 +94,17 @@ export default function Index() {
               </div>
             </div>
 
-            {/* Right Column — Image Carousel */}
             <div className="relative animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
               <div className="relative rounded-2xl overflow-hidden shadow-xl aspect-[4/3]">
                 {images.map((img, i) => (
-                  <img
-                    key={i}
-                    src={img}
-                    alt={`Slide ${i + 1}`}
-                    className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out"
-                    style={{ opacity: i === currentSlide ? 1 : 0 }}
-                  />
+                  <img key={i} src={img} alt={`Slide ${i + 1}`} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out" style={{ opacity: i === currentSlide ? 1 : 0 }} />
                 ))}
                 {images.length > 1 && (
                   <>
-                    <button
-                      onClick={prevSlide}
-                      className="absolute left-3 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-background/60 backdrop-blur-sm text-foreground hover:bg-background/80 transition-colors shadow-md"
-                      aria-label="Previous"
-                    >
+                    <button onClick={prevSlide} className="absolute left-3 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-background/60 backdrop-blur-sm text-foreground hover:bg-background/80 transition-colors shadow-md" aria-label="Previous">
                       <ChevronLeft className="w-5 h-5" />
                     </button>
-                    <button
-                      onClick={nextSlide}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-background/60 backdrop-blur-sm text-foreground hover:bg-background/80 transition-colors shadow-md"
-                      aria-label="Next"
-                    >
+                    <button onClick={nextSlide} className="absolute right-3 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-background/60 backdrop-blur-sm text-foreground hover:bg-background/80 transition-colors shadow-md" aria-label="Next">
                       <ChevronRight className="w-5 h-5" />
                     </button>
                   </>
@@ -134,14 +113,7 @@ export default function Index() {
               {images.length > 1 && (
                 <div className="flex justify-center gap-2 mt-4">
                   {images.map((_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setCurrentSlide(i)}
-                      className={`w-2.5 h-2.5 rounded-full transition-all ${
-                        i === currentSlide ? 'bg-primary w-6' : 'bg-primary/30'
-                      }`}
-                      aria-label={`Slide ${i + 1}`}
-                    />
+                    <button key={i} onClick={() => setCurrentSlide(i)} className={`w-2.5 h-2.5 rounded-full transition-all ${i === currentSlide ? 'bg-primary w-6' : 'bg-primary/30'}`} aria-label={`Slide ${i + 1}`} />
                   ))}
                 </div>
               )}
@@ -153,7 +125,7 @@ export default function Index() {
       {/* Sambutan */}
       <section className="py-20 bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10" ref={sambutanRef}>
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 text-foreground scroll-animate">Sambutan Kepala Sekolah</h2>
+          <h2 className="text-3xl font-bold text-center mb-12 text-foreground scroll-animate">{t('section_sambutan')}</h2>
           <div className="flex flex-col md:flex-row items-center gap-10 max-w-4xl mx-auto scroll-animate delay-200">
             <div className="w-56 h-64 rounded-xl overflow-hidden shadow-xl border-4 border-background shrink-0">
               <img src={data.sambutan.foto} alt={data.sambutan.nama} className="w-full h-full object-cover" />
@@ -161,7 +133,7 @@ export default function Index() {
             <div className="border-l-4 border-primary pl-6">
               <Quote className="w-8 h-8 text-secondary mb-3" />
               <h3 className="text-xl font-semibold text-primary mb-1">{data.sambutan.nama}</h3>
-              <span className="inline-block bg-primary/15 text-primary text-xs font-medium px-3 py-1 rounded-full mb-4">Kepala Sekolah</span>
+              <span className="inline-block bg-primary/15 text-primary text-xs font-medium px-3 py-1 rounded-full mb-4">{t('section_kepala_sekolah')}</span>
               <p className="text-muted-foreground whitespace-pre-line leading-relaxed">{data.sambutan.teks.substring(0, 300)}...</p>
             </div>
           </div>
@@ -171,7 +143,7 @@ export default function Index() {
       {/* Keunggulan */}
       <section className="py-16" ref={keunggulanRef}>
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-10 text-foreground scroll-animate">Kenapa Memilih Kami?</h2>
+          <h2 className="text-3xl font-bold text-center mb-10 text-foreground scroll-animate">{t('section_keunggulan')}</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {data.keunggulan.map((item, i) => {
               const IconComp = iconMap[item.icon] || Star;
@@ -194,22 +166,14 @@ export default function Index() {
       {/* Ekstrakurikuler */}
       <section className="py-16 bg-gradient-to-br from-secondary/10 via-accent/10 to-primary/10" ref={ekstrakurikulerRef}>
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-10 text-foreground scroll-animate">Ekstrakurikuler</h2>
+          <h2 className="text-3xl font-bold text-center mb-10 text-foreground scroll-animate">{t('section_ekstrakurikuler')}</h2>
           <div className="relative scroll-animate delay-200">
             {totalEkskulPages > 1 && (
               <>
-                <button
-                  onClick={() => setEkskulPage(p => (p - 1 + totalEkskulPages) % totalEkskulPages)}
-                  className="absolute -left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
-                  aria-label="Previous"
-                >
+                <button onClick={() => setEkskulPage(p => (p - 1 + totalEkskulPages) % totalEkskulPages)} className="absolute -left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-primary/10 hover:bg-primary/20 text-primary transition-colors" aria-label="Previous">
                   <ChevronLeft className="w-6 h-6" />
                 </button>
-                <button
-                  onClick={() => setEkskulPage(p => (p + 1) % totalEkskulPages)}
-                  className="absolute -right-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
-                  aria-label="Next"
-                >
+                <button onClick={() => setEkskulPage(p => (p + 1) % totalEkskulPages)} className="absolute -right-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-primary/10 hover:bg-primary/20 text-primary transition-colors" aria-label="Next">
                   <ChevronRight className="w-6 h-6" />
                 </button>
               </>
@@ -230,7 +194,7 @@ export default function Index() {
           </div>
           <div className="text-center mt-8 scroll-animate delay-300">
             <Link to="/ekstrakurikuler">
-              <Button variant="outline" className="gap-2">Lihat Semua <ArrowRight className="w-4 h-4" /></Button>
+              <Button variant="outline" className="gap-2">{t('btn_lihat_semua')} <ArrowRight className="w-4 h-4" /></Button>
             </Link>
           </div>
         </div>
@@ -238,7 +202,7 @@ export default function Index() {
 
       <section className="py-16 bg-muted" ref={kegiatanRef}>
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-10 text-foreground scroll-animate">Kegiatan Terbaru</h2>
+          <h2 className="text-3xl font-bold text-center mb-10 text-foreground scroll-animate">{t('section_kegiatan_terbaru')}</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.kegiatan.slice(0, 6).map((k, i) => (
               <Card key={k.id} className={`overflow-hidden hover:shadow-lg transition-shadow scroll-animate delay-${(i + 1) * 100}`}>
@@ -253,7 +217,7 @@ export default function Index() {
           </div>
           <div className="text-center mt-8 scroll-animate delay-400">
             <Link to="/kegiatan">
-              <Button variant="outline" className="gap-2">Lihat Semua <ArrowRight className="w-4 h-4" /></Button>
+              <Button variant="outline" className="gap-2">{t('btn_lihat_semua')} <ArrowRight className="w-4 h-4" /></Button>
             </Link>
           </div>
         </div>

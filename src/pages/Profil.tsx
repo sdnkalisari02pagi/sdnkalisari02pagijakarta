@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useSchool } from '@/contexts/SchoolContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -13,6 +14,7 @@ const VALID_TABS = ['sejarah', 'visimisi', 'pegawai'];
 
 export default function Profil() {
   const { data } = useSchool();
+  const { t } = useLanguage();
   const [searchParams] = useSearchParams();
   const tabParam = searchParams.get('tab');
   const initialTab = tabParam && VALID_TABS.includes(tabParam) ? tabParam : 'sejarah';
@@ -38,13 +40,13 @@ export default function Profil() {
   return (
     <div className="py-10" ref={scrollRef}>
       <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-bold text-center mb-10 text-foreground scroll-animate">Profil Sekolah</h1>
+        <h1 className="text-3xl font-bold text-center mb-10 text-foreground scroll-animate">{t('page_profil')}</h1>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="max-w-4xl mx-auto">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="sejarah">Sejarah</TabsTrigger>
-            <TabsTrigger value="visimisi">Visi & Misi</TabsTrigger>
-            <TabsTrigger value="pegawai">Pegawai</TabsTrigger>
+            <TabsTrigger value="sejarah">{t('tab_sejarah')}</TabsTrigger>
+            <TabsTrigger value="visimisi">{t('tab_visimisi')}</TabsTrigger>
+            <TabsTrigger value="pegawai">{t('tab_pegawai')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="sejarah" className="mt-6">
@@ -54,17 +56,17 @@ export default function Profil() {
 
           <TabsContent value="visimisi" className="mt-6 space-y-6">
             <Card className="scroll-animate"><CardContent className="pt-6">
-              <h3 className="font-semibold text-lg text-foreground mb-2">Visi</h3>
+              <h3 className="font-semibold text-lg text-foreground mb-2">{t('profil_visi')}</h3>
               <p className="text-muted-foreground">{data.profil.visi}</p>
             </CardContent></Card>
             <Card className="scroll-animate" style={{ animationDelay: '150ms' }}><CardContent className="pt-6">
-              <h3 className="font-semibold text-lg text-foreground mb-2">Misi</h3>
+              <h3 className="font-semibold text-lg text-foreground mb-2">{t('profil_misi')}</h3>
               <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
                 {data.profil.misi.map((m, i) => <li key={i}>{m}</li>)}
               </ol>
             </CardContent></Card>
             <Card className="scroll-animate" style={{ animationDelay: '300ms' }}><CardContent className="pt-6">
-              <h3 className="font-semibold text-lg text-foreground mb-2">Tujuan</h3>
+              <h3 className="font-semibold text-lg text-foreground mb-2">{t('profil_tujuan')}</h3>
               <p className="text-muted-foreground">{data.profil.tujuan}</p>
             </CardContent></Card>
           </TabsContent>
@@ -73,12 +75,12 @@ export default function Profil() {
             <div className="flex flex-col sm:flex-row gap-4 mb-6 scroll-animate">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input placeholder="Cari nama..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10" />
+                <Input placeholder={t('search_nama')} value={search} onChange={e => setSearch(e.target.value)} className="pl-10" />
               </div>
               <Select value={filterJabatan} onValueChange={setFilterJabatan}>
-                <SelectTrigger className="w-full sm:w-48"><SelectValue placeholder="Filter jabatan" /></SelectTrigger>
+                <SelectTrigger className="w-full sm:w-48"><SelectValue placeholder={t('filter_jabatan')} /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Semua Jabatan</SelectItem>
+                  <SelectItem value="all">{t('filter_semua_jabatan')}</SelectItem>
                   {jabatanList.map(j => <SelectItem key={j} value={j}>{j}</SelectItem>)}
                 </SelectContent>
               </Select>

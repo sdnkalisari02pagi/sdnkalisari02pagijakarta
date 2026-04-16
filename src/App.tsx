@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SchoolProvider } from "@/contexts/SchoolContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 
 import PublicLayout from "@/components/PublicLayout";
 import AdminLayout from "@/components/AdminLayout";
@@ -41,6 +42,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <LanguageProvider>
       <AuthProvider>
         <SchoolProvider>
           <BrowserRouter>
@@ -75,6 +77,7 @@ const App = () => (
           </BrowserRouter>
         </SchoolProvider>
       </AuthProvider>
+      </LanguageProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
