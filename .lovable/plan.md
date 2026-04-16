@@ -1,38 +1,47 @@
 
 
-# Redesign Hero Section — Layout Split Kiri-Kanan
+# Tambah Fitur Pilih Bahasa (Indonesia & Inggris)
 
-Terinspirasi dari gambar referensi, Hero akan diubah dari full-width carousel overlay menjadi layout dua kolom dengan background gradient lembut.
+## Pendekatan
 
-## Perubahan Utama
+Membuat Language Context dengan toggle ID/EN yang tersimpan di localStorage. Semua teks statis di website utama akan menggunakan translation dictionary. Konten dinamis dari admin (kegiatan, ekskul, sambutan, dll) tetap dalam Bahasa Indonesia karena dikelola admin.
 
-### `src/pages/Index.tsx` — Hero Section (baris 52-122)
+## Yang Akan Dibuat/Diubah
 
-Ganti seluruh section Hero menjadi layout baru:
+### 1. Buat `src/contexts/LanguageContext.tsx`
+- Context dengan state `lang: 'id' | 'en'`, fungsi `setLang`, dan helper `t(key)` untuk lookup terjemahan
+- Persist pilihan bahasa ke localStorage
 
-**Layout:**
-- Background: gradient lembut (dari primary/5 via secondary/5 ke accent/5) — bukan foto fullscreen lagi
-- **Kolom kiri** (teks):
-  - Badge kecil di atas: "Sekolah Unggulan Jakarta Timur" (pill/chip dengan ikon)
-  - Nama sekolah: `data.profil` atau teks sederhana "SDN Kalisari 02 Pagi"
-  - Heading besar dengan warna gradient (primary → secondary): `hero.judul`
-  - Subtitle paragraph: `hero.subtitle`
-  - 2 tombol CTA: "Kirim Masukan Anda" (link ke `/kontak`) dan "Lihat Guru & Staff" (link ke `/profil?tab=pegawai`)
-  - 3 stat cards di bawah: Guru & Staff (`data.pegawai.length`), Ekstrakurikuler (`data.ekstrakurikuler.length`), dan Tahun Berdiri (statis)
+### 2. Buat `src/lib/translations.ts`
+- Dictionary teks statis ID & EN untuk semua halaman publik:
+  - Navbar: Profil, Sejarah, Visi & Misi, Pegawai, Kegiatan, Ekstrakurikuler, Layanan, Kontak, Login
+  - Hero: button labels, stat labels
+  - Section headings: Sambutan Kepala Sekolah, Kenapa Memilih Kami, Ekstrakurikuler, Kegiatan Terbaru, dll
+  - Halaman Kontak: Alamat, Telepon, Email
+  - Halaman Profil: tab labels, headings
+  - Footer teks
+  - Tombol-tombol: Lihat Semua, Kirim Masukan, dll
 
-- **Kolom kanan** (gambar):
-  - Image carousel dengan rounded corners besar (`rounded-2xl`)
-  - Shadow lembut
-  - Dot indicators di bawah gambar (bukan di bawah section)
-  - Tanpa arrow buttons — navigasi hanya via dots + auto-play
+### 3. Tambah Language Switcher di Navbar (`src/components/Navbar.tsx`)
+- Tombol kecil berupa flag/text toggle (ID | EN) di sebelah kiri tombol Login
+- Di mobile menu juga ditampilkan
 
-**Responsif:**
-- Desktop: grid 2 kolom
-- Mobile: stack vertikal (teks di atas, gambar di bawah)
+### 4. Wrap App dengan LanguageProvider (`src/App.tsx`)
 
-### `src/pages/admin/AdminHero.tsx` — Tidak perlu diubah
-Data model tetap sama (`images`, `judul`, `subtitle`), jadi admin panel tidak perlu berubah.
+### 5. Update semua halaman publik
+- `Index.tsx` — heading, button text, stat labels
+- `Navbar.tsx` — menu labels
+- `Kontak.tsx` — headings, labels
+- `Profil.tsx` — tab labels, headings
+- `KegiatanPage.tsx` — heading
+- `EkstrakurikulerPage.tsx` — heading
+- `Layanan.tsx` — heading, labels
+- `Footer.tsx` — teks statis
+- `EkstrakurikulerDetail.tsx` — labels
 
-### `src/index.css` — Tambah gradient text utility (jika belum ada)
-Tambah class `.text-gradient` untuk heading dengan gradient warna primary ke secondary.
+Semua string hardcoded diganti dengan `t('key')`.
+
+## Catatan
+- Konten dinamis (deskripsi kegiatan, nama ekskul, sambutan, dll) tetap bahasa asli dari admin — hanya UI labels yang diterjemahkan
+- Admin panel tidak terpengaruh, tetap Bahasa Indonesia
 
