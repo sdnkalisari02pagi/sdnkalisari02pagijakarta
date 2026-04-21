@@ -3,28 +3,29 @@ import { useSchool, Kegiatan } from '@/contexts/SchoolContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { Search, Plus, Pencil, Trash2 } from 'lucide-react';
 import ImageUpload from '@/components/ImageUpload';
 import LastModifiedInfo from '@/components/LastModifiedInfo';
+import BilingualInput from '@/components/BilingualInput';
+import { tr, toBilingual } from '@/lib/i18n';
 
 export default function AdminKegiatan() {
   const { data, updateKegiatan } = useSchool();
   const [search, setSearch] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editItem, setEditItem] = useState<Kegiatan | null>(null);
-  const [form, setForm] = useState({ judul: '', tanggal: '', foto: '', deskripsi: '' });
+  const [form, setForm] = useState<{ judul: { id: string; en: string }; tanggal: string; foto: string; deskripsi: { id: string; en: string } }>({ judul: { id: '', en: '' }, tanggal: '', foto: '', deskripsi: { id: '', en: '' } });
 
-  const filtered = data.kegiatan.filter(k => k.judul.toLowerCase().includes(search.toLowerCase()));
+  const filtered = data.kegiatan.filter(k => tr(k.judul, 'id').toLowerCase().includes(search.toLowerCase()));
 
-  const openAdd = () => { setEditItem(null); setForm({ judul: '', tanggal: '', foto: '', deskripsi: '' }); setDialogOpen(true); };
-  const openEdit = (k: Kegiatan) => { setEditItem(k); setForm({ judul: k.judul, tanggal: k.tanggal, foto: k.foto, deskripsi: k.deskripsi }); setDialogOpen(true); };
+  const openAdd = () => { setEditItem(null); setForm({ judul: { id: '', en: '' }, tanggal: '', foto: '', deskripsi: { id: '', en: '' } }); setDialogOpen(true); };
+  const openEdit = (k: Kegiatan) => { setEditItem(k); setForm({ judul: toBilingual(k.judul), tanggal: k.tanggal, foto: k.foto, deskripsi: toBilingual(k.deskripsi) }); setDialogOpen(true); };
 
   const handleSave = () => {
-    if (!form.judul || !form.tanggal) return;
-    const foto = form.foto || `https://placehold.co/600x400/2563EB/white?text=${encodeURIComponent(form.judul)}`;
+    if (!form.judul.id || !form.tanggal) return;
+    const foto = form.foto || `https://placehold.co/600x400/2563EB/white?text=${encodeURIComponent(form.judul.id)}`;
     const now = new Date().toISOString();
     if (editItem) {
       updateKegiatan(data.kegiatan.map(k => k.id === editItem.id ? { ...k, ...form, foto, lastModified: now } : k));
@@ -42,13 +43,13 @@ export default function AdminKegiatan() {
         <h1 className="text-2xl font-bold text-foreground">Kelola Kegiatan</h1>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild><Button onClick={openAdd} className="gap-2"><Plus className="w-4 h-4" /> Tambah</Button></DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader><DialogTitle>{editItem ? 'Edit' : 'Tambah'} Kegiatan</DialogTitle></DialogHeader>
             <div className="space-y-4">
-              <div><Label>Judul</Label><Input value={form.judul} onChange={e => setForm(f => ({ ...f, judul: e.target.value }))} /></div>
+              <BilingualInput label="Judul" value={form.judul} onChange={v => setForm(f => ({ ...f, judul: v }))} />
               <div><Label>Tanggal</Label><Input type="date" value={form.tanggal} onChange={e => setForm(f => ({ ...f, tanggal: e.target.value }))} /></div>
               <div><Label>Foto</Label><ImageUpload value={form.foto} onChange={url => setForm(f => ({ ...f, foto: url }))} placeholder /></div>
-              <div><Label>Deskripsi</Label><Textarea value={form.deskripsi} onChange={e => setForm(f => ({ ...f, deskripsi: e.target.value }))} /></div>
+              <BilingualInput label="Deskripsi" value={form.deskripsi} onChange={v => setForm(f => ({ ...f, deskripsi: v }))} multiline rows={4} />
               <Button onClick={handleSave} className="w-full">Simpan</Button>
             </div>
           </DialogContent>
@@ -71,9 +72,9 @@ export default function AdminKegiatan() {
           <TableBody>
             {filtered.map(k => (
               <TableRow key={k.id}>
-                <TableCell><img src={k.foto} alt={k.judul} className="w-10 h-10 rounded object-cover" /></TableCell>
+                <TableCell><img src={k.foto} alt={tr(k.judul, 'id')} className="w-10 h-10 rounded object-cover" /></TableCell>
                 <TableCell className="font-medium">
-                  {k.judul}
+                  {tr(k.judul, 'id')}
                   {k.lastModified && <span className="block text-xs text-muted-foreground">Diubah: {new Date(k.lastModified).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>}
                 </TableCell>
                 <TableCell>{new Date(k.tanggal).toLocaleDateString('id-ID')}</TableCell>

@@ -1,6 +1,5 @@
 export const translations = {
   id: {
-    // Navbar
     nav_profil: 'Profil',
     nav_sejarah: 'Sejarah',
     nav_visimisi: 'Visi & Misi',
@@ -11,7 +10,6 @@ export const translations = {
     nav_kontak: 'Kontak',
     nav_login: 'Login',
 
-    // Hero
     hero_cta_feedback: 'Kirim Masukan Anda',
     hero_cta_staff: 'Lihat Guru & Staff',
     hero_stat_staff: 'Guru & Staff',
@@ -19,7 +17,6 @@ export const translations = {
     hero_stat_ekskul: 'Ekskul',
     hero_stat_founded: 'Berdiri',
 
-    // Sections
     section_sambutan: 'Sambutan Kepala Sekolah',
     section_kepala_sekolah: 'Kepala Sekolah',
     section_keunggulan: 'Kenapa Memilih Kami?',
@@ -27,17 +24,14 @@ export const translations = {
     section_kegiatan_terbaru: 'Kegiatan Terbaru',
     btn_lihat_semua: 'Lihat Semua',
 
-    // Kegiatan page
     page_kegiatan: 'Kegiatan Sekolah',
     search_kegiatan: 'Cari kegiatan...',
     no_kegiatan: 'Tidak ada kegiatan ditemukan.',
 
-    // Ekstrakurikuler page
     page_ekstrakurikuler: 'Ekstrakurikuler',
     btn_kembali: 'Kembali',
     galeri: 'Galeri',
 
-    // Profil page
     page_profil: 'Profil Sekolah',
     tab_sejarah: 'Sejarah',
     tab_visimisi: 'Visi & Misi',
@@ -49,27 +43,24 @@ export const translations = {
     filter_semua_jabatan: 'Semua Jabatan',
     filter_jabatan: 'Filter jabatan',
 
-    // Kontak page
     page_kontak: 'Kontak Kami',
     kontak_alamat: 'Alamat',
     kontak_telepon: 'Telepon',
     kontak_email: 'Email',
 
-    // Layanan page
     page_layanan: 'Layanan Dokumen',
     search_dokumen: 'Cari dokumen...',
     table_nama: 'Nama Dokumen',
     table_tanggal: 'Tanggal',
     table_aksi: 'Aksi',
     btn_unduh: 'Unduh',
+    btn_preview: 'Preview',
     no_dokumen: 'Tidak ada dokumen.',
 
-    // Footer
     footer_kontak: 'Kontak',
     footer_sosmed: 'Sosial Media',
   },
   en: {
-    // Navbar
     nav_profil: 'Profile',
     nav_sejarah: 'History',
     nav_visimisi: 'Vision & Mission',
@@ -80,7 +71,6 @@ export const translations = {
     nav_kontak: 'Contact',
     nav_login: 'Login',
 
-    // Hero
     hero_cta_feedback: 'Send Us Feedback',
     hero_cta_staff: 'View Teachers & Staff',
     hero_stat_staff: 'Teachers',
@@ -88,25 +78,21 @@ export const translations = {
     hero_stat_ekskul: 'Clubs',
     hero_stat_founded: 'Founded',
 
-    // Sections
-    section_sambutan: 'Principal\'s Welcome',
+    section_sambutan: "Principal's Welcome",
     section_kepala_sekolah: 'Principal',
     section_keunggulan: 'Why Choose Us?',
     section_ekstrakurikuler: 'Extracurricular',
     section_kegiatan_terbaru: 'Latest Activities',
     btn_lihat_semua: 'View All',
 
-    // Kegiatan page
     page_kegiatan: 'School Activities',
     search_kegiatan: 'Search activities...',
     no_kegiatan: 'No activities found.',
 
-    // Ekstrakurikuler page
     page_ekstrakurikuler: 'Extracurricular',
     btn_kembali: 'Back',
     galeri: 'Gallery',
 
-    // Profil page
     page_profil: 'School Profile',
     tab_sejarah: 'History',
     tab_visimisi: 'Vision & Mission',
@@ -118,22 +104,20 @@ export const translations = {
     filter_semua_jabatan: 'All Positions',
     filter_jabatan: 'Filter position',
 
-    // Kontak page
     page_kontak: 'Contact Us',
     kontak_alamat: 'Address',
     kontak_telepon: 'Phone',
     kontak_email: 'Email',
 
-    // Layanan page
     page_layanan: 'Document Services',
     search_dokumen: 'Search documents...',
     table_nama: 'Document Name',
     table_tanggal: 'Date',
     table_aksi: 'Action',
     btn_unduh: 'Download',
+    btn_preview: 'Preview',
     no_dokumen: 'No documents found.',
 
-    // Footer
     footer_kontak: 'Contact',
     footer_sosmed: 'Social Media',
   },

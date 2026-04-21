@@ -8,13 +8,15 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Plus, Pencil, Trash2, Search, Upload, FileText, X } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import LastModifiedInfo from '@/components/LastModifiedInfo';
+import BilingualInput from '@/components/BilingualInput';
+import { tr, toBilingual } from '@/lib/i18n';
 
 export default function AdminDokumen() {
   const { data, updateDokumen } = useSchool();
   const [search, setSearch] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editItem, setEditItem] = useState<Dokumen | null>(null);
-  const [form, setForm] = useState({ nama: '', tanggal: '', url: '#' });
+  const [form, setForm] = useState<{ nama: { id: string; en: string }; tanggal: string; url: string }>({ nama: { id: '', en: '' }, tanggal: '', url: '#' });
   const [fileName, setFileName] = useState('');
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -38,13 +40,13 @@ export default function AdminDokumen() {
     reader.readAsDataURL(file);
   };
 
-  const filtered = data.dokumen.filter(d => d.nama.toLowerCase().includes(search.toLowerCase()));
+  const filtered = data.dokumen.filter(d => tr(d.nama, 'id').toLowerCase().includes(search.toLowerCase()));
 
-  const openAdd = () => { setEditItem(null); setForm({ nama: '', tanggal: '', url: '#' }); setFileName(''); setDialogOpen(true); };
-  const openEdit = (d: Dokumen) => { setEditItem(d); setForm({ nama: d.nama, tanggal: d.tanggal, url: d.url }); setFileName(''); setDialogOpen(true); };
+  const openAdd = () => { setEditItem(null); setForm({ nama: { id: '', en: '' }, tanggal: '', url: '#' }); setFileName(''); setDialogOpen(true); };
+  const openEdit = (d: Dokumen) => { setEditItem(d); setForm({ nama: toBilingual(d.nama), tanggal: d.tanggal, url: d.url }); setFileName(''); setDialogOpen(true); };
 
   const handleSave = () => {
-    if (!form.nama || !form.tanggal) return;
+    if (!form.nama.id || !form.tanggal) return;
     const now = new Date().toISOString();
     if (editItem) {
       updateDokumen(data.dokumen.map(d => d.id === editItem.id ? { ...d, ...form, lastModified: now } : d));
@@ -62,20 +64,14 @@ export default function AdminDokumen() {
         <h1 className="text-2xl font-bold text-foreground">Kelola Dokumen</h1>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild><Button onClick={openAdd} className="gap-2"><Plus className="w-4 h-4" /> Tambah</Button></DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader><DialogTitle>{editItem ? 'Edit' : 'Tambah'} Dokumen</DialogTitle></DialogHeader>
             <div className="space-y-4">
-              <div><Label>Nama</Label><Input value={form.nama} onChange={e => setForm(f => ({ ...f, nama: e.target.value }))} /></div>
+              <BilingualInput label="Nama" value={form.nama} onChange={v => setForm(f => ({ ...f, nama: v }))} />
               <div><Label>Tanggal</Label><Input type="date" value={form.tanggal} onChange={e => setForm(f => ({ ...f, tanggal: e.target.value }))} /></div>
               <div>
                 <Label>File</Label>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.webp"
-                  className="hidden"
-                  onChange={e => { const file = e.target.files?.[0]; if (file) processFile(file); e.target.value = ''; }}
-                />
+                <input ref={fileInputRef} type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.webp" className="hidden" onChange={e => { const file = e.target.files?.[0]; if (file) processFile(file); e.target.value = ''; }} />
                 {form.url !== '#' && form.url !== '' ? (
                   <div className="flex items-center gap-2 p-3 rounded-lg border bg-muted/50">
                     <FileText className="w-5 h-5 text-primary shrink-0" />
@@ -85,15 +81,7 @@ export default function AdminDokumen() {
                     </button>
                   </div>
                 ) : (
-                  <div
-                    onClick={() => fileInputRef.current?.click()}
-                    onDragOver={e => { e.preventDefault(); setDragOver(true); }}
-                    onDragLeave={() => setDragOver(false)}
-                    onDrop={e => { e.preventDefault(); setDragOver(false); const file = e.dataTransfer.files?.[0]; if (file) processFile(file); }}
-                    className={`w-full min-h-[6rem] rounded-lg border-2 border-dashed flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors ${
-                      dragOver ? 'border-primary bg-primary/5' : 'border-muted-foreground/40 hover:border-primary/60'
-                    }`}
-                  >
+                  <div onClick={() => fileInputRef.current?.click()} onDragOver={e => { e.preventDefault(); setDragOver(true); }} onDragLeave={() => setDragOver(false)} onDrop={e => { e.preventDefault(); setDragOver(false); const file = e.dataTransfer.files?.[0]; if (file) processFile(file); }} className={`w-full min-h-[6rem] rounded-lg border-2 border-dashed flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors ${dragOver ? 'border-primary bg-primary/5' : 'border-muted-foreground/40 hover:border-primary/60'}`}>
                     <Upload className="w-6 h-6 text-muted-foreground" />
                     <p className="text-sm text-muted-foreground text-center">Seret file ke sini atau klik untuk unggah</p>
                     <p className="text-xs text-muted-foreground">PDF, DOC, XLS, JPG, PNG (maks 10MB)</p>
@@ -114,7 +102,7 @@ export default function AdminDokumen() {
             {filtered.map(d => (
               <TableRow key={d.id}>
                 <TableCell>
-                  {d.nama}
+                  {tr(d.nama, 'id')}
                   {d.lastModified && <span className="block text-xs text-muted-foreground">Diubah: {new Date(d.lastModified).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>}
                 </TableCell>
                 <TableCell>{new Date(d.tanggal).toLocaleDateString('id-ID')}</TableCell>

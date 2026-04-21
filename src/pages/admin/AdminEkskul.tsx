@@ -3,29 +3,30 @@ import { useSchool, Ekstrakurikuler } from '@/contexts/SchoolContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { Search, Plus, Pencil, Trash2 } from 'lucide-react';
 import ImageUpload from '@/components/ImageUpload';
 import GaleriUpload from '@/components/GaleriUpload';
 import LastModifiedInfo from '@/components/LastModifiedInfo';
+import BilingualInput from '@/components/BilingualInput';
+import { tr, toBilingual } from '@/lib/i18n';
 
 export default function AdminEkskul() {
   const { data, updateEkstrakurikuler } = useSchool();
   const [search, setSearch] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editItem, setEditItem] = useState<Ekstrakurikuler | null>(null);
-  const [form, setForm] = useState({ nama: '', foto: '', deskripsi: '', galeri: [] as string[] });
+  const [form, setForm] = useState<{ nama: { id: string; en: string }; foto: string; deskripsi: { id: string; en: string }; galeri: string[] }>({ nama: { id: '', en: '' }, foto: '', deskripsi: { id: '', en: '' }, galeri: [] });
 
-  const filtered = data.ekstrakurikuler.filter(e => e.nama.toLowerCase().includes(search.toLowerCase()));
+  const filtered = data.ekstrakurikuler.filter(e => tr(e.nama, 'id').toLowerCase().includes(search.toLowerCase()));
 
-  const openAdd = () => { setEditItem(null); setForm({ nama: '', foto: '', deskripsi: '', galeri: [] }); setDialogOpen(true); };
-  const openEdit = (e: Ekstrakurikuler) => { setEditItem(e); setForm({ nama: e.nama, foto: e.foto, deskripsi: e.deskripsi, galeri: e.galeri || [] }); setDialogOpen(true); };
+  const openAdd = () => { setEditItem(null); setForm({ nama: { id: '', en: '' }, foto: '', deskripsi: { id: '', en: '' }, galeri: [] }); setDialogOpen(true); };
+  const openEdit = (e: Ekstrakurikuler) => { setEditItem(e); setForm({ nama: toBilingual(e.nama), foto: e.foto, deskripsi: toBilingual(e.deskripsi), galeri: e.galeri || [] }); setDialogOpen(true); };
 
   const handleSave = () => {
-    if (!form.nama) return;
-    const foto = form.foto || `https://placehold.co/400x300/2563EB/white?text=${encodeURIComponent(form.nama)}`;
+    if (!form.nama.id) return;
+    const foto = form.foto || `https://placehold.co/400x300/2563EB/white?text=${encodeURIComponent(form.nama.id)}`;
     const now = new Date().toISOString();
     if (editItem) {
       updateEkstrakurikuler(data.ekstrakurikuler.map(e => e.id === editItem.id ? { ...e, ...form, foto, lastModified: now } : e));
@@ -43,12 +44,12 @@ export default function AdminEkskul() {
         <h1 className="text-2xl font-bold text-foreground">Kelola Ekstrakurikuler</h1>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild><Button onClick={openAdd} className="gap-2"><Plus className="w-4 h-4" /> Tambah</Button></DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader><DialogTitle>{editItem ? 'Edit' : 'Tambah'} Ekskul</DialogTitle></DialogHeader>
             <div className="space-y-4">
-              <div><Label>Nama</Label><Input value={form.nama} onChange={e => setForm(f => ({ ...f, nama: e.target.value }))} /></div>
+              <BilingualInput label="Nama" value={form.nama} onChange={v => setForm(f => ({ ...f, nama: v }))} />
               <div><Label>Foto</Label><ImageUpload value={form.foto} onChange={url => setForm(f => ({ ...f, foto: url }))} placeholder /></div>
-              <div><Label>Deskripsi</Label><Textarea value={form.deskripsi} onChange={e => setForm(f => ({ ...f, deskripsi: e.target.value }))} /></div>
+              <BilingualInput label="Deskripsi" value={form.deskripsi} onChange={v => setForm(f => ({ ...f, deskripsi: v }))} multiline rows={3} />
               <div><Label>Galeri</Label><GaleriUpload value={form.galeri} onChange={galeri => setForm(f => ({ ...f, galeri }))} /></div>
               <Button onClick={handleSave} className="w-full">Simpan</Button>
             </div>
@@ -71,9 +72,9 @@ export default function AdminEkskul() {
           <TableBody>
             {filtered.map(e => (
               <TableRow key={e.id}>
-                <TableCell><img src={e.foto} alt={e.nama} className="w-10 h-10 rounded object-cover" /></TableCell>
+                <TableCell><img src={e.foto} alt={tr(e.nama, 'id')} className="w-10 h-10 rounded object-cover" /></TableCell>
                 <TableCell className="font-medium">
-                  {e.nama}
+                  {tr(e.nama, 'id')}
                   {e.lastModified && <span className="block text-xs text-muted-foreground">Diubah: {new Date(e.lastModified).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>}
                 </TableCell>
                 <TableCell className="text-right space-x-2">

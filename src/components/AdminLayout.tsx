@@ -1,9 +1,9 @@
-import { Navigate, Outlet, Link, useLocation } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import { NavLink } from '@/components/NavLink';
-import { LayoutDashboard, Users, Calendar, Star, FileText, School, MessageSquare, Phone, LogOut, GraduationCap, ImageIcon, Mail, LayoutTemplate, Award } from 'lucide-react';
+import { LayoutDashboard, Users, Calendar, Star, FileText, School, MessageSquare, Phone, LogOut, GraduationCap, ImageIcon, LayoutTemplate, Award, UserCog, Shield } from 'lucide-react';
 import { useSchool } from '@/contexts/SchoolContext';
 
 const menuItems = [
@@ -12,19 +12,19 @@ const menuItems = [
   { title: 'Hero', url: '/admin/hero', icon: ImageIcon },
   { title: 'Keunggulan', url: '/admin/keunggulan', icon: Award },
   { title: 'Pegawai', url: '/admin/pegawai', icon: Users },
+  { title: 'Siswa', url: '/admin/siswa', icon: UserCog },
   { title: 'Kegiatan', url: '/admin/kegiatan', icon: Calendar },
   { title: 'Ekstrakurikuler', url: '/admin/ekstrakurikuler', icon: Star },
   { title: 'Dokumen', url: '/admin/dokumen', icon: FileText },
   { title: 'Profil Sekolah', url: '/admin/profil', icon: School },
   { title: 'Sambutan', url: '/admin/sambutan', icon: MessageSquare },
   { title: 'Kontak', url: '/admin/kontak', icon: Phone },
-  { title: 'Floating Email', url: '/admin/floating-email', icon: Mail },
   { title: 'Footer', url: '/admin/footer', icon: LayoutTemplate },
+  { title: 'Akun Admin', url: '/admin/akun', icon: Shield },
 ];
 
 function AdminSidebar() {
   const { logout } = useAuth();
-  const location = useLocation();
   const { data } = useSchool();
 
   return (
@@ -46,12 +46,7 @@ function AdminSidebar() {
               {menuItems.map(item => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <NavLink
-                      to={item.url}
-                      end={item.url === '/admin'}
-                      className="hover:bg-sidebar-accent/50"
-                      activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                    >
+                    <NavLink to={item.url} end={item.url === '/admin'} className="hover:bg-sidebar-accent/50" activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium">
                       <item.icon className="mr-2 h-4 w-4" />
                       <span>{item.title}</span>
                     </NavLink>
