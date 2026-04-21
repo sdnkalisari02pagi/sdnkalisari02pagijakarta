@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { useSchool, Keunggulan } from '@/contexts/SchoolContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Plus, Trash2, GripVertical, BookOpen, Users, Star, Shield, Award, Heart, Lightbulb, Target, Smile, Globe, Sparkles, Zap } from 'lucide-react';
 import LastModifiedInfo from '@/components/LastModifiedInfo';
+import BilingualInput from '@/components/BilingualInput';
+import { tr, toBilingual } from '@/lib/i18n';
 
 const iconOptions = [
   { value: 'BookOpen', label: 'Buku', Icon: BookOpen },
@@ -34,23 +34,18 @@ export default function AdminKeunggulan() {
   const [items, setItems] = useState<Keunggulan[]>(data.keunggulan);
 
   const addItem = () => {
-    setItems([...items, { id: Date.now().toString(), icon: 'Star', title: '', desc: '' }]);
+    setItems([...items, { id: Date.now().toString(), icon: 'Star', title: { id: '', en: '' }, desc: { id: '', en: '' } }]);
   };
 
-  const removeItem = (id: string) => {
-    setItems(items.filter(i => i.id !== id));
-  };
+  const removeItem = (id: string) => setItems(items.filter(i => i.id !== id));
 
-  const updateItem = (id: string, field: keyof Keunggulan, value: string) => {
+  const updateField = (id: string, field: keyof Keunggulan, value: any) => {
     setItems(items.map(i => i.id === id ? { ...i, [field]: value } : i));
   };
 
   const handleSave = () => {
-    const valid = items.every(i => i.title.trim() && i.desc.trim());
-    if (!valid) {
-      toast.error('Semua judul dan deskripsi harus diisi');
-      return;
-    }
+    const valid = items.every(i => tr(i.title, 'id').trim() && tr(i.desc, 'id').trim());
+    if (!valid) { toast.error('Semua judul dan deskripsi (ID) harus diisi'); return; }
     updateKeunggulan(items);
     toast.success('Keunggulan berhasil disimpan');
   };
@@ -82,40 +77,28 @@ export default function AdminKeunggulan() {
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid sm:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label>Ikon</Label>
-                  <Select value={item.icon} onValueChange={v => updateItem(item.id, 'icon', v)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {iconOptions.map(opt => (
-                        <SelectItem key={opt.value} value={opt.value}>
-                          <span className="flex items-center gap-2">
-                            <opt.Icon className="w-4 h-4" /> {opt.label}
-                          </span>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="sm:col-span-2 space-y-2">
-                  <Label>Judul</Label>
-                  <Input value={item.title} onChange={e => updateItem(item.id, 'title', e.target.value)} placeholder="Contoh: Kurikulum Berkualitas" />
-                </div>
+              <div className="space-y-2 max-w-xs">
+                <Label>Ikon</Label>
+                <Select value={item.icon} onValueChange={v => updateField(item.id, 'icon', v)}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {iconOptions.map(opt => (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        <span className="flex items-center gap-2"><opt.Icon className="w-4 h-4" /> {opt.label}</span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-              <div className="space-y-2">
-                <Label>Deskripsi</Label>
-                <Textarea value={item.desc} onChange={e => updateItem(item.id, 'desc', e.target.value)} placeholder="Deskripsi singkat keunggulan..." rows={2} />
-              </div>
+              <BilingualInput label="Judul" value={item.title} onChange={v => updateField(item.id, 'title', v)} />
+              <BilingualInput label="Deskripsi" value={item.desc} onChange={v => updateField(item.id, 'desc', v)} multiline rows={2} />
               <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
                 <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center">
                   <IconComp className="w-6 h-6 text-primary-foreground" />
                 </div>
                 <div>
-                  <p className="font-semibold text-foreground">{item.title || 'Judul'}</p>
-                  <p className="text-sm text-muted-foreground">{item.desc || 'Deskripsi'}</p>
+                  <p className="font-semibold text-foreground">{tr(item.title, 'id') || 'Judul'}</p>
+                  <p className="text-sm text-muted-foreground">{tr(item.desc, 'id') || 'Deskripsi'}</p>
                 </div>
               </div>
             </CardContent>

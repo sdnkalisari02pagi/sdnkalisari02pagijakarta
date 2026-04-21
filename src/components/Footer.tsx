@@ -1,10 +1,12 @@
 import { GraduationCap, Mail, MapPin, Instagram, Youtube } from 'lucide-react';
 import { useSchool } from '@/contexts/SchoolContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { tr } from '@/lib/i18n';
+import TikTokIcon from '@/components/TikTokIcon';
 
 export default function Footer() {
   const { data } = useSchool();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   return (
     <footer className="bg-primary text-primary-foreground pt-12 pb-6">
       <div className="container mx-auto px-4 grid md:grid-cols-3 gap-8">
@@ -19,20 +21,21 @@ export default function Footer() {
             )}
             <span className="font-bold text-lg">{data.footer.namaSekolah}</span>
           </div>
-          <p className="text-sm opacity-80">{data.footer.deskripsi}</p>
+          <p className="text-sm opacity-80">{tr(data.footer.deskripsi, lang)}</p>
         </div>
         <div>
           <h3 className="font-semibold mb-4">{t('footer_kontak')}</h3>
           <div className="space-y-2 text-sm opacity-80">
-            <div className="flex items-start gap-2"><MapPin className="w-4 h-4 mt-0.5 shrink-0" /><span>{data.kontak.alamat}</span></div>
+            <div className="flex items-start gap-2"><MapPin className="w-4 h-4 mt-0.5 shrink-0" /><span>{tr(data.kontak.alamat, lang)}</span></div>
             <div className="flex items-center gap-2"><Mail className="w-4 h-4 shrink-0" /><span>{data.kontak.email}</span></div>
           </div>
         </div>
         <div>
           <h3 className="font-semibold mb-4">{t('footer_sosmed')}</h3>
           <div className="flex gap-4">
-            <a href={data.footer.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors"><Instagram className="w-6 h-6" /></a>
-            <a href={data.footer.youtube} target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors"><Youtube className="w-6 h-6" /></a>
+            {data.footer.instagram && <a href={data.footer.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors"><Instagram className="w-6 h-6" /></a>}
+            {data.footer.youtube && <a href={data.footer.youtube} target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors"><Youtube className="w-6 h-6" /></a>}
+            {data.footer.tiktok && <a href={data.footer.tiktok} target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors"><TikTokIcon className="w-6 h-6" /></a>}
           </div>
         </div>
       </div>

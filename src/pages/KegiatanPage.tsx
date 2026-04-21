@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { useSchool } from '@/contexts/SchoolContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { tr } from '@/lib/i18n';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -11,17 +12,20 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 
 export default function KegiatanPage() {
   const { data } = useSchool();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const scrollRef = useScrollAnimation();
   const [search, setSearch] = useState('');
   const [filterDate, setFilterDate] = useState('');
   const [selectedKegiatan, setSelectedKegiatan] = useState<typeof data.kegiatan[0] | null>(null);
 
   const filtered = data.kegiatan.filter(k => {
-    const matchSearch = k.judul.toLowerCase().includes(search.toLowerCase());
+    const judul = tr(k.judul, lang).toLowerCase();
+    const matchSearch = judul.includes(search.toLowerCase());
     const matchDate = !filterDate || k.tanggal.startsWith(filterDate);
     return matchSearch && matchDate;
   }).sort((a, b) => new Date(b.tanggal).getTime() - new Date(a.tanggal).getTime());
+
+  const locale = lang === 'en' ? 'en-US' : 'id-ID';
 
   return (
     <div className="py-10">
@@ -37,11 +41,11 @@ export default function KegiatanPage() {
         <div ref={scrollRef} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {filtered.map((k, index) => (
             <Card key={k.id} className={`scroll-animate delay-${(index % 3 + 1) * 100} overflow-hidden hover:shadow-lg transition-shadow cursor-pointer`} onClick={() => setSelectedKegiatan(k)}>
-              <img src={k.foto} alt={k.judul} className="w-full h-48 object-cover" />
+              <img src={k.foto} alt={tr(k.judul, lang)} className="w-full h-48 object-cover" />
               <CardContent className="pt-4">
-                <p className="text-xs text-muted-foreground mb-1">{new Date(k.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-                <h3 className="font-semibold text-foreground mb-2">{k.judul}</h3>
-                <p className="text-sm text-muted-foreground line-clamp-2">{k.deskripsi}</p>
+                <p className="text-xs text-muted-foreground mb-1">{new Date(k.tanggal).toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                <h3 className="font-semibold text-foreground mb-2">{tr(k.judul, lang)}</h3>
+                <p className="text-sm text-muted-foreground line-clamp-2">{tr(k.deskripsi, lang)}</p>
                 <div className="flex justify-end mt-3">
                   <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => { e.stopPropagation(); setSelectedKegiatan(k); }}>
                     <ArrowRight className="w-4 h-4" />
@@ -59,15 +63,15 @@ export default function KegiatanPage() {
           <ScrollArea className="max-h-[85vh]">
             {selectedKegiatan && (
               <div>
-                <img src={selectedKegiatan.foto} alt={selectedKegiatan.judul} className="w-full h-64 object-cover" />
+                <img src={selectedKegiatan.foto} alt={tr(selectedKegiatan.judul, lang)} className="w-full h-64 object-cover" />
                 <div className="p-6">
                   <DialogHeader>
                     <p className="text-sm text-muted-foreground mb-1">
-                      {new Date(selectedKegiatan.tanggal).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                      {new Date(selectedKegiatan.tanggal).toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
                     </p>
-                    <DialogTitle className="text-2xl">{selectedKegiatan.judul}</DialogTitle>
+                    <DialogTitle className="text-2xl">{tr(selectedKegiatan.judul, lang)}</DialogTitle>
                   </DialogHeader>
-                  <p className="mt-4 text-muted-foreground leading-relaxed whitespace-pre-line">{selectedKegiatan.deskripsi}</p>
+                  <p className="mt-4 text-muted-foreground leading-relaxed whitespace-pre-line">{tr(selectedKegiatan.deskripsi, lang)}</p>
                 </div>
               </div>
             )}

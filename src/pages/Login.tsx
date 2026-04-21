@@ -13,17 +13,19 @@ export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const { data } = useSchool();
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (login(username, password)) {
-      navigate('/admin');
-    } else {
-      setError('Username atau password salah!');
-    }
+    setError('');
+    setLoading(true);
+    const res = await login(username, password);
+    setLoading(false);
+    if (res.ok) navigate('/admin');
+    else setError(res.error || 'Login gagal');
   };
 
   return (
@@ -44,13 +46,13 @@ export default function Login() {
             {error && <p className="text-sm text-destructive text-center">{error}</p>}
             <div className="space-y-2">
               <Label htmlFor="username">Username</Label>
-              <Input id="username" value={username} onChange={e => setUsername(e.target.value)} placeholder="Masukkan username" required />
+              <Input id="username" value={username} onChange={e => setUsername(e.target.value)} placeholder="Masukkan username" required autoComplete="username" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Masukkan password" required />
+              <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Masukkan password" required autoComplete="current-password" />
             </div>
-            <Button type="submit" className="w-full">Login</Button>
+            <Button type="submit" disabled={loading} className="w-full">{loading ? 'Memproses...' : 'Login'}</Button>
             <p className="text-center text-sm text-muted-foreground">
               <button type="button" onClick={() => toast('Silakan hubungi administrator untuk mereset password Anda.')} className="text-primary hover:underline">Forgot Password?</button>
             </p>

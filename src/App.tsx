@@ -31,8 +31,9 @@ import AdminKontak from "./pages/admin/AdminKontak";
 import AdminLogo from "./pages/admin/AdminLogo";
 import AdminHero from "./pages/admin/AdminHero";
 import AdminKeunggulan from "./pages/admin/AdminKeunggulan";
-import AdminFloatingEmail from "./pages/admin/AdminFloatingEmail";
 import AdminFooter from "./pages/admin/AdminFooter";
+import AdminSiswa from "./pages/admin/AdminSiswa";
+import AdminAkun from "./pages/admin/AdminAkun";
 
 
 const queryClient = new QueryClient();
@@ -63,14 +64,15 @@ const App = () => (
                 <Route path="hero" element={<AdminHero />} />
                 <Route path="keunggulan" element={<AdminKeunggulan />} />
                 <Route path="pegawai" element={<AdminPegawai />} />
+                <Route path="siswa" element={<AdminSiswa />} />
                 <Route path="kegiatan" element={<AdminKegiatan />} />
                 <Route path="ekstrakurikuler" element={<AdminEkskul />} />
                 <Route path="dokumen" element={<AdminDokumen />} />
                 <Route path="profil" element={<AdminProfil />} />
                 <Route path="sambutan" element={<AdminSambutan />} />
                 <Route path="kontak" element={<AdminKontak />} />
-                <Route path="floating-email" element={<AdminFloatingEmail />} />
                 <Route path="footer" element={<AdminFooter />} />
+                <Route path="akun" element={<AdminAkun />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>
