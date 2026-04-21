@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useSchool } from '@/contexts/SchoolContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { tr } from '@/lib/i18n';
 import { Users, BookOpen, Star, Shield, ArrowRight, ChevronLeft, ChevronRight, Award, Quote, GraduationCap, Calendar, Heart, Lightbulb, Target, Smile, Globe, Sparkles, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -13,7 +14,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 
 export default function Index() {
   const { data } = useSchool();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const sambutanRef = useScrollAnimation();
   const keunggulanRef = useScrollAnimation();
   const ekstrakurikulerRef = useScrollAnimation();
@@ -23,7 +24,7 @@ export default function Index() {
   const totalEkskulPages = Math.ceil(data.ekstrakurikuler.length / 3);
   const visibleEkskul = data.ekstrakurikuler.slice(ekskulPage * 3, (ekskulPage + 1) * 3);
 
-  const hero = data.hero || { images: [], judul: 'SDN Kalisari 02 Pagi', subtitle: 'Mewujudkan Generasi Cerdas, Berkarakter, dan Berprestasi' };
+  const hero = data.hero;
   const images = hero.images.length > 0 ? hero.images : [data.profil.fotoSekolah];
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -41,9 +42,21 @@ export default function Index() {
     return () => clearInterval(timer);
   }, [nextSlide, images.length]);
 
+  const totalSiswa = data.siswa.reduce((s, k) => s + (Number(k.jumlah) || 0), 0);
+  const vis = hero.statsVisibility;
+  const allStats = [
+    { key: 'staff', icon: Users, label: t('hero_stat_staff'), value: data.pegawai.length, show: vis.staff },
+    { key: 'students', icon: GraduationCap, label: t('hero_stat_students'), value: totalSiswa, show: vis.students },
+    { key: 'ekskul', icon: Award, label: t('hero_stat_ekskul'), value: data.ekstrakurikuler.length, show: vis.ekskul },
+    { key: 'founded', icon: Calendar, label: t('hero_stat_founded'), value: hero.tahunBerdiri, show: vis.founded },
+  ];
+  const stats = allStats.filter(s => s.show);
+  const gridColsMap: Record<number, string> = { 1: 'grid-cols-1', 2: 'grid-cols-2', 3: 'grid-cols-3', 4: 'grid-cols-4' };
+
+  const sambutanText = tr(data.sambutan.teks, lang);
+
   return (
     <div>
-      {/* Hero */}
       <section className="relative py-16 md:py-24 overflow-hidden hero-gradient">
         <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-primary/10 blur-3xl animate-pulse" />
         <div className="absolute top-1/2 -right-32 w-80 h-80 rounded-full bg-secondary/10 blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
@@ -54,10 +67,10 @@ export default function Index() {
             <div className="space-y-6 animate-fade-in-up">
               <div>
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-gradient mb-4">
-                  {hero.judul}
+                  {tr(hero.judul, lang)}
                 </h1>
                 <p className="text-lg text-muted-foreground leading-relaxed max-w-lg">
-                  {hero.subtitle}
+                  {tr(hero.subtitle, lang)}
                 </p>
               </div>
 
@@ -74,24 +87,21 @@ export default function Index() {
                 </Link>
               </div>
 
-              <div className="grid grid-cols-4 gap-3 pt-4">
-                {[
-                  { icon: Users, label: t('hero_stat_staff'), value: data.pegawai.length },
-                  { icon: GraduationCap, label: t('hero_stat_students'), value: '350+' },
-                  { icon: Award, label: t('hero_stat_ekskul'), value: data.ekstrakurikuler.length },
-                  { icon: Calendar, label: t('hero_stat_founded'), value: '1985' },
-                ].map((s, i) => (
-                  <div key={i} className="flex items-center gap-2 bg-background rounded-xl px-3 py-3 shadow-sm border border-border">
-                    <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                      <s.icon className="w-4 h-4 text-primary" />
+              {stats.length > 0 && (
+                <div className={`grid ${gridColsMap[stats.length] || 'grid-cols-4'} gap-3 pt-4`}>
+                  {stats.map((s) => (
+                    <div key={s.key} className="flex items-center gap-2 bg-background rounded-xl px-3 py-3 shadow-sm border border-border">
+                      <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                        <s.icon className="w-4 h-4 text-primary" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-lg font-bold leading-none text-foreground">{s.value}</p>
+                        <p className="text-[10px] text-muted-foreground truncate">{s.label}</p>
+                      </div>
                     </div>
-                    <div className="min-w-0">
-                      <p className="text-lg font-bold leading-none text-foreground">{s.value}</p>
-                      <p className="text-[10px] text-muted-foreground truncate">{s.label}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="relative animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
@@ -122,7 +132,6 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Sambutan */}
       <section className="py-20 bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10" ref={sambutanRef}>
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12 text-foreground scroll-animate">{t('section_sambutan')}</h2>
@@ -134,13 +143,12 @@ export default function Index() {
               <Quote className="w-8 h-8 text-secondary mb-3" />
               <h3 className="text-xl font-semibold text-primary mb-1">{data.sambutan.nama}</h3>
               <span className="inline-block bg-primary/15 text-primary text-xs font-medium px-3 py-1 rounded-full mb-4">{t('section_kepala_sekolah')}</span>
-              <p className="text-muted-foreground whitespace-pre-line leading-relaxed">{data.sambutan.teks.substring(0, 300)}...</p>
+              <p className="text-muted-foreground whitespace-pre-line leading-relaxed">{sambutanText.substring(0, 300)}...</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Keunggulan */}
       <section className="py-16" ref={keunggulanRef}>
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-10 text-foreground scroll-animate">{t('section_keunggulan')}</h2>
@@ -153,8 +161,8 @@ export default function Index() {
                   <div className="w-14 h-14 rounded-full bg-primary mx-auto mb-4 flex items-center justify-center">
                     <IconComp className="w-7 h-7 text-primary-foreground" />
                   </div>
-                  <h3 className="font-semibold text-foreground mb-2">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground">{item.desc}</p>
+                  <h3 className="font-semibold text-foreground mb-2">{tr(item.title, lang)}</h3>
+                  <p className="text-sm text-muted-foreground">{tr(item.desc, lang)}</p>
                 </CardContent>
               </Card>
               );
@@ -163,7 +171,6 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Ekstrakurikuler */}
       <section className="py-16 bg-gradient-to-br from-secondary/10 via-accent/10 to-primary/10" ref={ekstrakurikulerRef}>
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-10 text-foreground scroll-animate">{t('section_ekstrakurikuler')}</h2>
@@ -182,10 +189,10 @@ export default function Index() {
               {visibleEkskul.map((e) => (
                 <Link key={e.id} to={`/ekstrakurikuler/${e.id}`}>
                   <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full">
-                    <img src={e.foto} alt={e.nama} className="w-full h-48 object-cover" />
+                    <img src={e.foto} alt={tr(e.nama, lang)} className="w-full h-48 object-cover" />
                     <CardContent className="pt-4">
-                      <h3 className="font-semibold text-foreground mb-2">{e.nama}</h3>
-                      <p className="text-sm text-muted-foreground line-clamp-2">{e.deskripsi}</p>
+                      <h3 className="font-semibold text-foreground mb-2">{tr(e.nama, lang)}</h3>
+                      <p className="text-sm text-muted-foreground line-clamp-2">{tr(e.deskripsi, lang)}</p>
                     </CardContent>
                   </Card>
                 </Link>
@@ -206,11 +213,11 @@ export default function Index() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.kegiatan.slice(0, 6).map((k, i) => (
               <Card key={k.id} className={`overflow-hidden hover:shadow-lg transition-shadow scroll-animate delay-${(i + 1) * 100}`}>
-                <img src={k.foto} alt={k.judul} className="w-full h-48 object-cover" />
+                <img src={k.foto} alt={tr(k.judul, lang)} className="w-full h-48 object-cover" />
                 <CardContent className="pt-4">
-                  <p className="text-xs text-muted-foreground mb-1">{new Date(k.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-                  <h3 className="font-semibold text-foreground mb-2">{k.judul}</h3>
-                  <p className="text-sm text-muted-foreground line-clamp-2">{k.deskripsi}</p>
+                  <p className="text-xs text-muted-foreground mb-1">{new Date(k.tanggal).toLocaleDateString(lang === 'en' ? 'en-US' : 'id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                  <h3 className="font-semibold text-foreground mb-2">{tr(k.judul, lang)}</h3>
+                  <p className="text-sm text-muted-foreground line-clamp-2">{tr(k.deskripsi, lang)}</p>
                 </CardContent>
               </Card>
             ))}

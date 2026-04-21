@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useSchool } from '@/contexts/SchoolContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { tr } from '@/lib/i18n';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -14,7 +15,7 @@ const VALID_TABS = ['sejarah', 'visimisi', 'pegawai'];
 
 export default function Profil() {
   const { data } = useSchool();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [searchParams] = useSearchParams();
   const tabParam = searchParams.get('tab');
   const initialTab = tabParam && VALID_TABS.includes(tabParam) ? tabParam : 'sejarah';
@@ -25,9 +26,7 @@ export default function Profil() {
   const scrollRef = useScrollAnimation();
 
   useEffect(() => {
-    if (tabParam && VALID_TABS.includes(tabParam)) {
-      setActiveTab(tabParam);
-    }
+    if (tabParam && VALID_TABS.includes(tabParam)) setActiveTab(tabParam);
   }, [tabParam]);
 
   const jabatanList = [...new Set(data.pegawai.map(p => p.jabatan))];
@@ -51,23 +50,23 @@ export default function Profil() {
 
           <TabsContent value="sejarah" className="mt-6">
             <img src={data.profil.fotoSekolah} alt="Sekolah" className="w-full h-64 object-cover rounded-lg mb-6 scroll-animate" />
-            <p className="text-muted-foreground leading-relaxed scroll-animate" style={{ animationDelay: '150ms' }}>{data.profil.sejarah}</p>
+            <p className="text-muted-foreground leading-relaxed scroll-animate whitespace-pre-line" style={{ animationDelay: '150ms' }}>{tr(data.profil.sejarah, lang)}</p>
           </TabsContent>
 
           <TabsContent value="visimisi" className="mt-6 space-y-6">
             <Card className="scroll-animate"><CardContent className="pt-6">
               <h3 className="font-semibold text-lg text-foreground mb-2">{t('profil_visi')}</h3>
-              <p className="text-muted-foreground">{data.profil.visi}</p>
+              <p className="text-muted-foreground">{tr(data.profil.visi, lang)}</p>
             </CardContent></Card>
             <Card className="scroll-animate" style={{ animationDelay: '150ms' }}><CardContent className="pt-6">
               <h3 className="font-semibold text-lg text-foreground mb-2">{t('profil_misi')}</h3>
               <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
-                {data.profil.misi.map((m, i) => <li key={i}>{m}</li>)}
+                {data.profil.misi.map((m, i) => <li key={i}>{tr(m, lang)}</li>)}
               </ol>
             </CardContent></Card>
             <Card className="scroll-animate" style={{ animationDelay: '300ms' }}><CardContent className="pt-6">
               <h3 className="font-semibold text-lg text-foreground mb-2">{t('profil_tujuan')}</h3>
-              <p className="text-muted-foreground">{data.profil.tujuan}</p>
+              <p className="text-muted-foreground">{tr(data.profil.tujuan, lang)}</p>
             </CardContent></Card>
           </TabsContent>
 

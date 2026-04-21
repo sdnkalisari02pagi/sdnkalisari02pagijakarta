@@ -1,11 +1,13 @@
 import { useSchool } from '@/contexts/SchoolContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { tr } from '@/lib/i18n';
 import { Card, CardContent } from '@/components/ui/card';
 import { MapPin, Phone, Mail, Instagram, Youtube } from 'lucide-react';
+import TikTokIcon from '@/components/TikTokIcon';
 
 export default function Kontak() {
   const { data } = useSchool();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
 
   return (
     <div className="py-10">
@@ -15,7 +17,7 @@ export default function Kontak() {
           <div className="space-y-4">
             <Card><CardContent className="pt-6 flex items-start gap-3">
               <MapPin className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-              <div><h3 className="font-semibold text-foreground">{t('kontak_alamat')}</h3><p className="text-sm text-muted-foreground">{data.kontak.alamat}</p></div>
+              <div><h3 className="font-semibold text-foreground">{t('kontak_alamat')}</h3><p className="text-sm text-muted-foreground">{tr(data.kontak.alamat, lang)}</p></div>
             </CardContent></Card>
             <Card><CardContent className="pt-6 flex items-start gap-3">
               <Phone className="w-5 h-5 text-primary shrink-0" />
@@ -25,9 +27,10 @@ export default function Kontak() {
               <Mail className="w-5 h-5 text-primary shrink-0" />
               <div><h3 className="font-semibold text-foreground">{t('kontak_email')}</h3><p className="text-sm text-muted-foreground">{data.kontak.email}</p></div>
             </CardContent></Card>
-            <Card><CardContent className="pt-6 flex items-center gap-4">
-              <a href={data.kontak.instagram} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline"><Instagram className="w-5 h-5" /> Instagram</a>
-              <a href={data.kontak.youtube} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline"><Youtube className="w-5 h-5" /> YouTube</a>
+            <Card><CardContent className="pt-6 flex items-center gap-4 flex-wrap">
+              {data.kontak.instagram && <a href={data.kontak.instagram} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline"><Instagram className="w-5 h-5" /> Instagram</a>}
+              {data.kontak.youtube && <a href={data.kontak.youtube} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline"><Youtube className="w-5 h-5" /> YouTube</a>}
+              {data.kontak.tiktok && <a href={data.kontak.tiktok} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline"><TikTokIcon className="w-5 h-5" /> TikTok</a>}
             </CardContent></Card>
           </div>
           <div className="rounded-lg overflow-hidden border h-[300px] md:h-full min-h-[300px]">
