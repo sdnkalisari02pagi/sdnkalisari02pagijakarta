@@ -1,6 +1,11 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Bilingual, toBilingual } from '@/lib/i18n';
 
+export interface Pelatih {
+  nama: Bilingual;
+  foto: string;
+}
+
 export interface Pegawai {
   id: string;
   nama: string;
@@ -9,21 +14,34 @@ export interface Pegawai {
   lastModified?: string;
 }
 
-export interface Kegiatan {
+export type ContentTipe = 'foto' | 'video';
+
+export interface Berita {
   id: string;
   judul: Bilingual;
   tanggal: string;
-  foto: string;
+  tipe: ContentTipe;
+  fotoUtama: string;        // for tipe=foto, used as card image
+  thumbnail: string;        // for tipe=video, used as card image
+  videoUrl: string;
+  galeri: string[];
   deskripsi: Bilingual;
   lastModified?: string;
 }
 
+export type Prestasi = Berita;
+
+// Legacy alias kept for compatibility (read-only). Maps to Berita shape.
+export type Kegiatan = Berita;
+
 export interface Ekstrakurikuler {
   id: string;
   nama: Bilingual;
-  foto: string;
+  foto: string;          // legacy, kept as fallback
+  fotoUtama: string;     // main card image (required)
   deskripsi: Bilingual;
   galeri: string[];
+  pelatih: Pelatih[];    // max 3
   lastModified?: string;
 }
 
@@ -107,6 +125,8 @@ export interface LastModified {
   logo?: string;
   pegawai?: string;
   kegiatan?: string;
+  berita?: string;
+  prestasi?: string;
   ekstrakurikuler?: string;
   dokumen?: string;
   profil?: string;
@@ -124,8 +144,9 @@ export interface SchoolData {
   hero: HeroData;
   keunggulan: Keunggulan[];
   pegawai: Pegawai[];
-  jabatanList: string[];
-  kegiatan: Kegiatan[];
+  jabatanList: Bilingual[];
+  berita: Berita[];
+  prestasi: Prestasi[];
   ekstrakurikuler: Ekstrakurikuler[];
   dokumen: Dokumen[];
   profil: ProfilSekolah;
@@ -158,7 +179,18 @@ const defaultData: SchoolData = {
     { id: '3', icon: 'Star', title: B('Prestasi Gemilang', 'Outstanding Achievements'), desc: B('Siswa berprestasi di berbagai kompetisi akademik dan non-akademik.', 'Students excel in various academic and non-academic competitions.') },
     { id: '4', icon: 'Shield', title: B('Lingkungan Aman', 'Safe Environment'), desc: B('Lingkungan sekolah yang aman, bersih, dan nyaman.', 'A safe, clean, and comfortable school environment.') },
   ],
-  jabatanList: ['Kepala Sekolah', 'Guru Kelas 1', 'Guru Kelas 2', 'Guru Kelas 3', 'Guru Kelas 4', 'Guru Kelas 5', 'Guru Kelas 6', 'Tata Usaha', 'Penjaga Sekolah', 'Guru Agama'],
+  jabatanList: [
+    B('Kepala Sekolah', 'Principal'),
+    B('Guru Kelas 1', 'Grade 1 Teacher'),
+    B('Guru Kelas 2', 'Grade 2 Teacher'),
+    B('Guru Kelas 3', 'Grade 3 Teacher'),
+    B('Guru Kelas 4', 'Grade 4 Teacher'),
+    B('Guru Kelas 5', 'Grade 5 Teacher'),
+    B('Guru Kelas 6', 'Grade 6 Teacher'),
+    B('Tata Usaha', 'Administration'),
+    B('Penjaga Sekolah', 'School Caretaker'),
+    B('Guru Agama', 'Religion Teacher'),
+  ],
   pegawai: [
     { id: '1', nama: 'Nuroyanah, M.Pd', jabatan: 'Kepala Sekolah', foto: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=face' },
     { id: '2', nama: 'Siti Aminah, S.Pd', jabatan: 'Guru Kelas 1', foto: 'https://images.unsplash.com/photo-1580894732444-8ecded7900cd?w=200&h=200&fit=crop&crop=face' },
@@ -171,21 +203,24 @@ const defaultData: SchoolData = {
     { id: '9', nama: 'Hendra Gunawan', jabatan: 'Penjaga Sekolah', foto: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop&crop=face' },
     { id: '10', nama: 'Fatimah, S.Pd', jabatan: 'Guru Agama', foto: 'https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=200&h=200&fit=crop&crop=face' },
   ],
-  kegiatan: [
-    { id: '1', judul: B('Upacara Bendera Hari Senin', 'Monday Flag Ceremony'), tanggal: '2026-04-07', foto: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?w=600&h=400&fit=crop', deskripsi: B('Pelaksanaan upacara bendera rutin setiap hari Senin untuk meningkatkan kedisiplinan dan rasa nasionalisme siswa.', 'Routine flag ceremony every Monday to enhance student discipline and nationalism.') },
-    { id: '2', judul: B('Lomba Mewarnai Tingkat Kecamatan', 'Sub-District Coloring Contest'), tanggal: '2026-03-25', foto: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=600&h=400&fit=crop', deskripsi: B('Siswa SDN Kalisari 02 Pagi berpartisipasi dalam lomba mewarnai tingkat kecamatan dan meraih juara 2.', 'SDN Kalisari 02 Pagi students participated in the sub-district coloring contest and won 2nd place.') },
-    { id: '3', judul: B('Peringatan Hari Kartini', 'Kartini Day Commemoration'), tanggal: '2026-04-01', foto: 'https://images.unsplash.com/photo-1604881991720-f91add269bed?w=600&h=400&fit=crop', deskripsi: B('Peringatan Hari Kartini dengan kegiatan fashion show pakaian adat nusantara.', 'Kartini Day commemoration with traditional Indonesian costume fashion show.') },
-    { id: '4', judul: B('Kunjungan ke Museum Nasional', 'National Museum Visit'), tanggal: '2026-03-15', foto: 'https://images.unsplash.com/photo-1588072432836-e10032774350?w=600&h=400&fit=crop', deskripsi: B('Kunjungan edukatif ke Museum Nasional untuk siswa kelas 5 dan 6.', 'Educational visit to the National Museum for grade 5 and 6 students.') },
-    { id: '5', judul: B('Pentas Seni Akhir Semester', 'End of Semester Art Performance'), tanggal: '2026-02-28', foto: 'https://images.unsplash.com/photo-1514533212735-5df27d970db0?w=600&h=400&fit=crop', deskripsi: B('Penampilan tari, musik, dan drama dari seluruh kelas dalam acara pentas seni akhir semester.', 'Dance, music, and drama performances from all classes in the end of semester art event.') },
-    { id: '6', judul: B('Senam Pagi Bersama', 'Morning Exercise Together'), tanggal: '2026-04-05', foto: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&h=400&fit=crop', deskripsi: B('Kegiatan senam pagi bersama setiap Jumat untuk menjaga kesehatan dan kebugaran siswa.', 'Morning exercise every Friday to maintain student health and fitness.') },
+  berita: [
+    { id: '1', judul: B('Upacara Bendera Hari Senin', 'Monday Flag Ceremony'), tanggal: '2026-04-07', tipe: 'foto', fotoUtama: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?w=600&h=400&fit=crop', thumbnail: '', videoUrl: '', galeri: [], deskripsi: B('Pelaksanaan upacara bendera rutin setiap hari Senin untuk meningkatkan kedisiplinan dan rasa nasionalisme siswa.', 'Routine flag ceremony every Monday to enhance student discipline and nationalism.') },
+    { id: '2', judul: B('Lomba Mewarnai Tingkat Kecamatan', 'Sub-District Coloring Contest'), tanggal: '2026-03-25', tipe: 'foto', fotoUtama: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=600&h=400&fit=crop', thumbnail: '', videoUrl: '', galeri: [], deskripsi: B('Siswa SDN Kalisari 02 Pagi berpartisipasi dalam lomba mewarnai tingkat kecamatan dan meraih juara 2.', 'SDN Kalisari 02 Pagi students participated in the sub-district coloring contest and won 2nd place.') },
+    { id: '3', judul: B('Peringatan Hari Kartini', 'Kartini Day Commemoration'), tanggal: '2026-04-01', tipe: 'foto', fotoUtama: 'https://images.unsplash.com/photo-1604881991720-f91add269bed?w=600&h=400&fit=crop', thumbnail: '', videoUrl: '', galeri: [], deskripsi: B('Peringatan Hari Kartini dengan kegiatan fashion show pakaian adat nusantara.', 'Kartini Day commemoration with traditional Indonesian costume fashion show.') },
+    { id: '4', judul: B('Kunjungan ke Museum Nasional', 'National Museum Visit'), tanggal: '2026-03-15', tipe: 'foto', fotoUtama: 'https://images.unsplash.com/photo-1588072432836-e10032774350?w=600&h=400&fit=crop', thumbnail: '', videoUrl: '', galeri: [], deskripsi: B('Kunjungan edukatif ke Museum Nasional untuk siswa kelas 5 dan 6.', 'Educational visit to the National Museum for grade 5 and 6 students.') },
+    { id: '5', judul: B('Pentas Seni Akhir Semester', 'End of Semester Art Performance'), tanggal: '2026-02-28', tipe: 'foto', fotoUtama: 'https://images.unsplash.com/photo-1514533212735-5df27d970db0?w=600&h=400&fit=crop', thumbnail: '', videoUrl: '', galeri: [], deskripsi: B('Penampilan tari, musik, dan drama dari seluruh kelas dalam acara pentas seni akhir semester.', 'Dance, music, and drama performances from all classes in the end of semester art event.') },
+    { id: '6', judul: B('Senam Pagi Bersama', 'Morning Exercise Together'), tanggal: '2026-04-05', tipe: 'foto', fotoUtama: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&h=400&fit=crop', thumbnail: '', videoUrl: '', galeri: [], deskripsi: B('Kegiatan senam pagi bersama setiap Jumat untuk menjaga kesehatan dan kebugaran siswa.', 'Morning exercise every Friday to maintain student health and fitness.') },
+  ],
+  prestasi: [
+    { id: 'p1', judul: B('Juara 1 Lomba Cerdas Cermat', '1st Place Quiz Competition'), tanggal: '2026-02-10', tipe: 'foto', fotoUtama: 'https://images.unsplash.com/photo-1546058256-47154de4046c?w=600&h=400&fit=crop', thumbnail: '', videoUrl: '', galeri: [], deskripsi: B('Tim cerdas cermat sekolah berhasil meraih juara 1 tingkat kecamatan.', 'Our quiz team won 1st place at the sub-district level.') },
   ],
   ekstrakurikuler: [
-    { id: '1', nama: B('Pramuka', 'Scouts'), foto: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=400&h=300&fit=crop', deskripsi: B('Kegiatan Pramuka bertujuan membentuk karakter siswa yang mandiri, disiplin, dan bertanggung jawab melalui berbagai kegiatan outdoor dan indoor.', 'Scouts activities aim to build independent, disciplined, and responsible student character through various outdoor and indoor activities.'), galeri: ['https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&h=400&fit=crop', 'https://images.unsplash.com/photo-1523289333742-be1143f6b766?w=600&h=400&fit=crop', 'https://images.unsplash.com/photo-1445307806294-bff7f67ff225?w=600&h=400&fit=crop'] },
-    { id: '2', nama: B('Pantomim', 'Pantomime'), foto: 'https://images.unsplash.com/photo-1503095396549-807759245b35?w=400&h=300&fit=crop', deskripsi: B('Seni pantomim melatih ekspresi tubuh dan kreativitas siswa dalam bercerita tanpa kata-kata.', 'Pantomime art trains body expression and student creativity in storytelling without words.'), galeri: ['https://images.unsplash.com/photo-1503095396549-807759245b35?w=600&h=400&fit=crop', 'https://images.unsplash.com/photo-1547153760-18fc86c0acf7?w=600&h=400&fit=crop'] },
-    { id: '3', nama: B('Tari', 'Dance'), foto: 'https://images.unsplash.com/photo-1547153760-18fc86c0acf7?w=400&h=300&fit=crop', deskripsi: B('Ekstrakurikuler tari melestarikan budaya Indonesia melalui tarian tradisional dan modern.', 'Dance extracurricular preserves Indonesian culture through traditional and modern dances.'), galeri: ['https://images.unsplash.com/photo-1547153760-18fc86c0acf7?w=600&h=400&fit=crop', 'https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=600&h=400&fit=crop'] },
-    { id: '4', nama: B('Qasidah', 'Qasidah'), foto: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400&h=300&fit=crop', deskripsi: B('Grup qasidah sekolah yang aktif tampil di berbagai acara keagamaan dan perayaan hari besar Islam.', 'School qasidah group actively performing at various religious events and Islamic holiday celebrations.'), galeri: ['https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=600&h=400&fit=crop', 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=600&h=400&fit=crop'] },
-    { id: '5', nama: B('Marawis', 'Marawis'), foto: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=300&fit=crop', deskripsi: B('Seni musik Marawis sebagai wadah siswa mengekspresikan bakat seni musik islami.', 'Marawis music art as a place for students to express their Islamic music talent.'), galeri: ['https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&h=400&fit=crop', 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=600&h=400&fit=crop'] },
-    { id: '6', nama: B('Menggambar', 'Drawing'), foto: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=400&h=300&fit=crop', deskripsi: B('Kegiatan menggambar dan melukis untuk mengembangkan kreativitas serta kemampuan seni rupa siswa.', 'Drawing and painting activities to develop creativity and student visual arts skills.'), galeri: ['https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=600&h=400&fit=crop', 'https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=600&h=400&fit=crop'] },
+    { id: '1', nama: B('Pramuka', 'Scouts'), foto: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=400&h=300&fit=crop', fotoUtama: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&h=400&fit=crop', deskripsi: B('Kegiatan Pramuka bertujuan membentuk karakter siswa yang mandiri, disiplin, dan bertanggung jawab melalui berbagai kegiatan outdoor dan indoor.', 'Scouts activities aim to build independent, disciplined, and responsible student character through various outdoor and indoor activities.'), galeri: ['https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&h=400&fit=crop', 'https://images.unsplash.com/photo-1523289333742-be1143f6b766?w=600&h=400&fit=crop', 'https://images.unsplash.com/photo-1445307806294-bff7f67ff225?w=600&h=400&fit=crop'], pelatih: [{ nama: B('Pak Budi', 'Mr. Budi'), foto: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face' }] },
+    { id: '2', nama: B('Pantomim', 'Pantomime'), foto: 'https://images.unsplash.com/photo-1503095396549-807759245b35?w=400&h=300&fit=crop', fotoUtama: 'https://images.unsplash.com/photo-1503095396549-807759245b35?w=600&h=400&fit=crop', deskripsi: B('Seni pantomim melatih ekspresi tubuh dan kreativitas siswa dalam bercerita tanpa kata-kata.', 'Pantomime art trains body expression and student creativity in storytelling without words.'), galeri: ['https://images.unsplash.com/photo-1503095396549-807759245b35?w=600&h=400&fit=crop'], pelatih: [] },
+    { id: '3', nama: B('Tari', 'Dance'), foto: 'https://images.unsplash.com/photo-1547153760-18fc86c0acf7?w=400&h=300&fit=crop', fotoUtama: 'https://images.unsplash.com/photo-1547153760-18fc86c0acf7?w=600&h=400&fit=crop', deskripsi: B('Ekstrakurikuler tari melestarikan budaya Indonesia melalui tarian tradisional dan modern.', 'Dance extracurricular preserves Indonesian culture through traditional and modern dances.'), galeri: ['https://images.unsplash.com/photo-1547153760-18fc86c0acf7?w=600&h=400&fit=crop'], pelatih: [] },
+    { id: '4', nama: B('Qasidah', 'Qasidah'), foto: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400&h=300&fit=crop', fotoUtama: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=600&h=400&fit=crop', deskripsi: B('Grup qasidah sekolah yang aktif tampil di berbagai acara keagamaan.', 'School qasidah group actively performing at various religious events.'), galeri: ['https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=600&h=400&fit=crop'], pelatih: [] },
+    { id: '5', nama: B('Marawis', 'Marawis'), foto: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=300&fit=crop', fotoUtama: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&h=400&fit=crop', deskripsi: B('Seni musik Marawis sebagai wadah siswa mengekspresikan bakat seni musik islami.', 'Marawis music art as a place for students to express their Islamic music talent.'), galeri: ['https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&h=400&fit=crop'], pelatih: [] },
+    { id: '6', nama: B('Menggambar', 'Drawing'), foto: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=400&h=300&fit=crop', fotoUtama: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=600&h=400&fit=crop', deskripsi: B('Kegiatan menggambar dan melukis untuk mengembangkan kreativitas serta kemampuan seni rupa siswa.', 'Drawing and painting activities to develop creativity and student visual arts skills.'), galeri: ['https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=600&h=400&fit=crop'], pelatih: [] },
   ],
   dokumen: [
     { id: '1', nama: B('Formulir Pendaftaran Siswa Baru 2026', 'New Student Registration Form 2026'), tanggal: '2026-01-15', url: '#' },
@@ -195,39 +230,28 @@ const defaultData: SchoolData = {
   ],
   profil: {
     sejarah: B(
-      'SDN Kalisari 02 Pagi didirikan pada tahun 1985 dan telah menjadi salah satu sekolah dasar unggulan di wilayah Kalisari, Jakarta Timur. Selama lebih dari 40 tahun, sekolah ini telah meluluskan ribuan siswa yang berhasil melanjutkan ke jenjang pendidikan yang lebih tinggi. Dengan fasilitas yang terus diperbarui dan tenaga pendidik yang profesional, SDN Kalisari 02 Pagi berkomitmen untuk memberikan pendidikan terbaik bagi anak-anak Indonesia.',
-      'SDN Kalisari 02 Pagi was founded in 1985 and has become one of the leading elementary schools in the Kalisari area of East Jakarta. For over 40 years, the school has graduated thousands of students who have successfully continued to higher education. With continuously updated facilities and professional educators, SDN Kalisari 02 Pagi is committed to providing the best education for Indonesian children.'
+      'SDN Kalisari 02 Pagi didirikan pada tahun 1985 dan telah menjadi salah satu sekolah dasar unggulan di wilayah Kalisari, Jakarta Timur.',
+      'SDN Kalisari 02 Pagi was founded in 1985 and has become one of the leading elementary schools in Kalisari, East Jakarta.'
     ),
-    visi: B(
-      'Mewujudkan peserta didik yang beriman, berakhlak mulia, cerdas, terampil, dan berwawasan lingkungan.',
-      'Building students who are faithful, noble, smart, skilled, and environmentally conscious.'
-    ),
+    visi: B('Mewujudkan peserta didik yang beriman, berakhlak mulia, cerdas, terampil, dan berwawasan lingkungan.', 'Building students who are faithful, noble, smart, skilled, and environmentally conscious.'),
     misi: [
       B('Melaksanakan pembelajaran yang aktif, kreatif, efektif, dan menyenangkan.', 'Implement active, creative, effective, and enjoyable learning.'),
-      B('Menumbuhkan semangat keunggulan dan budaya berprestasi.', 'Foster a spirit of excellence and a culture of achievement.'),
+      B('Menumbuhkan semangat keunggulan dan budaya berprestasi.', 'Foster a spirit of excellence and achievement.'),
       B('Membiasakan perilaku yang terpuji dan berakhlak mulia.', 'Cultivate praiseworthy and noble behavior.'),
-      B('Menciptakan lingkungan sekolah yang bersih, sehat, dan nyaman.', 'Create a clean, healthy, and comfortable school environment.'),
-      B('Mengembangkan potensi siswa melalui kegiatan ekstrakurikuler.', 'Develop student potential through extracurricular activities.'),
     ],
-    tujuan: B(
-      'Menghasilkan lulusan yang berkarakter, berprestasi, dan siap melanjutkan ke jenjang pendidikan yang lebih tinggi serta menjadi warga negara yang bertanggung jawab.',
-      'Produce graduates with strong character, achievements, and ready to continue to higher education while becoming responsible citizens.'
-    ),
+    tujuan: B('Menghasilkan lulusan yang berkarakter, berprestasi, dan siap melanjutkan pendidikan.', 'Produce graduates with strong character ready for higher education.'),
     fotoSekolah: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=800&h=400&fit=crop',
   },
   sambutan: {
     nama: 'Ibu Nuroyanah, M.Pd',
     foto: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=face',
     teks: B(
-      'Assalamualaikum Warahmatullahi Wabarakatuh.\n\nSelamat datang di website resmi SDN Kalisari 02 Pagi. Puji syukur kita panjatkan ke hadirat Allah SWT atas segala nikmat dan karunia-Nya.\n\nSDN Kalisari 02 Pagi berkomitmen untuk memberikan pendidikan yang berkualitas dan membentuk generasi penerus bangsa yang beriman, berilmu, dan berakhlak mulia. Kami percaya bahwa setiap anak memiliki potensi yang luar biasa dan tugas kami adalah membantu mereka menemukan dan mengembangkan potensi tersebut.\n\nSemoga website ini dapat menjadi sarana informasi dan komunikasi yang bermanfaat bagi seluruh warga sekolah dan masyarakat.\n\nWassalamualaikum Warahmatullahi Wabarakatuh.',
-      'Assalamualaikum Warahmatullahi Wabarakatuh.\n\nWelcome to the official website of SDN Kalisari 02 Pagi. We give thanks to Allah SWT for all His blessings and grace.\n\nSDN Kalisari 02 Pagi is committed to providing quality education and shaping the next generation that is faithful, knowledgeable, and noble. We believe every child has extraordinary potential and our duty is to help them discover and develop that potential.\n\nMay this website serve as a useful means of information and communication for all members of the school and community.\n\nWassalamualaikum Warahmatullahi Wabarakatuh.'
+      'Assalamualaikum Warahmatullahi Wabarakatuh.\n\nSelamat datang di website resmi SDN Kalisari 02 Pagi.',
+      'Assalamualaikum Warahmatullahi Wabarakatuh.\n\nWelcome to the official website of SDN Kalisari 02 Pagi.'
     ),
   },
   kontak: {
-    alamat: B(
-      'Jl. Kalisari Raya No. 2, Kelurahan Kalisari, Kecamatan Pasar Rebo, Jakarta Timur 13790',
-      'Jl. Kalisari Raya No. 2, Kalisari Sub-District, Pasar Rebo District, East Jakarta 13790'
-    ),
+    alamat: B('Jl. Kalisari Raya No. 2, Jakarta Timur 13790', 'Jl. Kalisari Raya No. 2, East Jakarta 13790'),
     telepon: '(021) 8401234',
     email: 'kalisari02pagi@gmail.com',
     instagram: 'https://www.instagram.com/sdnegerikalisari02pagi/',
@@ -272,23 +296,60 @@ interface SchoolContextType {
   updateKeunggulan: (keunggulan: Keunggulan[]) => void;
   updateHero: (hero: HeroData) => void;
   updatePegawai: (pegawai: Pegawai[]) => void;
-  updateKegiatan: (kegiatan: Kegiatan[]) => void;
+  updateBerita: (berita: Berita[]) => void;
+  updatePrestasi: (prestasi: Prestasi[]) => void;
   updateEkstrakurikuler: (ekskul: Ekstrakurikuler[]) => void;
   updateDokumen: (dokumen: Dokumen[]) => void;
   updateProfil: (profil: ProfilSekolah) => void;
   updateSambutan: (sambutan: Sambutan) => void;
   updateKontak: (kontak: KontakInfo) => void;
   updateFooter: (footer: FooterData) => void;
-  updateJabatanList: (jabatanList: string[]) => void;
+  updateJabatanList: (jabatanList: Bilingual[]) => void;
   updateSiswa: (siswa: KelasSiswa[]) => void;
 }
 
 const SchoolContext = createContext<SchoolContextType | undefined>(undefined);
 
-// Migrate legacy string fields to bilingual objects
+function migrateBerita(items: any[]): Berita[] {
+  return (items || []).map((k: any) => ({
+    id: k.id || Date.now().toString(),
+    judul: toBilingual(k.judul),
+    tanggal: k.tanggal || '',
+    tipe: (k.tipe === 'video' ? 'video' : 'foto') as ContentTipe,
+    fotoUtama: k.fotoUtama || k.foto || '',
+    thumbnail: k.thumbnail || '',
+    videoUrl: k.videoUrl || '',
+    galeri: Array.isArray(k.galeri) ? k.galeri : [],
+    deskripsi: toBilingual(k.deskripsi),
+    lastModified: k.lastModified,
+  }));
+}
+
 function migrate(data: any): SchoolData {
   const m = (v: any) => toBilingual(v);
   const mArr = (a: any[]) => Array.isArray(a) ? a.map(m) : [];
+
+  // Migrate jabatanList: support legacy string[] -> Bilingual[]
+  let jabatanList: Bilingual[];
+  if (Array.isArray(data.jabatanList) && data.jabatanList.length > 0) {
+    jabatanList = data.jabatanList.map((j: any) => toBilingual(j));
+  } else {
+    jabatanList = defaultData.jabatanList;
+  }
+
+  // Migrate berita from legacy kegiatan if not already present
+  let berita: Berita[];
+  if (Array.isArray(data.berita) && data.berita.length > 0) {
+    berita = migrateBerita(data.berita);
+  } else if (Array.isArray(data.kegiatan) && data.kegiatan.length > 0) {
+    berita = migrateBerita(data.kegiatan);
+  } else {
+    berita = defaultData.berita;
+  }
+
+  const prestasi = Array.isArray(data.prestasi) && data.prestasi.length > 0
+    ? migrateBerita(data.prestasi)
+    : defaultData.prestasi;
 
   return {
     ...defaultData,
@@ -305,11 +366,19 @@ function migrate(data: any): SchoolData {
     keunggulan: (data.keunggulan || defaultData.keunggulan).map((k: any) => ({
       ...k, title: m(k.title), desc: m(k.desc),
     })),
-    kegiatan: (data.kegiatan || defaultData.kegiatan).map((k: any) => ({
-      ...k, judul: m(k.judul), deskripsi: m(k.deskripsi),
-    })),
+    berita,
+    prestasi,
     ekstrakurikuler: (data.ekstrakurikuler || defaultData.ekstrakurikuler).map((e: any) => ({
-      ...e, nama: m(e.nama), deskripsi: m(e.deskripsi), galeri: e.galeri || [],
+      id: e.id,
+      nama: m(e.nama),
+      foto: e.foto || '',
+      fotoUtama: e.fotoUtama || e.foto || '',
+      deskripsi: m(e.deskripsi),
+      galeri: e.galeri || [],
+      pelatih: Array.isArray(e.pelatih)
+        ? e.pelatih.slice(0, 3).map((p: any) => ({ nama: toBilingual(p.nama), foto: p.foto || '' }))
+        : [],
+      lastModified: e.lastModified,
     })),
     dokumen: (data.dokumen || defaultData.dokumen).map((d: any) => ({
       ...d, nama: m(d.nama),
@@ -341,7 +410,7 @@ function migrate(data: any): SchoolData {
       tiktok: data.footer?.tiktok || '',
     },
     siswa: data.siswa || defaultData.siswa,
-    jabatanList: data.jabatanList || defaultData.jabatanList,
+    jabatanList,
     pegawai: data.pegawai || defaultData.pegawai,
     lastModified: data.lastModified || {},
   };
@@ -367,18 +436,19 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   const updateHero = (hero: HeroData) => setData(d => ({ ...d, hero, lastModified: { ...d.lastModified, hero: now() } }));
   const updateKeunggulan = (keunggulan: Keunggulan[]) => setData(d => ({ ...d, keunggulan, lastModified: { ...d.lastModified, keunggulan: now() } }));
   const updatePegawai = (pegawai: Pegawai[]) => setData(d => ({ ...d, pegawai, lastModified: { ...d.lastModified, pegawai: now() } }));
-  const updateKegiatan = (kegiatan: Kegiatan[]) => setData(d => ({ ...d, kegiatan, lastModified: { ...d.lastModified, kegiatan: now() } }));
+  const updateBerita = (berita: Berita[]) => setData(d => ({ ...d, berita, lastModified: { ...d.lastModified, berita: now() } }));
+  const updatePrestasi = (prestasi: Prestasi[]) => setData(d => ({ ...d, prestasi, lastModified: { ...d.lastModified, prestasi: now() } }));
   const updateEkstrakurikuler = (ekstrakurikuler: Ekstrakurikuler[]) => setData(d => ({ ...d, ekstrakurikuler, lastModified: { ...d.lastModified, ekstrakurikuler: now() } }));
   const updateDokumen = (dokumen: Dokumen[]) => setData(d => ({ ...d, dokumen, lastModified: { ...d.lastModified, dokumen: now() } }));
   const updateProfil = (profil: ProfilSekolah) => setData(d => ({ ...d, profil, lastModified: { ...d.lastModified, profil: now() } }));
   const updateSambutan = (sambutan: Sambutan) => setData(d => ({ ...d, sambutan, lastModified: { ...d.lastModified, sambutan: now() } }));
   const updateKontak = (kontak: KontakInfo) => setData(d => ({ ...d, kontak, lastModified: { ...d.lastModified, kontak: now() } }));
   const updateFooter = (footer: FooterData) => setData(d => ({ ...d, footer, lastModified: { ...d.lastModified, footer: now() } }));
-  const updateJabatanList = (jabatanList: string[]) => setData(d => ({ ...d, jabatanList }));
+  const updateJabatanList = (jabatanList: Bilingual[]) => setData(d => ({ ...d, jabatanList }));
   const updateSiswa = (siswa: KelasSiswa[]) => setData(d => ({ ...d, siswa, lastModified: { ...d.lastModified, siswa: now() } }));
 
   return (
-    <SchoolContext.Provider value={{ data, updateLogo, updateHero, updateKeunggulan, updatePegawai, updateKegiatan, updateEkstrakurikuler, updateDokumen, updateProfil, updateSambutan, updateKontak, updateFooter, updateJabatanList, updateSiswa }}>
+    <SchoolContext.Provider value={{ data, updateLogo, updateHero, updateKeunggulan, updatePegawai, updateBerita, updatePrestasi, updateEkstrakurikuler, updateDokumen, updateProfil, updateSambutan, updateKontak, updateFooter, updateJabatanList, updateSiswa }}>
       {children}
     </SchoolContext.Provider>
   );
