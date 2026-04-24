@@ -1,9 +1,9 @@
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import { NavLink } from '@/components/NavLink';
-import { LayoutDashboard, Users, Calendar, Star, FileText, School, MessageSquare, Phone, LogOut, GraduationCap, ImageIcon, LayoutTemplate, Award, UserCog, Shield } from 'lucide-react';
+import { LayoutDashboard, Users, Calendar, Star, FileText, School, MessageSquare, Phone, LogOut, GraduationCap, ImageIcon, LayoutTemplate, Award, UserCog, Shield, Trophy } from 'lucide-react';
 import { useSchool } from '@/contexts/SchoolContext';
 
 const menuItems = [
@@ -13,7 +13,8 @@ const menuItems = [
   { title: 'Keunggulan', url: '/admin/keunggulan', icon: Award },
   { title: 'Pegawai', url: '/admin/pegawai', icon: Users },
   { title: 'Siswa', url: '/admin/siswa', icon: UserCog },
-  { title: 'Kegiatan', url: '/admin/kegiatan', icon: Calendar },
+  { title: 'Berita', url: '/admin/berita', icon: Calendar },
+  { title: 'Prestasi', url: '/admin/prestasi', icon: Trophy },
   { title: 'Ekstrakurikuler', url: '/admin/ekstrakurikuler', icon: Star },
   { title: 'Dokumen', url: '/admin/dokumen', icon: FileText },
   { title: 'Profil Sekolah', url: '/admin/profil', icon: School },
