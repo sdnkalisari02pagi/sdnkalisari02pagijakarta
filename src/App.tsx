@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,7 +12,7 @@ import AdminLayout from "@/components/AdminLayout";
 
 import Index from "./pages/Index";
 import Profil from "./pages/Profil";
-import KegiatanPage from "./pages/KegiatanPage";
+import { BeritaPage, BeritaDetail, PrestasiPage, PrestasiDetail } from "./pages/ContentPages";
 import EkstrakurikulerPage from "./pages/EkstrakurikulerPage";
 import EkstrakurikulerDetail from "./pages/EkstrakurikulerDetail";
 import Layanan from "./pages/Layanan";
@@ -22,7 +22,8 @@ import NotFound from "./pages/NotFound";
 
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminPegawai from "./pages/admin/AdminPegawai";
-import AdminKegiatan from "./pages/admin/AdminKegiatan";
+import AdminBerita from "./pages/admin/AdminBerita";
+import AdminPrestasi from "./pages/admin/AdminPrestasi";
 import AdminEkskul from "./pages/admin/AdminEkskul";
 import AdminDokumen from "./pages/admin/AdminDokumen";
 import AdminProfil from "./pages/admin/AdminProfil";
@@ -34,7 +35,6 @@ import AdminKeunggulan from "./pages/admin/AdminKeunggulan";
 import AdminFooter from "./pages/admin/AdminFooter";
 import AdminSiswa from "./pages/admin/AdminSiswa";
 import AdminAkun from "./pages/admin/AdminAkun";
-
 
 const queryClient = new QueryClient();
 
@@ -51,10 +51,15 @@ const App = () => (
               <Route element={<PublicLayout />}>
                 <Route path="/" element={<Index />} />
                 <Route path="/profil" element={<Profil />} />
-                <Route path="/kegiatan" element={<KegiatanPage />} />
+                <Route path="/berita" element={<BeritaPage />} />
+                <Route path="/berita/:id" element={<BeritaDetail />} />
+                <Route path="/prestasi" element={<PrestasiPage />} />
+                <Route path="/prestasi/:id" element={<PrestasiDetail />} />
+                <Route path="/kegiatan" element={<Navigate to="/berita" replace />} />
                 <Route path="/ekstrakurikuler" element={<EkstrakurikulerPage />} />
                 <Route path="/ekstrakurikuler/:id" element={<EkstrakurikulerDetail />} />
-                <Route path="/layanan" element={<Layanan />} />
+                <Route path="/dokumen" element={<Layanan />} />
+                <Route path="/layanan" element={<Navigate to="/dokumen" replace />} />
                 <Route path="/kontak" element={<Kontak />} />
                 <Route path="/login" element={<Login />} />
               </Route>
@@ -65,7 +70,9 @@ const App = () => (
                 <Route path="keunggulan" element={<AdminKeunggulan />} />
                 <Route path="pegawai" element={<AdminPegawai />} />
                 <Route path="siswa" element={<AdminSiswa />} />
-                <Route path="kegiatan" element={<AdminKegiatan />} />
+                <Route path="berita" element={<AdminBerita />} />
+                <Route path="prestasi" element={<AdminPrestasi />} />
+                <Route path="kegiatan" element={<Navigate to="/admin/berita" replace />} />
                 <Route path="ekstrakurikuler" element={<AdminEkskul />} />
                 <Route path="dokumen" element={<AdminDokumen />} />
                 <Route path="profil" element={<AdminProfil />} />

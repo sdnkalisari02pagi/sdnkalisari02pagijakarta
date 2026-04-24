@@ -9,7 +9,9 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@
 import { Search, Plus, Pencil, Trash2, GripVertical, Settings } from 'lucide-react';
 import ImageUpload from '@/components/ImageUpload';
 import LastModifiedInfo from '@/components/LastModifiedInfo';
+import BilingualInput from '@/components/BilingualInput';
 import { toast } from '@/hooks/use-toast';
+import { tr, toBilingual } from '@/lib/i18n';
 
 export default function AdminPegawai() {
   const { data, updatePegawai, updateJabatanList } = useSchool();
@@ -19,7 +21,9 @@ export default function AdminPegawai() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [jabatanDialogOpen, setJabatanDialogOpen] = useState(false);
   const [form, setForm] = useState({ nama: '', jabatan: '', foto: '' });
-  const [newJabatan, setNewJabatan] = useState('');
+  const [newJabatan, setNewJabatan] = useState({ id: '', en: '' });
+  const [editJabIdx, setEditJabIdx] = useState<number | null>(null);
+  const [editJabValue, setEditJabValue] = useState({ id: '', en: '' });
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
@@ -30,6 +34,9 @@ export default function AdminPegawai() {
     return ms && mf;
   });
 
+  // jabatan ID values used by pegawai (we store p.jabatan as the ID-language string for backward compat)
+  const jabatanIdList = data.jabatanList.map(j => tr(j, 'id'));
+
   const handleDragStart = (index: number) => setDraggedIndex(index);
   const handleDragOver = (e: React.DragEvent, index: number) => { e.preventDefault(); setDragOverIndex(index); };
   const handleDrop = (dropIndex: number) => {
@@ -38,8 +45,7 @@ export default function AdminPegawai() {
     const [moved] = arr.splice(draggedIndex, 1);
     arr.splice(dropIndex, 0, moved);
     updatePegawai(arr);
-    setDraggedIndex(null);
-    setDragOverIndex(null);
+    setDraggedIndex(null); setDragOverIndex(null);
   };
   const handleDragEnd = () => { setDraggedIndex(null); setDragOverIndex(null); };
 
@@ -47,13 +53,15 @@ export default function AdminPegawai() {
   const openEdit = (p: Pegawai) => { setEditItem(p); setForm({ nama: p.nama, jabatan: p.jabatan, foto: p.foto }); setDialogOpen(true); };
 
   const handleSave = () => {
-    if (!form.nama || !form.jabatan) return;
-    const foto = form.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(form.nama)}&background=2563EB&color=fff&size=200`;
+    if (!form.nama || !form.jabatan || !form.foto) {
+      toast({ title: 'Gagal', description: 'Nama, jabatan & foto wajib diisi.', variant: 'destructive' });
+      return;
+    }
     const now = new Date().toISOString();
     if (editItem) {
-      updatePegawai(data.pegawai.map(p => p.id === editItem.id ? { ...p, ...form, foto, lastModified: now } : p));
+      updatePegawai(data.pegawai.map(p => p.id === editItem.id ? { ...p, ...form, lastModified: now } : p));
     } else {
-      updatePegawai([...data.pegawai, { id: Date.now().toString(), ...form, foto, lastModified: now }]);
+      updatePegawai([...data.pegawai, { id: Date.now().toString(), ...form, lastModified: now }]);
     }
     setDialogOpen(false);
   };
@@ -61,26 +69,43 @@ export default function AdminPegawai() {
   const handleDelete = (id: string) => { if (confirm('Hapus pegawai ini?')) updatePegawai(data.pegawai.filter(p => p.id !== id)); };
 
   const handleAddJabatan = () => {
-    const trimmed = newJabatan.trim();
-    if (!trimmed) return;
-    if (data.jabatanList.includes(trimmed)) {
+    const id = newJabatan.id.trim();
+    if (!id) return;
+    if (jabatanIdList.includes(id)) {
       toast({ title: 'Jabatan sudah ada', variant: 'destructive' });
       return;
     }
-    updateJabatanList([...data.jabatanList, trimmed]);
-    setNewJabatan('');
+    updateJabatanList([...data.jabatanList, { id, en: newJabatan.en.trim() }]);
+    setNewJabatan({ id: '', en: '' });
     toast({ title: 'Jabatan berhasil ditambahkan' });
   };
 
-  const handleDeleteJabatan = (jabatan: string) => {
-    const used = data.pegawai.some(p => p.jabatan === jabatan);
+  const handleSaveEditJabatan = () => {
+    if (editJabIdx === null) return;
+    const id = editJabValue.id.trim();
+    if (!id) return;
+    const oldId = tr(data.jabatanList[editJabIdx], 'id');
+    const newList = [...data.jabatanList];
+    newList[editJabIdx] = { id, en: editJabValue.en.trim() };
+    updateJabatanList(newList);
+    // sync pegawai whose jabatan matches old ID
+    if (oldId !== id) {
+      updatePegawai(data.pegawai.map(p => p.jabatan === oldId ? { ...p, jabatan: id } : p));
+    }
+    setEditJabIdx(null);
+    toast({ title: 'Jabatan diperbarui' });
+  };
+
+  const handleDeleteJabatan = (idx: number) => {
+    const j = tr(data.jabatanList[idx], 'id');
+    const used = data.pegawai.some(p => p.jabatan === j);
     if (used) {
-      toast({ title: 'Tidak dapat menghapus', description: 'Jabatan ini masih digunakan oleh pegawai.', variant: 'destructive' });
+      toast({ title: 'Tidak dapat menghapus', description: 'Jabatan ini masih digunakan.', variant: 'destructive' });
       return;
     }
-    if (confirm(`Hapus jabatan "${jabatan}"?`)) {
-      updateJabatanList(data.jabatanList.filter(j => j !== jabatan));
-      toast({ title: 'Jabatan berhasil dihapus' });
+    if (confirm(`Hapus jabatan "${j}"?`)) {
+      updateJabatanList(data.jabatanList.filter((_, i) => i !== idx));
+      toast({ title: 'Jabatan dihapus' });
     }
   };
 
@@ -93,25 +118,46 @@ export default function AdminPegawai() {
             <DialogTrigger asChild>
               <Button variant="outline" className="gap-2"><Settings className="w-4 h-4" /> Kelola Jabatan</Button>
             </DialogTrigger>
-            <DialogContent>
-              <DialogHeader><DialogTitle>Kelola Jabatan</DialogTitle></DialogHeader>
+            <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+              <DialogHeader><DialogTitle>Kelola Jabatan (Bilingual)</DialogTitle></DialogHeader>
               <div className="space-y-4">
-                <div className="flex gap-2">
-                  <Input placeholder="Nama jabatan baru..." value={newJabatan} onChange={e => setNewJabatan(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleAddJabatan()} />
-                  <Button onClick={handleAddJabatan}><Plus className="w-4 h-4" /></Button>
+                <div className="border rounded-lg p-3 space-y-3 bg-muted/30">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase">Tambah Jabatan</p>
+                  <BilingualInput value={newJabatan} onChange={setNewJabatan} placeholder="Nama jabatan" />
+                  <Button onClick={handleAddJabatan} size="sm" className="gap-1"><Plus className="w-3 h-3" /> Tambah</Button>
                 </div>
-                <div className="border rounded-lg divide-y max-h-64 overflow-y-auto">
-                  {data.jabatanList.map(j => {
-                    const used = data.pegawai.some(p => p.jabatan === j);
+
+                <div className="border rounded-lg divide-y max-h-96 overflow-y-auto">
+                  {data.jabatanList.map((j, idx) => {
+                    const idStr = tr(j, 'id');
+                    const enStr = tr(j, 'en');
+                    const used = data.pegawai.some(p => p.jabatan === idStr);
+                    const isEditing = editJabIdx === idx;
                     return (
-                      <div key={j} className="flex items-center justify-between px-3 py-2">
-                        <span className="text-sm">{j}</span>
-                        <div className="flex items-center gap-2">
-                          {used && <span className="text-xs text-muted-foreground">Digunakan</span>}
-                          <Button size="sm" variant="ghost" onClick={() => handleDeleteJabatan(j)} className={used ? 'text-muted-foreground' : 'text-destructive hover:text-destructive'}>
-                            <Trash2 className="w-3 h-3" />
-                          </Button>
-                        </div>
+                      <div key={idx} className="px-3 py-3 space-y-2">
+                        {isEditing ? (
+                          <>
+                            <BilingualInput value={editJabValue} onChange={setEditJabValue} />
+                            <div className="flex gap-2">
+                              <Button size="sm" onClick={handleSaveEditJabatan}>Simpan</Button>
+                              <Button size="sm" variant="ghost" onClick={() => setEditJabIdx(null)}>Batal</Button>
+                            </div>
+                          </>
+                        ) : (
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium">🇮🇩 {idStr}</p>
+                              <p className="text-xs text-muted-foreground">🇬🇧 {enStr || '—'}</p>
+                            </div>
+                            <div className="flex items-center gap-1 shrink-0">
+                              {used && <span className="text-xs text-muted-foreground">Digunakan</span>}
+                              <Button size="sm" variant="ghost" onClick={() => { setEditJabIdx(idx); setEditJabValue({ id: idStr, en: enStr }); }}><Pencil className="w-3 h-3" /></Button>
+                              <Button size="sm" variant="ghost" onClick={() => handleDeleteJabatan(idx)} className={used ? 'text-muted-foreground' : 'text-destructive hover:text-destructive'}>
+                                <Trash2 className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     );
                   })}
@@ -131,11 +177,14 @@ export default function AdminPegawai() {
                   <Select value={form.jabatan} onValueChange={v => setForm(f => ({ ...f, jabatan: v }))}>
                     <SelectTrigger><SelectValue placeholder="Pilih jabatan" /></SelectTrigger>
                     <SelectContent>
-                      {data.jabatanList.map(j => <SelectItem key={j} value={j}>{j}</SelectItem>)}
+                      {data.jabatanList.map((j, i) => {
+                        const idStr = tr(j, 'id');
+                        return <SelectItem key={i} value={idStr}>{idStr}</SelectItem>;
+                      })}
                     </SelectContent>
                   </Select>
                 </div>
-                <div><Label>Foto</Label><ImageUpload value={form.foto} onChange={url => setForm(f => ({ ...f, foto: url }))} placeholder /></div>
+                <div><Label>Foto</Label><ImageUpload value={form.foto} onChange={url => setForm(f => ({ ...f, foto: url }))} placeholder required recommendedSize="300×400 px (3:4)" /></div>
                 <Button onClick={handleSave} className="w-full">Simpan</Button>
               </div>
             </DialogContent>
@@ -149,7 +198,10 @@ export default function AdminPegawai() {
           <SelectTrigger className="w-full sm:w-48"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Semua</SelectItem>
-            {data.jabatanList.map(j => <SelectItem key={j} value={j}>{j}</SelectItem>)}
+            {data.jabatanList.map((j, i) => {
+              const idStr = tr(j, 'id');
+              return <SelectItem key={i} value={idStr}>{idStr}</SelectItem>;
+            })}
           </SelectContent>
         </Select>
       </div>
@@ -178,15 +230,10 @@ export default function AdminPegawai() {
                   onDragEnd={handleDragEnd}
                   className={`${!isFiltering ? 'cursor-grab active:cursor-grabbing' : ''} ${draggedIndex === realIndex ? 'opacity-50' : ''} ${dragOverIndex === realIndex && draggedIndex !== realIndex ? 'border-t-2 border-t-primary' : ''}`}
                 >
-                  {!isFiltering && (
-                    <TableCell className="w-10 text-muted-foreground"><GripVertical className="w-4 h-4" /></TableCell>
-                  )}
+                  {!isFiltering && (<TableCell className="w-10 text-muted-foreground"><GripVertical className="w-4 h-4" /></TableCell>)}
                   <TableCell>{realIndex + 1}</TableCell>
                   <TableCell><img src={p.foto} alt={p.nama} className="w-10 h-10 rounded-full object-cover" /></TableCell>
-                  <TableCell className="font-medium">
-                    {p.nama}
-                    {p.lastModified && <span className="block text-xs text-muted-foreground">Diubah: {new Date(p.lastModified).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>}
-                  </TableCell>
+                  <TableCell className="font-medium">{p.nama}</TableCell>
                   <TableCell>{p.jabatan}</TableCell>
                   <TableCell className="text-right space-x-1">
                     <Button size="sm" variant="outline" onClick={() => openEdit(p)}><Pencil className="w-3 h-3" /></Button>

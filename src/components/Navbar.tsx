@@ -8,38 +8,53 @@ import { Button } from '@/components/ui/button';
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [profilOpen, setProfilOpen] = useState(false);
+  const [kegiatanOpen, setKegiatanOpen] = useState(false);
   const location = useLocation();
   const { data } = useSchool();
   const { lang, setLang, t } = useLanguage();
   const isProfilActive = location.pathname.startsWith('/profil');
-
-  const menuItems = [
-    { label: t('nav_kegiatan'), path: '/kegiatan' },
-    { label: t('nav_ekstrakurikuler'), path: '/ekstrakurikuler' },
-    { label: t('nav_layanan'), path: '/layanan' },
-    { label: t('nav_kontak'), path: '/kontak' },
-  ];
+  const isKegiatanActive = location.pathname.startsWith('/ekstrakurikuler') || location.pathname.startsWith('/prestasi');
 
   const profilSubMenu = [
     { label: t('nav_sejarah'), path: '/profil?tab=sejarah' },
     { label: t('nav_visimisi'), path: '/profil?tab=visimisi' },
     { label: t('nav_pegawai'), path: '/profil?tab=pegawai' },
+    { label: t('nav_siswa'), path: '/profil?tab=siswa' },
+  ];
+
+  const kegiatanSubMenu = [
+    { label: t('nav_ekstrakurikuler'), path: '/ekstrakurikuler' },
+    { label: t('nav_prestasi'), path: '/prestasi' },
+  ];
+
+  const menuItems = [
+    { label: t('nav_berita'), path: '/berita', match: '/berita' },
+    { label: t('nav_dokumen'), path: '/dokumen', match: '/dokumen' },
+    { label: t('nav_kontak'), path: '/kontak', match: '/kontak' },
   ];
 
   const LangToggle = () => (
     <div className="flex items-center gap-0.5 bg-muted rounded-full p-0.5 text-xs font-medium">
-      <button
-        onClick={() => setLang('id')}
-        className={`px-2.5 py-1 rounded-full transition-colors ${lang === 'id' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-      >
-        ID
+      <button onClick={() => setLang('id')} className={`px-2.5 py-1 rounded-full transition-colors ${lang === 'id' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}>ID</button>
+      <button onClick={() => setLang('en')} className={`px-2.5 py-1 rounded-full transition-colors ${lang === 'en' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}>EN</button>
+    </div>
+  );
+
+  const Dropdown = ({ label, isActive, items }: { label: string; isActive: boolean; items: { label: string; path: string }[] }) => (
+    <div className="relative group">
+      <button className={`px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground inline-flex items-center gap-1 ${isActive ? 'bg-accent text-accent-foreground' : 'text-foreground'}`}>
+        {label}
+        <ChevronDown className="w-3.5 h-3.5 transition-transform group-hover:rotate-180" />
       </button>
-      <button
-        onClick={() => setLang('en')}
-        className={`px-2.5 py-1 rounded-full transition-colors ${lang === 'en' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-      >
-        EN
-      </button>
+      <div className="absolute top-full left-0 pt-1 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 z-50">
+        <div className="bg-popover border rounded-md shadow-lg py-1 min-w-[180px]">
+          {items.map(item => (
+            <Link key={item.path} to={item.path} className="block px-4 py-2 text-sm text-popover-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+              {item.label}
+            </Link>
+          ))}
+        </div>
+      </div>
     </div>
   );
 
@@ -58,33 +73,19 @@ export default function Navbar() {
         </Link>
 
         <div className="hidden md:flex items-center gap-1">
-          <div className="relative group">
-            <button
-              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground inline-flex items-center gap-1 ${isProfilActive ? 'bg-accent text-accent-foreground' : 'text-foreground'}`}
-            >
-              {t('nav_profil')}
-              <ChevronDown className="w-3.5 h-3.5 transition-transform group-hover:rotate-180" />
-            </button>
-            <div className="absolute top-full left-0 pt-1 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200">
-              <div className="bg-popover border rounded-md shadow-lg py-1 min-w-[160px]">
-                {profilSubMenu.map(item => (
-                  <Link key={item.path} to={item.path} className="block px-4 py-2 text-sm text-popover-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {menuItems.map(item => (
-            <Link key={item.path} to={item.path} className={`px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground ${location.pathname.startsWith(item.path) ? 'bg-accent text-accent-foreground' : 'text-foreground'}`}>
-              {item.label}
-            </Link>
-          ))}
-          <LangToggle />
-          <Link to="/login">
-            <Button size="sm" className="ml-2">{t('nav_login')}</Button>
+          <Dropdown label={t('nav_profil')} isActive={isProfilActive} items={profilSubMenu} />
+          <Link to="/berita" className={`px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground ${location.pathname.startsWith('/berita') ? 'bg-accent text-accent-foreground' : 'text-foreground'}`}>
+            {t('nav_berita')}
           </Link>
+          <Dropdown label={t('nav_kegiatan')} isActive={isKegiatanActive} items={kegiatanSubMenu} />
+          <Link to="/dokumen" className={`px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground ${location.pathname.startsWith('/dokumen') ? 'bg-accent text-accent-foreground' : 'text-foreground'}`}>
+            {t('nav_dokumen')}
+          </Link>
+          <Link to="/kontak" className={`px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground ${location.pathname.startsWith('/kontak') ? 'bg-accent text-accent-foreground' : 'text-foreground'}`}>
+            {t('nav_kontak')}
+          </Link>
+          <LangToggle />
+          <Link to="/login"><Button size="sm" className="ml-2">{t('nav_login')}</Button></Link>
         </div>
 
         <button className="md:hidden p-2" onClick={() => setOpen(!open)}>
@@ -94,28 +95,35 @@ export default function Navbar() {
 
       {open && (
         <div className="md:hidden border-t bg-background pb-4">
-          <button
-            onClick={() => setProfilOpen(!profilOpen)}
-            className={`w-full flex items-center justify-between px-6 py-3 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground ${isProfilActive ? 'bg-accent text-accent-foreground' : 'text-foreground'}`}
-          >
+          <button onClick={() => setProfilOpen(!profilOpen)} className={`w-full flex items-center justify-between px-6 py-3 text-sm font-medium transition-colors hover:bg-accent ${isProfilActive ? 'bg-accent text-accent-foreground' : 'text-foreground'}`}>
             {t('nav_profil')}
             <ChevronDown className={`w-4 h-4 transition-transform ${profilOpen ? 'rotate-180' : ''}`} />
           </button>
           {profilOpen && (
             <div className="bg-muted/50">
               {profilSubMenu.map(item => (
-                <Link key={item.path} to={item.path} onClick={() => { setOpen(false); setProfilOpen(false); }} className="block px-10 py-2.5 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-                  {item.label}
-                </Link>
+                <Link key={item.path} to={item.path} onClick={() => { setOpen(false); setProfilOpen(false); }} className="block px-10 py-2.5 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">{item.label}</Link>
               ))}
             </div>
           )}
 
-          {menuItems.map(item => (
-            <Link key={item.path} to={item.path} onClick={() => setOpen(false)} className={`block px-6 py-3 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground ${location.pathname.startsWith(item.path) ? 'bg-accent text-accent-foreground' : 'text-foreground'}`}>
-              {item.label}
-            </Link>
-          ))}
+          <Link to="/berita" onClick={() => setOpen(false)} className={`block px-6 py-3 text-sm font-medium hover:bg-accent ${location.pathname.startsWith('/berita') ? 'bg-accent text-accent-foreground' : 'text-foreground'}`}>{t('nav_berita')}</Link>
+
+          <button onClick={() => setKegiatanOpen(!kegiatanOpen)} className={`w-full flex items-center justify-between px-6 py-3 text-sm font-medium transition-colors hover:bg-accent ${isKegiatanActive ? 'bg-accent text-accent-foreground' : 'text-foreground'}`}>
+            {t('nav_kegiatan')}
+            <ChevronDown className={`w-4 h-4 transition-transform ${kegiatanOpen ? 'rotate-180' : ''}`} />
+          </button>
+          {kegiatanOpen && (
+            <div className="bg-muted/50">
+              {kegiatanSubMenu.map(item => (
+                <Link key={item.path} to={item.path} onClick={() => { setOpen(false); setKegiatanOpen(false); }} className="block px-10 py-2.5 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">{item.label}</Link>
+              ))}
+            </div>
+          )}
+
+          <Link to="/dokumen" onClick={() => setOpen(false)} className={`block px-6 py-3 text-sm font-medium hover:bg-accent ${location.pathname.startsWith('/dokumen') ? 'bg-accent text-accent-foreground' : 'text-foreground'}`}>{t('nav_dokumen')}</Link>
+          <Link to="/kontak" onClick={() => setOpen(false)} className={`block px-6 py-3 text-sm font-medium hover:bg-accent ${location.pathname.startsWith('/kontak') ? 'bg-accent text-accent-foreground' : 'text-foreground'}`}>{t('nav_kontak')}</Link>
+
           <div className="px-6 pt-3 flex items-center gap-3">
             <LangToggle />
             <Link to="/login" onClick={() => setOpen(false)} className="flex-1">

@@ -7,9 +7,11 @@ interface ImageUploadProps {
   value: string;
   onChange: (url: string) => void;
   placeholder?: boolean;
+  required?: boolean;
+  recommendedSize?: string;
 }
 
-export default function ImageUpload({ value, onChange, placeholder }: ImageUploadProps) {
+export default function ImageUpload({ value, onChange, placeholder, required, recommendedSize }: ImageUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
 
@@ -40,6 +42,8 @@ export default function ImageUpload({ value, onChange, placeholder }: ImageUploa
     if (file) processFile(file);
   };
 
+  const isMissing = required && !value;
+
   return (
     <div
       className="space-y-2"
@@ -59,18 +63,21 @@ export default function ImageUpload({ value, onChange, placeholder }: ImageUploa
         <div
           onClick={() => inputRef.current?.click()}
           className={`w-full min-h-[8rem] rounded-lg border-2 border-dashed flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors ${
-            dragOver ? 'border-primary bg-primary/5' : 'border-muted-foreground/40 hover:border-primary/60'
+            dragOver ? 'border-primary bg-primary/5' : isMissing ? 'border-destructive/60 hover:border-destructive' : 'border-muted-foreground/40 hover:border-primary/60'
           }`}
         >
           <Upload className="w-6 h-6 text-muted-foreground" />
           <p className="text-sm text-muted-foreground text-center">Seret foto ke sini atau klik untuk unggah</p>
+          {required && <p className="text-xs text-destructive font-medium">* Wajib diisi</p>}
         </div>
       )}
       <div>
         <Button type="button" variant="outline" size="sm" onClick={() => inputRef.current?.click()} className="gap-2">
           <Upload className="w-4 h-4" /> Unggah Foto
         </Button>
-        <p className="text-xs text-muted-foreground">Maksimal 2MB, format JPG/PNG</p>
+        <p className="text-xs text-muted-foreground">
+          Maksimal 2MB · JPG/PNG/WebP{recommendedSize ? ` · Disarankan: ${recommendedSize}` : ''}
+        </p>
       </div>
     </div>
   );

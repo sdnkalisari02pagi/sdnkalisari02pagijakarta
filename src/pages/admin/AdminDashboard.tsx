@@ -1,14 +1,15 @@
 import { useSchool } from '@/contexts/SchoolContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, Calendar, Star, FileText } from 'lucide-react';
+import { Users, Calendar, Star, FileText, Award } from 'lucide-react';
 
 export default function AdminDashboard() {
   const { data } = useSchool();
   const stats = [
     { label: 'Pegawai', value: data.pegawai.length, icon: Users, color: 'bg-primary' },
-    { label: 'Kegiatan', value: data.kegiatan.length, icon: Calendar, color: 'bg-secondary' },
-    { label: 'Ekstrakurikuler', value: data.ekstrakurikuler.length, icon: Star, color: 'bg-primary' },
-    { label: 'Dokumen', value: data.dokumen.length, icon: FileText, color: 'bg-secondary' },
+    { label: 'Berita', value: data.berita.length, icon: Calendar, color: 'bg-secondary' },
+    { label: 'Prestasi', value: data.prestasi.length, icon: Award, color: 'bg-primary' },
+    { label: 'Ekstrakurikuler', value: data.ekstrakurikuler.length, icon: Star, color: 'bg-secondary' },
+    { label: 'Dokumen', value: data.dokumen.length, icon: FileText, color: 'bg-primary' },
   ];
 
   return (
