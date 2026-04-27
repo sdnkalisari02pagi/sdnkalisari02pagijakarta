@@ -428,7 +428,25 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   const [data, setData] = useState<SchoolData>(loadData);
 
   useEffect(() => {
-    localStorage.setItem('school-data', JSON.stringify(data));
+    try {
+      localStorage.setItem('school-data', JSON.stringify(data));
+    } catch (err) {
+      console.error('Gagal menyimpan data ke localStorage:', err);
+      if (err instanceof DOMException && (err.name === 'QuotaExceededError' || err.code === 22)) {
+        // Defer toast to avoid render-phase side effects
+        setTimeout(() => {
+          try {
+            // Lazy import to avoid circular deps
+            const { toast } = require('@/hooks/use-toast');
+            toast({
+              title: 'Penyimpanan Penuh',
+              description: 'Data terlalu besar untuk disimpan di browser. Coba kompres/kurangi gambar atau hapus konten lama.',
+              variant: 'destructive',
+            });
+          } catch {}
+        }, 0);
+      }
+    }
   }, [data]);
 
   const now = () => new Date().toISOString();
