@@ -12,6 +12,7 @@ import GaleriUpload from '@/components/GaleriUpload';
 import LastModifiedInfo from '@/components/LastModifiedInfo';
 import BilingualInput from '@/components/BilingualInput';
 import { tr, toBilingual } from '@/lib/i18n';
+import { getVideoThumbnail } from '@/lib/videoEmbed';
 
 interface FormState {
   judul: { id: string; en: string };
