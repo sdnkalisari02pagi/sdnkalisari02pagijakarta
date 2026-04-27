@@ -245,8 +245,8 @@ export default function Profil() {
                     <tbody>
                       {siswaPaged.map((s) => (
                         <tr key={s.id} className="border-t">
-                          <td className="px-4 py-3 font-medium">{s.kelas}</td>
-                          <td className="px-4 py-3 text-right">{s.jumlah}</td>
+                          <td className="px-4 py-3 text-center">{s.kelas}</td>
+                          <td className="px-4 py-3 text-center">{s.jumlah}</td>
                         </tr>
                       ))}
                       {siswaPaged.length === 0 && (
