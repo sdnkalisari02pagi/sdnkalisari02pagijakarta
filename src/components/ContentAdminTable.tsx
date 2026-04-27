@@ -157,10 +157,12 @@ export default function ContentAdminTable({ title, items, onChange, lastModified
           </TableHeader>
           <TableBody>
             {filtered.map(k => {
-              const cardImg = k.tipe === 'video' ? k.thumbnail : k.fotoUtama;
+              const cardImg = k.tipe === 'video'
+                ? (k.thumbnail || getVideoThumbnail(k.videoUrl))
+                : k.fotoUtama;
               return (
                 <TableRow key={k.id}>
-                  <TableCell>{cardImg ? <img src={cardImg} alt={tr(k.judul, 'id')} className="w-10 h-10 rounded object-cover" /> : <div className="w-10 h-10 rounded bg-muted" />}</TableCell>
+                  <TableCell>{cardImg ? <img src={cardImg} alt={tr(k.judul, 'id')} className="w-10 h-10 rounded object-cover" /> : <div className="w-10 h-10 rounded bg-muted flex items-center justify-center">{k.tipe === 'video' ? <Video className="w-4 h-4 text-muted-foreground" /> : null}</div>}</TableCell>
                   <TableCell className="font-medium">
                     {tr(k.judul, 'id')}
                     {k.lastModified && <span className="block text-xs text-muted-foreground">Diubah: {new Date(k.lastModified).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>}
