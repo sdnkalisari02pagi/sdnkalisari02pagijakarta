@@ -123,6 +123,7 @@ export default function ContentAdminTable({ title, items, onChange, lastModified
                   <div>
                     <Label>Thumbnail (Card) <span className="text-muted-foreground text-xs">(opsional)</span></Label>
                     <ImageUpload value={form.thumbnail} onChange={url => setForm(f => ({ ...f, thumbnail: url }))} placeholder recommendedSize="1200×800 px (3:2)" />
+                    <p className="text-xs text-muted-foreground mt-1">Kosongkan untuk auto-ambil dari URL (YouTube & Google Drive). TikTok/Instagram akan menggunakan placeholder.</p>
                   </div>
                 </>
               )}
