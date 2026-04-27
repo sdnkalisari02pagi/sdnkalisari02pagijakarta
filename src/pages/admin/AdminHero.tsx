@@ -94,7 +94,7 @@ export default function AdminHero() {
           </div>
           <div>
             <p className="text-sm font-medium text-foreground mb-2">Tambah Gambar</p>
-            <ImageUpload value="" onChange={addImage} />
+            <ImageUpload value="" onChange={addImage} recommendedSize="1920×900 px (panorama 16:7.5)" />
           </div>
         </CardContent>
       </Card>
