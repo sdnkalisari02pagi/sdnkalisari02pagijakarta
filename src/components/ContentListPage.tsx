@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Search, ArrowRight, Play, Image as ImageIcon } from 'lucide-react';
 import FilterSidebar from '@/components/FilterSidebar';
 import PaginationBar, { PerPage, paginate } from '@/components/PaginationBar';
+import VideoCardThumbnail from '@/components/VideoCardThumbnail';
 
 interface Props {
   title: string;
@@ -76,21 +77,17 @@ export default function ContentListPage({ title, items, basePath, searchKey, emp
           <div className="flex-1 min-w-0">
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {paged.map(k => {
-                const cardImg = k.tipe === 'video' ? k.thumbnail : k.fotoUtama;
                 return (
                   <Card key={k.id} className="overflow-hidden hover:shadow-lg transition-shadow flex flex-col">
-                    <div className="relative">
-                      {cardImg ? (
-                        <img src={cardImg} alt={tr(k.judul, lang)} className="w-full h-48 object-cover" />
+                    {k.tipe === 'video' ? (
+                      <VideoCardThumbnail videoUrl={k.videoUrl} manualThumbnail={k.thumbnail} alt={tr(k.judul, lang)} />
+                    ) : (
+                      k.fotoUtama ? (
+                        <img src={k.fotoUtama} alt={tr(k.judul, lang)} className="w-full h-48 object-cover" />
                       ) : (
                         <div className="w-full h-48 bg-muted flex items-center justify-center"><ImageIcon className="w-10 h-10 text-muted-foreground" /></div>
-                      )}
-                      {k.tipe === 'video' && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                          <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center"><Play className="w-6 h-6 text-primary fill-primary ml-1" /></div>
-                        </div>
-                      )}
-                    </div>
+                      )
+                    )}
                     <CardContent className="pt-4 flex flex-col flex-1">
                       <p className="text-xs text-muted-foreground mb-1">{new Date(k.tanggal).toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' })}</p>
                       <h3 className="font-semibold text-foreground mb-2">{tr(k.judul, lang)}</h3>
