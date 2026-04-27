@@ -50,3 +50,33 @@ export function getVideoEmbed(url: string): VideoEmbed {
 
   return { platform, embedUrl, originalUrl: url };
 }
+
+/**
+ * Extract auto-thumbnail URL from a video URL.
+ * Returns null for platforms that don't expose public thumbnails (TikTok/Instagram).
+ */
+export function getVideoThumbnail(url: string): string | null {
+  if (!url) return null;
+  const platform = detectVideoPlatform(url);
+
+  try {
+    if (platform === 'youtube') {
+      let id = '';
+      if (url.includes('youtu.be/')) {
+        id = url.split('youtu.be/')[1].split(/[?&]/)[0];
+      } else if (url.includes('watch?v=')) {
+        id = new URL(url).searchParams.get('v') || '';
+      } else if (url.includes('/embed/')) {
+        id = url.split('/embed/')[1].split(/[?&]/)[0];
+      } else if (url.includes('/shorts/')) {
+        id = url.split('/shorts/')[1].split(/[?&]/)[0];
+      }
+      if (id) return `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+    } else if (platform === 'gdrive') {
+      const m = url.match(/\/file\/d\/([^/]+)/);
+      if (m) return `https://drive.google.com/thumbnail?id=${m[1]}&sz=w1200`;
+    }
+  } catch {}
+
+  return null;
+}
