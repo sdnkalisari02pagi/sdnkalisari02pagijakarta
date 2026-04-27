@@ -67,8 +67,8 @@ export default function ContentAdminTable({ title, items, onChange, lastModified
       alert('Foto Utama wajib diisi untuk tipe Foto.');
       return;
     }
-    if (form.tipe === 'video' && (!form.videoUrl || !form.thumbnail)) {
-      alert('URL Video & Thumbnail wajib diisi untuk tipe Video.');
+    if (form.tipe === 'video' && !form.videoUrl) {
+      alert('URL Video wajib diisi untuk tipe Video.');
       return;
     }
     const now = new Date().toISOString();
@@ -116,13 +116,13 @@ export default function ContentAdminTable({ title, items, onChange, lastModified
               ) : (
                 <>
                   <div>
-                    <Label>URL Video</Label>
-                    <Input value={form.videoUrl} onChange={e => setForm(f => ({ ...f, videoUrl: e.target.value }))} placeholder="YouTube / TikTok / Instagram / Google Drive" />
+                    <Label>URL Video <span className="text-destructive">*</span></Label>
+                    <Input value={form.videoUrl} onChange={e => setForm(f => ({ ...f, videoUrl: e.target.value }))} placeholder="YouTube / TikTok / Instagram / Google Drive" required />
                     <p className="text-xs text-muted-foreground mt-1">Pastikan video / postingan bersifat publik & mendukung embed.</p>
                   </div>
                   <div>
-                    <Label>Thumbnail (Card)</Label>
-                    <ImageUpload value={form.thumbnail} onChange={url => setForm(f => ({ ...f, thumbnail: url }))} placeholder required recommendedSize="1200×800 px (3:2)" />
+                    <Label>Thumbnail (Card) <span className="text-muted-foreground text-xs">(opsional)</span></Label>
+                    <ImageUpload value={form.thumbnail} onChange={url => setForm(f => ({ ...f, thumbnail: url }))} placeholder recommendedSize="1200×800 px (3:2)" />
                   </div>
                 </>
               )}
