@@ -59,8 +59,8 @@ export default function AdminProfil() {
           <BilingualInput value={form.tujuan} onChange={v => setForm(f => ({ ...f, tujuan: v }))} multiline rows={3} />
         </CardContent></Card>
         <Card><CardHeader><CardTitle className="text-lg">Foto Sekolah</CardTitle></CardHeader><CardContent>
-          <Label>Foto Sekolah</Label>
-          <ImageUpload value={form.fotoSekolah} onChange={url => setForm(f => ({ ...f, fotoSekolah: url }))} placeholder />
+          <Label>Foto Sekolah (Sejarah)</Label>
+          <ImageUpload value={form.fotoSekolah} onChange={url => setForm(f => ({ ...f, fotoSekolah: url }))} placeholder required recommendedSize="1600×900 px (16:9)" />
         </CardContent></Card>
         <Button onClick={handleSave}>Simpan Perubahan</Button>
       </div>
