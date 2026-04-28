@@ -12,7 +12,7 @@ export default function Kontak() {
   return (
     <div className="py-10">
       <div className="container mx-auto px-4 max-w-4xl">
-        <h1 className="text-3xl font-bold text-center mb-10 text-foreground">{t('page_kontak')}</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-10 text-foreground">{t('page_kontak')}</h1>
         <div className="grid md:grid-cols-2 gap-6">
           <div className="space-y-4">
             <Card><CardContent className="pt-6 flex items-start gap-3">

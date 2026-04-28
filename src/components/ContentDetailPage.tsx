@@ -39,7 +39,7 @@ export default function ContentDetailPage({ items, backPath }: Props) {
         </Link>
 
         <p className="text-sm text-muted-foreground mb-2">{new Date(item.tanggal).toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
-        <h1 className="text-3xl font-bold mb-6 text-foreground">{judul}</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-foreground break-words">{judul}</h1>
 
         {item.tipe === 'foto' ? (
           item.fotoUtama && (
