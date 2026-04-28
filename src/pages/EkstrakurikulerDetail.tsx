@@ -30,7 +30,7 @@ export default function EkstrakurikulerDetail() {
         <Link to="/ekstrakurikuler">
           <Button variant="ghost" className="mb-6 gap-2"><ArrowLeft className="w-4 h-4" /> {t('btn_kembali')}</Button>
         </Link>
-        <h1 className="text-3xl font-bold mb-4 text-foreground">{nama}</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold mb-4 text-foreground break-words">{nama}</h1>
         {heroImg && <img src={heroImg} alt={nama} className="w-full max-h-[480px] object-cover rounded-xl mb-6 shadow-md" />}
         <div className="text-muted-foreground mb-8 leading-relaxed">
           <LinkedText text={tr(ekskul.deskripsi, lang)} />

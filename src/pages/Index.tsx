@@ -46,13 +46,13 @@ export default function Index() {
     { key: 'founded', icon: Calendar, label: t('hero_stat_founded'), value: hero.tahunBerdiri, show: vis.founded },
   ];
   const stats = allStats.filter(s => s.show);
-  const gridColsMap: Record<number, string> = { 1: 'grid-cols-1', 2: 'grid-cols-2', 3: 'grid-cols-3', 4: 'grid-cols-4' };
+  const gridColsMap: Record<number, string> = { 1: 'grid-cols-1', 2: 'grid-cols-2', 3: 'grid-cols-2 sm:grid-cols-3', 4: 'grid-cols-2 sm:grid-cols-4' };
 
   const sambutanText = tr(data.sambutan.teks, lang);
 
   return (
     <div>
-      <section className="relative py-16 md:py-24 overflow-hidden hero-gradient">
+      <section className="relative py-12 md:py-24 overflow-hidden hero-gradient">
         <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-primary/10 blur-3xl animate-pulse" />
         <div className="absolute top-1/2 -right-32 w-80 h-80 rounded-full bg-secondary/10 blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
         <div className="absolute -bottom-16 left-1/3 w-64 h-64 rounded-full bg-primary/5 blur-2xl animate-pulse" style={{ animationDelay: '2s' }} />
@@ -61,8 +61,8 @@ export default function Index() {
           <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
             <div className="space-y-6 animate-fade-in-up">
               <div>
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-gradient mb-4">{tr(hero.judul, lang)}</h1>
-                <p className="text-lg text-muted-foreground leading-relaxed max-w-lg">{tr(hero.subtitle, lang)}</p>
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-gradient mb-4">{tr(hero.judul, lang)}</h1>
+                <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-lg">{tr(hero.subtitle, lang)}</p>
               </div>
 
               <div className="flex flex-wrap gap-3 pt-2">
@@ -111,14 +111,14 @@ export default function Index() {
         </div>
       </section>
 
-      <section className="py-20 bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10" ref={sambutanRef}>
+      <section className="py-12 md:py-20 bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10" ref={sambutanRef}>
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 text-foreground scroll-animate">{t('section_sambutan')}</h2>
-          <div className="flex flex-col md:flex-row items-center gap-10 max-w-4xl mx-auto scroll-animate delay-200">
-            <div className="w-56 h-64 rounded-xl overflow-hidden shadow-xl border-4 border-background shrink-0">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 md:mb-12 text-foreground scroll-animate">{t('section_sambutan')}</h2>
+          <div className="flex flex-col md:flex-row items-center gap-6 md:gap-10 max-w-4xl mx-auto scroll-animate delay-200">
+            <div className="w-48 h-56 sm:w-56 sm:h-64 rounded-xl overflow-hidden shadow-xl border-4 border-background shrink-0">
               <img src={data.sambutan.foto} alt={data.sambutan.nama} className="w-full h-full object-cover" />
             </div>
-            <div className="border-l-4 border-primary pl-6">
+            <div className="border-l-4 border-primary pl-4 sm:pl-6">
               <Quote className="w-8 h-8 text-secondary mb-3" />
               <h3 className="text-xl font-semibold text-primary mb-1">{data.sambutan.nama}</h3>
               <span className="inline-block bg-primary/15 text-primary text-xs font-medium px-3 py-1 rounded-full mb-4">{t('section_kepala_sekolah')}</span>
@@ -128,9 +128,9 @@ export default function Index() {
         </div>
       </section>
 
-      <section className="py-16" ref={keunggulanRef}>
+      <section className="py-12 md:py-16" ref={keunggulanRef}>
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-10 text-foreground scroll-animate">{t('section_keunggulan')}</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 md:mb-10 text-foreground scroll-animate">{t('section_keunggulan')}</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {data.keunggulan.map((item, i) => {
               const IconComp = iconMap[item.icon] || Star;
@@ -150,17 +150,17 @@ export default function Index() {
         </div>
       </section>
 
-      <section className="py-16 bg-gradient-to-br from-secondary/10 via-accent/10 to-primary/10" ref={ekstrakurikulerRef}>
+      <section className="py-12 md:py-16 bg-gradient-to-br from-secondary/10 via-accent/10 to-primary/10" ref={ekstrakurikulerRef}>
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-10 text-foreground scroll-animate">{t('section_ekstrakurikuler')}</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 md:mb-10 text-foreground scroll-animate">{t('section_ekstrakurikuler')}</h2>
           <div className="relative scroll-animate delay-200">
             {totalEkskulPages > 1 && (
               <>
-                <button onClick={() => setEkskulPage(p => (p - 1 + totalEkskulPages) % totalEkskulPages)} className="absolute -left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-primary/10 hover:bg-primary/20 text-primary transition-colors" aria-label="Previous"><ChevronLeft className="w-6 h-6" /></button>
-                <button onClick={() => setEkskulPage(p => (p + 1) % totalEkskulPages)} className="absolute -right-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-primary/10 hover:bg-primary/20 text-primary transition-colors" aria-label="Next"><ChevronRight className="w-6 h-6" /></button>
+                <button onClick={() => setEkskulPage(p => (p - 1 + totalEkskulPages) % totalEkskulPages)} className="absolute left-0 sm:-left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-primary/10 hover:bg-primary/20 text-primary transition-colors" aria-label="Previous"><ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" /></button>
+                <button onClick={() => setEkskulPage(p => (p + 1) % totalEkskulPages)} className="absolute right-0 sm:-right-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-primary/10 hover:bg-primary/20 text-primary transition-colors" aria-label="Next"><ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" /></button>
               </>
             )}
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 px-8">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 px-10 sm:px-8">
               {visibleEkskul.map((e) => {
                 const cardImg = e.fotoUtama || e.foto;
                 const pelatihNames = (e.pelatih || []).slice(0, 3).map(p => tr(p.nama, lang)).filter(Boolean);
@@ -187,9 +187,9 @@ export default function Index() {
         </div>
       </section>
 
-      <section className="py-16 bg-muted" ref={beritaRef}>
+      <section className="py-12 md:py-16 bg-muted" ref={beritaRef}>
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-10 text-foreground scroll-animate">{t('section_kegiatan_terbaru')}</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 md:mb-10 text-foreground scroll-animate">{t('section_kegiatan_terbaru')}</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.berita.slice(0, 6).map((k, i) => {
               const cardImg = k.tipe === 'video' ? k.thumbnail : k.fotoUtama;

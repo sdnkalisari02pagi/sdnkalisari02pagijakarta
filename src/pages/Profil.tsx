@@ -63,18 +63,18 @@ export default function Profil() {
   return (
     <div className="py-10">
       <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-bold text-center mb-8 text-foreground">{t("page_profil")}</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8 text-foreground">{t("page_profil")}</h1>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="max-w-6xl mx-auto">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="sejarah">{t("tab_sejarah")}</TabsTrigger>
-            <TabsTrigger value="visimisi">{t("tab_visimisi")}</TabsTrigger>
-            <TabsTrigger value="pegawai">{t("tab_pegawai")}</TabsTrigger>
-            <TabsTrigger value="siswa">{t("tab_siswa")}</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto">
+            <TabsTrigger value="sejarah" className="text-xs sm:text-sm py-2">{t("tab_sejarah")}</TabsTrigger>
+            <TabsTrigger value="visimisi" className="text-xs sm:text-sm py-2">{t("tab_visimisi")}</TabsTrigger>
+            <TabsTrigger value="pegawai" className="text-xs sm:text-sm py-2">{t("tab_pegawai")}</TabsTrigger>
+            <TabsTrigger value="siswa" className="text-xs sm:text-sm py-2">{t("tab_siswa")}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="sejarah" className="mt-6">
-            <img src={data.profil.fotoSekolah} alt="Sekolah" className="w-full h-64 object-cover rounded-lg mb-6" />
+            <img src={data.profil.fotoSekolah} alt="Sekolah" className="w-full h-48 sm:h-64 object-cover rounded-lg mb-6" />
             <div className="text-muted-foreground leading-relaxed">
               <LinkedText text={tr(data.profil.sejarah, lang)} />
             </div>
@@ -154,7 +154,7 @@ export default function Profil() {
               </FilterSidebar>
 
               <div className="flex-1 min-w-0">
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
                   {pegawaiPaged.map((p) => (
                     <Card
                       key={p.id}
