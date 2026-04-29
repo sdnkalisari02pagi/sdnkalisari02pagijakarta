@@ -64,14 +64,14 @@ const App = () => (
                 <Route path="/kontak" element={<Kontak />} />
                 <Route path="/login" element={<Login />} />
               </Route>
-              <Route>
-                  path="/admin"
-                  element={
-                    <ProtectedRoute>
-                      <AdminLayout />
-                    </ProtectedRoute>
-                  }
-                >
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute>
+                    <AdminLayout />
+                  </ProtectedRoute>
+                }
+              >
                 <Route index element={<AdminDashboard />} />
                 <Route path="logo" element={<AdminLogo />} />
                 <Route path="hero" element={<AdminHero />} />
