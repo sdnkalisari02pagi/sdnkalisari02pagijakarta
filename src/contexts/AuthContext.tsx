@@ -24,31 +24,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (username: string, password: string) => {
-    // 1. cek ke table akun
-    const { data, error } = await supabase.rpc('login_akun', {
-      input_username: username,
-      input_password: password,
-    });
+  const { data, error } = await supabase.rpc('login_akun', {
+    input_username: username,
+    input_password: password,
+  });
 
-    if (error || !data) {
-      return { ok: false, error: 'Username atau password salah' };
-    }
+  if (error || !data) {
+    return { ok: false, error: 'Username atau password salah' };
+  }
 
-    // 2. login ke supabase auth (buat session)
-    const { error: authError } = await supabase.auth.signInWithPassword({
-      email: 'admin@system.local',
-      password: 'Admin123!',
-    });
+  const { error: authError } = await supabase.auth.signInWithPassword({
+    email: username,
+    password: password,
+  });
 
-    if (authError) {
-      return { ok: false, error: 'Gagal membuat session' };
-    }
+  if (authError) {
+    console.log(authError);
+    return { ok: false, error: 'Gagal membuat session' };
+  }
 
-    setIsLoggedIn(true);
-    setUsername(username);
+  setIsLoggedIn(true);
+  setUsername(username);
 
-    return { ok: true };
-  };
+  return { ok: true };
+};
 
   const logout = async () => {
     await supabase.auth.signOut();
