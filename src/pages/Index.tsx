@@ -195,7 +195,7 @@ export default function Index() {
               const cardImg = k.tipe === 'video' ? k.thumbnail : k.fotoUtama;
               return (
                 <Link key={k.id} to={`/berita/${k.id}`}>
-                  <Card className={`overflow-hidden hover:shadow-lg transition-shadow scroll-animate delay-${(i + 1) * 100}`}>
+                  <Card className="overflow-hidden hover:shadow-lg transition-shadow scroll-animate" style={{ animationDelay: `${(i + 1) * 100}ms` }}>
                     <div className="relative">
                       {cardImg && <img src={cardImg} alt={tr(k.judul, lang)} className="w-full h-48 object-cover" />}
                       {k.tipe === 'video' && (
