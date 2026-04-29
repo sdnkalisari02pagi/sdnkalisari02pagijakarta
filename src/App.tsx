@@ -1,3 +1,4 @@
+import ProtectedRoute from "@/components/ProtectedRoute";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -63,7 +64,14 @@ const App = () => (
                 <Route path="/kontak" element={<Kontak />} />
                 <Route path="/login" element={<Login />} />
               </Route>
-              <Route path="/admin" element={<AdminLayout />}>
+              <Route
+                  path="/admin"
+                  element={
+                    <ProtectedRoute>
+                      <AdminLayout />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route index element={<AdminDashboard />} />
                 <Route path="logo" element={<AdminLogo />} />
                 <Route path="hero" element={<AdminHero />} />
