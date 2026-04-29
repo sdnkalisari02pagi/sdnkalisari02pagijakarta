@@ -68,3 +68,11 @@ export function useAuth() {
   if (!ctx) throw new Error('useAuth must be used within AuthProvider');
   return ctx;
 }
+
+export function validatePasswordStrength(password: string): string | null {
+  if (password.length < 8) return "Password minimal 8 karakter";
+  if (!/[A-Z]/.test(password)) return "Harus ada huruf besar (A-Z)";
+  if (!/[a-z]/.test(password)) return "Harus ada huruf kecil (a-z)";
+  if (!/[0-9]/.test(password)) return "Harus ada angka (0-9)";
+  return null;
+}
