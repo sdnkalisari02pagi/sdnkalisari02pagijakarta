@@ -36,8 +36,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // 2. login ke supabase auth (buat session)
     const { error: authError } = await supabase.auth.signInWithPassword({
-      email: 'username',
-      password: 'password',
+      email: 'admin@system.local',
+      password: 'Admin123!',
     });
 
     if (authError) {
