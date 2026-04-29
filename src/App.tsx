@@ -71,7 +71,7 @@ const App = () => (
                       <AdminLayout />
                     </ProtectedRoute>
                   }
-                />
+                >
                 <Route index element={<AdminDashboard />} />
                 <Route path="logo" element={<AdminLogo />} />
                 <Route path="hero" element={<AdminHero />} />
