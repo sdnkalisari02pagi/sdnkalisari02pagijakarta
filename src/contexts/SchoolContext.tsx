@@ -1,127 +1,29 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Bilingual, toBilingual } from '@/lib/i18n';
+import { Bilingual } from '@/lib/i18n';
 import { supabase } from '@/lib/supabase';
 
-/* ================= TYPES (TIDAK DIUBAH) ================= */
+/* ================= TYPES ================= */
 
-export interface Pelatih {
-  nama: Bilingual;
-  foto: any;
-}
-
-export interface Pegawai {
-  id: string;
-  nama: string;
-  jabatan: string;
-  foto: any;
-}
-
-export type ContentTipe = 'foto' | 'video';
-
-export interface Berita {
-  id: string;
-  judul: Bilingual;
-  tanggal: string;
-  tipe: ContentTipe;
-  fotoUtama: any;
-  thumbnail: any;
-  videoUrl: string;
-  galeri: any[];
-  deskripsi: Bilingual;
-}
-
-export type Prestasi = Berita;
-
-export interface Ekstrakurikuler {
-  id: string;
-  nama: Bilingual;
-  foto: any;
-  fotoUtama: any;
-  deskripsi: Bilingual;
-  galeri: any[];
-  pelatih: Pelatih[];
-}
-
-export interface Dokumen {
-  id: string;
-  nama: Bilingual;
-  tanggal: string;
-  url: string;
-}
-
-export interface Keunggulan {
-  id: string;
-  icon: string;
-  title: Bilingual;
-  desc: Bilingual;
-}
-
-export interface ProfilSekolah {
-  sejarah: Bilingual;
-  visi: Bilingual;
-  misi: Bilingual[];
-  tujuan: Bilingual;
-  fotoSekolah: any;
-}
-
-export interface Sambutan {
-  nama: string;
-  foto: any;
-  teks: Bilingual;
-}
-
-export interface KontakInfo {
-  alamat: Bilingual;
-  telepon: string;
-  email: string;
-  instagram: string;
-  youtube: string;
-  tiktok: string;
-  mapsEmbed: string;
-}
-
-export interface HeroData {
-  images: any[];
-  judul: Bilingual;
-  subtitle: Bilingual;
-  tahunBerdiri: string;
-  statsVisibility: {
-    staff: boolean;
-    students: boolean;
-    ekskul: boolean;
-    founded: boolean;
-  };
-}
-
-export interface FooterData {
-  namaSekolah: string;
-  deskripsi: Bilingual;
-  instagram: string;
-  youtube: string;
-  tiktok: string;
-  copyright: string;
-}
+const B = (id: string, en = ''): Bilingual => ({ id, en });
 
 export interface SchoolData {
   logo: any;
-  hero: HeroData;
-  keunggulan: Keunggulan[];
-  pegawai: Pegawai[];
-  jabatanList: Bilingual[];
-  berita: Berita[];
-  prestasi: Prestasi[];
-  ekstrakurikuler: Ekstrakurikuler[];
-  dokumen: Dokumen[];
-  profil: ProfilSekolah;
-  sambutan: Sambutan;
-  kontak: KontakInfo;
-  footer: FooterData;
+  hero: any;
+  keunggulan: any[];
+  pegawai: any[];
+  jabatanList: any[];
+  berita: any[];
+  prestasi: any[];
+  ekstrakurikuler: any[];
+  dokumen: any[];
+  profil: any;
+  sambutan: any;
+  kontak: any;
+  footer: any;
   siswa: any[];
 }
 
 /* ================= DEFAULT ================= */
-
-const B = (id: string, en = ''): Bilingual => ({ id, en });
 
 const defaultData: SchoolData = {
   logo: '',
@@ -171,14 +73,15 @@ const defaultData: SchoolData = {
 
 const SchoolContext = createContext<any>(undefined);
 
-/* ================= FETCH (ANTI CRASH TOTAL) ================= */
+/* ================= FETCH ================= */
 
 async function fetchAll(): Promise<SchoolData> {
   try {
     const [
       logo,
       hero, heroImages, keunggulan, pegawai, jabatan,
-      berita, beritaGaleri
+      berita, beritaGaleri,
+      footer
     ] = await Promise.all([
       supabase.from('logo').select('*').limit(1).maybeSingle(),
       supabase.from('hero').select('*').limit(1).maybeSingle(),
@@ -187,7 +90,8 @@ async function fetchAll(): Promise<SchoolData> {
       supabase.from('pegawai').select('*'),
       supabase.from('jabatan_list').select('*'),
       supabase.from('berita').select('*'),
-      supabase.from('berita_galeri').select('*')
+      supabase.from('berita_galeri').select('*'),
+      supabase.from('footer').select('*').limit(1).maybeSingle()
     ]);
 
     return {
@@ -209,9 +113,7 @@ async function fetchAll(): Promise<SchoolData> {
       } : defaultData.hero,
 
       keunggulan: keunggulan.data || [],
-
       pegawai: pegawai.data || [],
-
       jabatanList: jabatan.data?.map(j => B(j.nama_id || '', j.nama_en || '')) || [],
 
       berita: berita.data?.map(b => ({
@@ -226,8 +128,14 @@ async function fetchAll(): Promise<SchoolData> {
         deskripsi: B(b.deskripsi_id || '', b.deskripsi_en || '')
       })) || [],
 
-      // ⚠️ Footer fallback biar ga undefined
-      footer: defaultData.footer
+      footer: footer.data ? {
+        namaSekolah: footer.data.nama || '',
+        deskripsi: B(footer.data.deskripsi_id || '', footer.data.deskripsi_en || ''),
+        instagram: footer.data.instagram || '',
+        youtube: footer.data.youtube || '',
+        tiktok: footer.data.tiktok || '',
+        copyright: footer.data.copyright || ''
+      } : defaultData.footer
     };
 
   } catch (err) {
@@ -250,101 +158,8 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
       .catch(err => console.error(err));
   }, []);
 
-  /* ================= HELPER ================= */
-
-  const resetTable = async (table: string) => {
-    await supabase.from(table).delete().neq('id', '');
-  };
-
-  const uploadIfFile = async (fileOrUrl: any, bucket: string) => {
-    if (!fileOrUrl) return '';
-    if (typeof fileOrUrl === 'string') return fileOrUrl;
-
-    const file = fileOrUrl as File;
-    const name = `${Date.now()}-${file.name}`;
-
-    const { error } = await supabase.storage.from(bucket).upload(name, file);
-    if (error) return '';
-
-    const { data } = supabase.storage.from(bucket).getPublicUrl(name);
-    return data.publicUrl;
-  };
-
-  /* ================= UPDATE ================= */
-
-  const updateLogo = async (file: any) => {
-    const url = await uploadIfFile(file, 'logo');
-    await supabase.from('logo').upsert({ id: 1, url });
-    setData(d => ({ ...d, logo: url }));
-  };
-
-  const updatePegawai = async (items: Pegawai[]) => {
-    await resetTable('pegawai');
-
-    const processed = await Promise.all(items.map(async p => ({
-      ...p,
-      foto: await uploadIfFile(p.foto, 'pegawai')
-    })));
-
-    await supabase.from('pegawai').insert(processed);
-    setData(d => ({ ...d, pegawai: processed }));
-  };
-
-  const updateBerita = async (items: Berita[]) => {
-    await resetTable('berita');
-    await resetTable('berita_galeri');
-
-    const processed = await Promise.all(items.map(async b => ({
-      ...b,
-      fotoUtama: await uploadIfFile(b.fotoUtama, 'berita'),
-      galeri: await Promise.all(b.galeri.map(g => uploadIfFile(g, 'berita')))
-    })));
-
-    await supabase.from('berita').insert(
-      processed.map(b => ({
-        id: b.id,
-        judul_id: b.judul.id,
-        judul_en: b.judul.en,
-        tanggal: b.tanggal,
-        tipe: b.tipe,
-        foto: b.fotoUtama,
-        thumbnail: b.thumbnail,
-        video: b.videoUrl,
-        deskripsi_id: b.deskripsi.id,
-        deskripsi_en: b.deskripsi.en
-      }))
-    );
-
-    await supabase.from('berita_galeri').insert(
-      processed.flatMap(b =>
-        b.galeri.map(url => ({
-          berita_id: b.id,
-          url
-        }))
-      )
-    );
-
-    setData(d => ({ ...d, berita: processed }));
-  };
-
   return (
-    <SchoolContext.Provider value={{
-      data,
-      updateLogo,
-      updatePegawai,
-      updateBerita,
-      updatePrestasi: updateBerita,
-      updateHero: async () => {},
-      updateKeunggulan: async () => {},
-      updateEkstrakurikuler: async () => {},
-      updateDokumen: async () => {},
-      updateProfil: async () => {},
-      updateSambutan: async () => {},
-      updateKontak: async () => {},
-      updateFooter: async () => {},
-      updateJabatanList: async () => {},
-      updateSiswa: async () => {}
-    }}>
+    <SchoolContext.Provider value={{ data }}>
       {children}
     </SchoolContext.Provider>
   );
