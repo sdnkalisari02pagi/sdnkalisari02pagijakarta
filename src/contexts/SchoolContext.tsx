@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase.ts';
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Bilingual, toBilingual } from '@/lib/i18n';
 
