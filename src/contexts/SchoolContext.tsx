@@ -221,31 +221,16 @@ const defaultData: SchoolData = {
 
 const SchoolContext = createContext<any>(undefined);
 
-/* ================= FETCH (STABLE) ================= */
+/* ================= FETCH ================= */
 
 async function fetchAll(): Promise<SchoolData> {
   try {
     const [
-      hero,
-      heroImages,
-      keunggulan,
-      pegawai,
-      jabatan,
-      berita,
-      beritaGaleri,
-      prestasi,
-      prestasiGaleri,
-      ekskul,
-      ekskulGaleri,
-      pelatih,
-      dokumen,
-      profil,
-      profilMisi,
-      sambutan,
-      kontak,
-      sosial,
-      footer,
-      siswa
+      hero, heroImages, keunggulan, pegawai, jabatan,
+      berita, beritaGaleri, prestasi, prestasiGaleri,
+      ekskul, ekskulGaleri, pelatih,
+      dokumen, profil, profilMisi,
+      sambutan, kontak, sosial, footer, siswa
     ] = await Promise.all([
       supabase.from('hero').select('*').limit(1).maybeSingle(),
       supabase.from('hero_images').select('*'),
@@ -269,55 +254,36 @@ async function fetchAll(): Promise<SchoolData> {
       supabase.from('siswa').select('*')
     ]);
 
-    const heroData = hero.data || {};
-    const heroImagesData = heroImages.data || [];
-    const keunggulanData = keunggulan.data || [];
-    const pegawaiData = pegawai.data || [];
-    const jabatanData = jabatan.data || [];
-    const beritaData = berita.data || [];
-    const beritaGaleriData = beritaGaleri.data || [];
-    const prestasiData = prestasi.data || [];
-    const prestasiGaleriData = prestasiGaleri.data || [];
-    const ekskulData = ekskul.data || [];
-    const ekskulGaleriData = ekskulGaleri.data || [];
-    const pelatihData = pelatih.data || [];
-    const dokumenData = dokumen.data || [];
-    const profilData = profil.data || {};
-    const profilMisiData = profilMisi.data || [];
-    const sambutanData = sambutan.data || {};
-    const kontakData = kontak.data || {};
-    const sosialData = sosial.data || {};
-    const footerData = footer.data || {};
-    const siswaData = siswa.data || [];
+    const d = (v: any, def: any) => v ?? def;
 
     return {
       ...defaultData,
 
       hero: {
-        images: heroImagesData.map(i => i.url),
-        judul: B(heroData.judul_id, heroData.judul_en),
-        subtitle: B(heroData.subtitle_id, heroData.subtitle_en),
-        tahunBerdiri: heroData.tahun || '',
+        images: (heroImages.data || []).map(i => i.url),
+        judul: B(d(hero.data?.judul_id, ''), d(hero.data?.judul_en, '')),
+        subtitle: B(d(hero.data?.subtitle_id, ''), d(hero.data?.subtitle_en, '')),
+        tahunBerdiri: d(hero.data?.tahun, ''),
         statsVisibility: {
-          staff: heroData.staff ?? true,
-          students: heroData.students ?? true,
-          ekskul: heroData.ekskul ?? true,
-          founded: heroData.founded ?? true
+          staff: hero.data?.staff ?? true,
+          students: hero.data?.students ?? true,
+          ekskul: hero.data?.ekskul ?? true,
+          founded: hero.data?.founded ?? true
         }
       },
 
-      keunggulan: keunggulanData.map(k => ({
+      keunggulan: (keunggulan.data || []).map(k => ({
         id: k.id,
         icon: k.icon,
         title: B(k.title_id, k.title_en),
         desc: B(k.desc_id, k.desc_en)
       })),
 
-      pegawai: pegawaiData,
+      pegawai: pegawai.data || [],
 
-      jabatanList: jabatanData.map(j => B(j.nama_id, j.nama_en)),
+      jabatanList: (jabatan.data || []).map(j => B(j.nama_id, j.nama_en)),
 
-      berita: beritaData.map(b => ({
+      berita: (berita.data || []).map(b => ({
         id: b.id,
         judul: B(b.judul_id, b.judul_en),
         tanggal: b.tanggal,
@@ -325,13 +291,11 @@ async function fetchAll(): Promise<SchoolData> {
         fotoUtama: b.foto,
         thumbnail: b.thumbnail || '',
         videoUrl: b.video || '',
-        galeri: beritaGaleriData
-          .filter(g => g.berita_id === b.id)
-          .map(g => g.url),
+        galeri: (beritaGaleri.data || []).filter(g => g.berita_id === b.id).map(g => g.url),
         deskripsi: B(b.deskripsi_id, b.deskripsi_en)
       })),
 
-      prestasi: prestasiData.map(p => ({
+      prestasi: (prestasi.data || []).map(p => ({
         id: p.id,
         judul: B(p.judul_id, p.judul_en),
         tanggal: p.tanggal,
@@ -339,30 +303,24 @@ async function fetchAll(): Promise<SchoolData> {
         fotoUtama: p.foto,
         thumbnail: p.thumbnail || '',
         videoUrl: p.video || '',
-        galeri: prestasiGaleriData
-          .filter(g => g.prestasi_id === p.id)
-          .map(g => g.url),
+        galeri: (prestasiGaleri.data || []).filter(g => g.prestasi_id === p.id).map(g => g.url),
         deskripsi: B(p.deskripsi_id, p.deskripsi_en)
       })),
 
-      ekstrakurikuler: ekskulData.map(e => ({
+      ekstrakurikuler: (ekskul.data || []).map(e => ({
         id: e.id,
         nama: B(e.nama_id, e.nama_en),
         foto: e.foto,
         fotoUtama: e.foto_utama,
         deskripsi: B(e.deskripsi_id, e.deskripsi_en),
-        galeri: ekskulGaleriData
-          .filter(g => g.ekskul_id === e.id)
-          .map(g => g.url),
-        pelatih: pelatihData
-          .filter(p => p.ekskul_id === e.id)
-          .map(p => ({
-            nama: B(p.nama_id, p.nama_en),
-            foto: p.foto
-          }))
+        galeri: (ekskulGaleri.data || []).filter(g => g.ekskul_id === e.id).map(g => g.url),
+        pelatih: (pelatih.data || []).filter(p => p.ekskul_id === e.id).map(p => ({
+          nama: B(p.nama_id, p.nama_en),
+          foto: p.foto
+        }))
       })),
 
-      dokumen: dokumenData.map(d => ({
+      dokumen: (dokumen.data || []).map(d => ({
         id: d.id,
         nama: B(d.nama_id, d.nama_en),
         tanggal: d.tanggal,
@@ -370,46 +328,46 @@ async function fetchAll(): Promise<SchoolData> {
       })),
 
       profil: {
-        sejarah: B(profilData.sejarah_id, profilData.sejarah_en),
-        visi: B(profilData.visi_id, profilData.visi_en),
-        tujuan: B(profilData.tujuan_id, profilData.tujuan_en),
-        fotoSekolah: profilData.foto || '',
-        misi: profilMisiData.map(m => B(m.misi_id, m.misi_en))
+        sejarah: B(d(profil.data?.sejarah_id, ''), d(profil.data?.sejarah_en, '')),
+        visi: B(d(profil.data?.visi_id, ''), d(profil.data?.visi_en, '')),
+        tujuan: B(d(profil.data?.tujuan_id, ''), d(profil.data?.tujuan_en, '')),
+        fotoSekolah: d(profil.data?.foto, ''),
+        misi: (profilMisi.data || []).map(m => B(m.misi_id, m.misi_en))
       },
 
       sambutan: {
-        nama: sambutanData.nama || '',
-        foto: sambutanData.foto || '',
-        teks: B(sambutanData.teks_id, sambutanData.teks_en)
+        nama: sambutan.data?.nama || '',
+        foto: sambutan.data?.foto || '',
+        teks: B(sambutan.data?.teks_id, sambutan.data?.teks_en)
       },
 
       kontak: {
-        alamat: B(kontakData.alamat_id, kontakData.alamat_en),
-        telepon: kontakData.telepon || '',
-        email: kontakData.email || '',
-        instagram: kontakData.instagram || '',
-        youtube: kontakData.youtube || '',
-        tiktok: kontakData.tiktok || '',
-        mapsEmbed: kontakData.maps || ''
+        alamat: B(kontak.data?.alamat_id, kontak.data?.alamat_en),
+        telepon: kontak.data?.telepon || '',
+        email: kontak.data?.email || '',
+        instagram: kontak.data?.instagram || '',
+        youtube: kontak.data?.youtube || '',
+        tiktok: kontak.data?.tiktok || '',
+        mapsEmbed: kontak.data?.maps || ''
       },
 
       sosialMedia: {
-        instagram: sosialData.instagram || '',
-        youtube: sosialData.youtube || '',
-        tiktok: sosialData.tiktok || '',
-        email: sosialData.email || ''
+        instagram: sosial.data?.instagram || '',
+        youtube: sosial.data?.youtube || '',
+        tiktok: sosial.data?.tiktok || '',
+        email: sosial.data?.email || ''
       },
 
       footer: {
-        namaSekolah: footerData.nama || '',
-        deskripsi: B(footerData.deskripsi_id, footerData.deskripsi_en),
-        instagram: footerData.instagram || '',
-        youtube: footerData.youtube || '',
-        tiktok: footerData.tiktok || '',
-        copyright: footerData.copyright || ''
+        namaSekolah: footer.data?.nama || '',
+        deskripsi: B(footer.data?.deskripsi_id, footer.data?.deskripsi_en),
+        instagram: footer.data?.instagram || '',
+        youtube: footer.data?.youtube || '',
+        tiktok: footer.data?.tiktok || '',
+        copyright: footer.data?.copyright || ''
       },
 
-      siswa: siswaData,
+      siswa: siswa.data || [],
     };
 
   } catch (err) {
@@ -428,7 +386,23 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <SchoolContext.Provider value={{ data }}>
+    <SchoolContext.Provider value={{
+      data,
+      updateHero: async () => {},
+      updateKeunggulan: async () => {},
+      updatePegawai: async () => {},
+      updateBerita: async () => {},
+      updatePrestasi: async () => {},
+      updateEkstrakurikuler: async () => {},
+      updateDokumen: async () => {},
+      updateProfil: async () => {},
+      updateSambutan: async () => {},
+      updateKontak: async () => {},
+      updateFooter: async () => {},
+      updateJabatanList: async () => {},
+      updateSiswa: async () => {},
+      updateLogo: async () => {},
+    }}>
       {children}
     </SchoolContext.Provider>
   );
