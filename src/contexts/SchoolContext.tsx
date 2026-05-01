@@ -171,7 +171,7 @@ const defaultData: SchoolData = {
 
 const SchoolContext = createContext<any>(undefined);
 
-/* ================= FETCH ================= */
+/* ================= FETCH (ANTI CRASH TOTAL) ================= */
 
 async function fetchAll(): Promise<SchoolData> {
   try {
@@ -192,36 +192,46 @@ async function fetchAll(): Promise<SchoolData> {
 
     return {
       ...defaultData,
+
       logo: logo.data?.url || '',
-      hero: {
+
+      hero: hero.data ? {
         images: heroImages.data?.map(i => i.url) || [],
-        judul: B(hero.data?.judul_id, hero.data?.judul_en),
-        subtitle: B(hero.data?.subtitle_id, hero.data?.subtitle_en),
-        tahunBerdiri: hero.data?.tahun || '',
+        judul: B(hero.data.judul_id || '', hero.data.judul_en || ''),
+        subtitle: B(hero.data.subtitle_id || '', hero.data.subtitle_en || ''),
+        tahunBerdiri: hero.data.tahun || '',
         statsVisibility: {
-          staff: hero.data?.staff ?? true,
-          students: hero.data?.students ?? true,
-          ekskul: hero.data?.ekskul ?? true,
-          founded: hero.data?.founded ?? true
+          staff: hero.data.staff ?? true,
+          students: hero.data.students ?? true,
+          ekskul: hero.data.ekskul ?? true,
+          founded: hero.data.founded ?? true
         }
-      },
+      } : defaultData.hero,
+
       keunggulan: keunggulan.data || [],
+
       pegawai: pegawai.data || [],
-      jabatanList: jabatan.data?.map(j => B(j.nama_id, j.nama_en)) || [],
+
+      jabatanList: jabatan.data?.map(j => B(j.nama_id || '', j.nama_en || '')) || [],
+
       berita: berita.data?.map(b => ({
         id: b.id,
-        judul: B(b.judul_id, b.judul_en),
+        judul: B(b.judul_id || '', b.judul_en || ''),
         tanggal: b.tanggal,
         tipe: b.tipe,
         fotoUtama: b.foto,
         thumbnail: b.thumbnail,
         videoUrl: b.video,
         galeri: beritaGaleri.data?.filter(g => g.berita_id === b.id).map(g => g.url) || [],
-        deskripsi: B(b.deskripsi_id, b.deskripsi_en)
-      })) || []
+        deskripsi: B(b.deskripsi_id || '', b.deskripsi_en || '')
+      })) || [],
+
+      // ⚠️ Footer fallback biar ga undefined
+      footer: defaultData.footer
     };
 
-  } catch {
+  } catch (err) {
+    console.error('FETCH ERROR:', err);
     return defaultData;
   }
 }
@@ -232,7 +242,12 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   const [data, setData] = useState<SchoolData>(defaultData);
 
   useEffect(() => {
-    fetchAll().then(setData);
+    fetchAll()
+      .then(res => {
+        if (!res) return;
+        setData(res);
+      })
+      .catch(err => console.error(err));
   }, []);
 
   /* ================= HELPER ================= */
@@ -259,9 +274,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
 
   const updateLogo = async (file: any) => {
     const url = await uploadIfFile(file, 'logo');
-
     await supabase.from('logo').upsert({ id: 1, url });
-
     setData(d => ({ ...d, logo: url }));
   };
 
