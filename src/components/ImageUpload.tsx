@@ -4,14 +4,13 @@ import { Upload, X } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 interface ImageUploadProps {
-  value: string;
-  onChange: (url: string) => void;
-  placeholder?: boolean;
+  value: string; // URL / preview
+  onChange: (file: File | null) => void; // 🔥 sekarang File
   required?: boolean;
   recommendedSize?: string;
 }
 
-export default function ImageUpload({ value, onChange, placeholder, required, recommendedSize }: ImageUploadProps) {
+export default function ImageUpload({ value, onChange, required, recommendedSize }: ImageUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
 
@@ -20,13 +19,13 @@ export default function ImageUpload({ value, onChange, placeholder, required, re
       toast({ title: 'Gagal', description: 'Ukuran file maksimal 2MB.', variant: 'destructive' });
       return;
     }
+
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
       toast({ title: 'Gagal', description: 'Format file harus JPG, PNG, atau WebP.', variant: 'destructive' });
       return;
     }
-    const reader = new FileReader();
-    reader.onload = () => onChange(reader.result as string);
-    reader.readAsDataURL(file);
+
+    onChange(file); // 🔥 langsung kirim File
   };
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,34 +50,47 @@ export default function ImageUpload({ value, onChange, placeholder, required, re
       onDragLeave={() => setDragOver(false)}
       onDrop={handleDrop}
     >
-      <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleFile} />
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        className="hidden"
+        onChange={handleFile}
+      />
+
       {value ? (
         <div className="relative inline-block">
           <img src={value} alt="Preview" className="w-32 h-32 object-cover rounded-lg border" />
-          <button onClick={() => onChange('')} className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1">
+          <button
+            onClick={() => onChange(null)}
+            className="absolute -top-2 -right-2 bg-destructive text-white rounded-full p-1"
+          >
             <X className="w-3 h-3" />
           </button>
         </div>
       ) : (
         <div
           onClick={() => inputRef.current?.click()}
-          className={`w-full min-h-[8rem] rounded-lg border-2 border-dashed flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors ${
-            dragOver ? 'border-primary bg-primary/5' : isMissing ? 'border-destructive/60 hover:border-destructive' : 'border-muted-foreground/40 hover:border-primary/60'
+          className={`w-full min-h-[8rem] rounded-lg border-2 border-dashed flex flex-col items-center justify-center gap-2 cursor-pointer ${
+            dragOver
+              ? 'border-primary bg-primary/5'
+              : isMissing
+              ? 'border-destructive'
+              : 'border-muted-foreground/40 hover:border-primary/60'
           }`}
         >
           <Upload className="w-6 h-6 text-muted-foreground" />
-          <p className="text-sm text-muted-foreground text-center">Seret foto ke sini atau klik untuk unggah</p>
-          {required && <p className="text-xs text-destructive font-medium">* Wajib diisi</p>}
+          <p className="text-sm text-muted-foreground">Klik atau drag foto</p>
         </div>
       )}
-      <div>
-        <Button type="button" variant="outline" size="sm" onClick={() => inputRef.current?.click()} className="gap-2">
-          <Upload className="w-4 h-4" /> Unggah Foto
-        </Button>
-        <p className="text-xs text-muted-foreground">
-          Maksimal 2MB · JPG/PNG/WebP{recommendedSize ? ` · Disarankan: ${recommendedSize}` : ''}
-        </p>
-      </div>
+
+      <Button type="button" variant="outline" size="sm" onClick={() => inputRef.current?.click()}>
+        Upload
+      </Button>
+
+      <p className="text-xs text-muted-foreground">
+        Maks 2MB · JPG/PNG/WebP {recommendedSize && `· ${recommendedSize}`}
+      </p>
     </div>
   );
 }
