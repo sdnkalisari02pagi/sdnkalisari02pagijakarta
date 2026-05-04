@@ -28,24 +28,30 @@ const defaultHero: HeroData = {
 export default function AdminHero() {
   const { data, updateHero } = useSchool();
 
-  const [hero, setHero] = useState<HeroData>(data?.hero || defaultHero);
+  const [hero, setHero] = useState<HeroData>(defaultHero);
   const [files, setFiles] = useState<File[]>([]);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
+  // 🔥 FIX: amanin data dari context
   useEffect(() => {
     if (data?.hero) {
-      setHero(data.hero);
+      setHero({
+        ...defaultHero,
+        ...data.hero,
+        statsVisibility: {
+          ...defaultHero.statsVisibility,
+          ...(data.hero.statsVisibility || {})
+        }
+      });
     }
   }, [data?.hero]);
-
-  /* ================= UPLOAD ================= */
 
   const uploadToStorage = async (file: File) => {
     const fileName = `hero-${Date.now()}-${Math.random()}`;
 
     const { error } = await supabase.storage
-      .from('hero') // ⚠️ pastikan bucket ada
+      .from('hero')
       .upload(fileName, file);
 
     if (error) throw error;
@@ -57,8 +63,6 @@ export default function AdminHero() {
     return data.publicUrl;
   };
 
-  /* ================= ACTION ================= */
-
   const handleSave = async () => {
     if (!hero.images || hero.images.length === 0) {
       toast({ title: 'Gagal', description: 'Minimal 1 gambar hero.', variant: 'destructive' });
@@ -68,7 +72,6 @@ export default function AdminHero() {
     try {
       let finalImages = [...hero.images];
 
-      // upload file baru
       if (files.length > 0) {
         const uploadedUrls = await Promise.all(
           files.map(file => uploadToStorage(file))
@@ -80,12 +83,11 @@ export default function AdminHero() {
         ];
       }
 
-      const finalHero = {
+      updateHero({
         ...hero,
         images: finalImages
-      };
+      });
 
-      updateHero(finalHero);
       setFiles([]);
 
       toast({ title: 'Berhasil', description: 'Hero berhasil diperbarui.' });
@@ -96,12 +98,12 @@ export default function AdminHero() {
   };
 
   const addImage = (url: string) => {
-    if (url) {
-      setHero(h => ({
-        ...h,
-        images: [...(h.images || []), url]
-      }));
-    }
+    if (!url) return;
+
+    setHero(h => ({
+      ...h,
+      images: [...(h.images || []), url]
+    }));
   };
 
   const removeImage = (index: number) => {
@@ -127,13 +129,11 @@ export default function AdminHero() {
     setHero(h => ({
       ...h,
       statsVisibility: {
-        ...h.statsVisibility,
+        ...(h.statsVisibility || defaultHero.statsVisibility),
         [key]: val
       }
     }));
   };
-
-  /* ================= UI ================= */
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
@@ -160,7 +160,7 @@ export default function AdminHero() {
         </CardContent>
       </Card>
 
-      {/* STATS */}
+      {/* STATS (UI tetap, label diperbaiki) */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Statistik Hero</CardTitle>
@@ -175,12 +175,17 @@ export default function AdminHero() {
             />
           </div>
 
-          {['staff','students','ekskul','founded'].map((key: any) => (
-            <div key={key} className="flex justify-between">
-              <Label>{key}</Label>
+          {[
+            { key: 'staff', label: 'Guru & Staff' },
+            { key: 'students', label: 'Siswa (otomatis dari data Siswa)' },
+            { key: 'ekskul', label: 'Ekskul (otomatis dari data Ekstrakurikuler)' },
+            { key: 'founded', label: 'Berdiri (Tahun)' },
+          ].map(s => (
+            <div key={s.key} className="flex justify-between">
+              <Label>{s.label}</Label>
               <Switch
-                checked={hero.statsVisibility[key]}
-                onCheckedChange={v => setVis(key, v)}
+                checked={hero.statsVisibility?.[s.key] ?? true}
+                onCheckedChange={v => setVis(s.key as any, v)}
               />
             </div>
           ))}
