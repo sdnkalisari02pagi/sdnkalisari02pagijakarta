@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSchool } from '@/contexts/SchoolContext';
+import { supabase } from '@/lib/supabase';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -14,6 +15,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
   const { login } = useAuth();
   const { data } = useSchool();
   const navigate = useNavigate();
@@ -22,10 +24,26 @@ export default function Login() {
     e.preventDefault();
     setError('');
     setLoading(true);
-    const res = await login(username, password);
+
+    // 🔥 LOGIN KE SUPABASE
+    const { data: user, error } = await supabase
+      .from('akun')
+      .select('*')
+      .eq('username', username)
+      .eq('password', password)
+      .single();
+
     setLoading(false);
-    if (res.ok) navigate('/admin');
-    else setError(res.error || 'Login gagal');
+
+    if (error || !user) {
+      setError('Username atau password salah');
+      return;
+    }
+
+    // ✅ tetap pakai AuthContext biar struktur ga berubah
+    login(user.username);
+
+    navigate('/admin');
   };
 
   return (
@@ -41,21 +59,57 @@ export default function Login() {
           )}
           <CardTitle className="text-2xl">Login Admin</CardTitle>
         </CardHeader>
+
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            {error && <p className="text-sm text-destructive text-center">{error}</p>}
+
+            {error && (
+              <p className="text-sm text-destructive text-center">
+                {error}
+              </p>
+            )}
+
             <div className="space-y-2">
               <Label htmlFor="username">Username</Label>
-              <Input id="username" value={username} onChange={e => setUsername(e.target.value)} placeholder="Masukkan username" required autoComplete="username" />
+              <Input
+                id="username"
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+                placeholder="Masukkan username"
+                required
+                autoComplete="username"
+              />
             </div>
+
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Masukkan password" required autoComplete="current-password" />
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                placeholder="Masukkan password"
+                required
+                autoComplete="current-password"
+              />
             </div>
-            <Button type="submit" disabled={loading} className="w-full">{loading ? 'Memproses...' : 'Login'}</Button>
+
+            <Button type="submit" disabled={loading} className="w-full">
+              {loading ? 'Memproses...' : 'Login'}
+            </Button>
+
             <p className="text-center text-sm text-muted-foreground">
-              <button type="button" onClick={() => toast('Silakan hubungi administrator untuk mereset password Anda.')} className="text-primary hover:underline">Forgot Password?</button>
+              <button
+                type="button"
+                onClick={() =>
+                  toast('Silakan hubungi administrator untuk mereset password Anda.')
+                }
+                className="text-primary hover:underline"
+              >
+                Forgot Password?
+              </button>
             </p>
+
           </form>
         </CardContent>
       </Card>
