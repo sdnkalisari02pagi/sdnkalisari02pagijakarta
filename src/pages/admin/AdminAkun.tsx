@@ -38,36 +38,40 @@ export default function AdminAkun() {
 
     // VALIDASI
     if (form.newPassword !== form.confirmPassword) {
-      toast({ title: 'Gagal', description: 'Konfirmasi password tidak cocok', variant: 'destructive' });
+      toast({
+        title: 'Gagal',
+        description: 'Konfirmasi password tidak cocok',
+        variant: 'destructive'
+      });
       return;
     }
 
     const strErr = validatePasswordStrength(form.newPassword);
     if (strErr) {
-      toast({ title: 'Gagal', description: strErr, variant: 'destructive' });
+      toast({
+        title: 'Gagal',
+        description: strErr,
+        variant: 'destructive'
+      });
       return;
     }
 
     setLoading(true);
 
     try {
-      // 🔍 AMBIL DATA DARI TABLE akun
+      // 🔥 VALIDASI USER + PASSWORD LANGSUNG KE DB
       const { data, error: fetchError } = await supabase
         .from('akun')
         .select('*')
         .eq('username', username)
+        .eq('password', form.oldPassword)
         .single();
 
       if (fetchError || !data) {
-        throw new Error('User tidak ditemukan');
+        throw new Error('User tidak ditemukan atau password salah');
       }
 
-      // 🔐 CEK PASSWORD LAMA
-      if (data.password !== form.oldPassword) {
-        throw new Error('Password lama salah');
-      }
-
-      // ✏️ UPDATE KE SUPABASE
+      // ✏️ UPDATE DATA
       const { error: updateError } = await supabase
         .from('akun')
         .update({
