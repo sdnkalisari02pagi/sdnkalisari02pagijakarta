@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth, validatePasswordStrength } from '@/contexts/AuthContext';
+import { supabase } from '@/lib/supabase';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -8,9 +9,21 @@ import { toast } from '@/hooks/use-toast';
 import { Shield, Eye, EyeOff, CheckCircle2, XCircle } from 'lucide-react';
 
 export default function AdminAkun() {
-  const { username, changeCredentials, logout } = useAuth();
-  const [form, setForm] = useState({ oldPassword: '', newUsername: username, newPassword: '', confirmPassword: '' });
-  const [show, setShow] = useState({ old: false, new: false, confirm: false });
+  const { username, logout } = useAuth();
+
+  const [form, setForm] = useState({
+    oldPassword: '',
+    newUsername: username,
+    newPassword: '',
+    confirmPassword: ''
+  });
+
+  const [show, setShow] = useState({
+    old: false,
+    new: false,
+    confirm: false
+  });
+
   const [loading, setLoading] = useState(false);
 
   const checks = [
@@ -22,82 +35,190 @@ export default function AdminAkun() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // VALIDASI
     if (form.newPassword !== form.confirmPassword) {
-      toast({ title: 'Gagal', description: 'Konfirmasi password tidak cocok', variant: 'destructive' });
+      toast({
+        title: 'Gagal',
+        description: 'Konfirmasi password tidak cocok',
+        variant: 'destructive'
+      });
       return;
     }
+
     const strErr = validatePasswordStrength(form.newPassword);
-    if (strErr) { toast({ title: 'Gagal', description: strErr, variant: 'destructive' }); return; }
+    if (strErr) {
+      toast({
+        title: 'Gagal',
+        description: strErr,
+        variant: 'destructive'
+      });
+      return;
+    }
 
     setLoading(true);
-    const res = await changeCredentials(form.oldPassword, form.newUsername, form.newPassword);
-    setLoading(false);
-    if (!res.ok) {
-      toast({ title: 'Gagal', description: res.error, variant: 'destructive' });
-      return;
+
+    try {
+      // 🔍 CEK PASSWORD LAMA
+      const { data: adminData, error: fetchError } = await supabase
+        .from('admin')
+        .select('*')
+        .eq('username', username)
+        .single();
+
+      if (fetchError || !adminData) {
+        throw new Error('User tidak ditemukan');
+      }
+
+      if (adminData.password !== form.oldPassword) {
+        throw new Error('Password lama salah');
+      }
+
+      // ✏️ UPDATE DATA
+      const { error: updateError } = await supabase
+        .from('admin')
+        .update({
+          username: form.newUsername,
+          password: form.newPassword
+        })
+        .eq('username', username);
+
+      if (updateError) throw updateError;
+
+      toast({
+        title: 'Berhasil',
+        description: 'Kredensial diperbarui. Silakan login ulang.'
+      });
+
+      setTimeout(() => logout(), 1200);
+
+    } catch (err: any) {
+      toast({
+        title: 'Gagal',
+        description: err.message,
+        variant: 'destructive'
+      });
     }
-    toast({ title: 'Berhasil', description: 'Kredensial diperbarui. Silakan login ulang.' });
-    setTimeout(() => logout(), 1200);
+
+    setLoading(false);
   };
 
   return (
     <div className="max-w-2xl space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground flex items-center gap-2"><Shield className="w-6 h-6 text-primary" /> Akun Admin</h1>
-        <p className="text-sm text-muted-foreground">Ubah username dan password admin. Password disimpan dengan SHA-256 + salt.</p>
+        <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+          <Shield className="w-6 h-6 text-primary" /> Akun Admin
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          Ubah username dan password admin. Password disimpan dengan SHA-256 + salt.
+        </p>
       </div>
 
       <Card>
-        <CardHeader><CardTitle className="text-base">Username Saat Ini</CardTitle></CardHeader>
-        <CardContent><p className="font-mono text-foreground">{username}</p></CardContent>
+        <CardHeader>
+          <CardTitle className="text-base">Username Saat Ini</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="font-mono text-foreground">{username}</p>
+        </CardContent>
       </Card>
 
       <Card>
-        <CardHeader><CardTitle className="text-base">Ganti Kredensial</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle className="text-base">Ganti Kredensial</CardTitle>
+        </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
+
+            {/* PASSWORD LAMA */}
             <div>
               <Label>Password Lama</Label>
               <div className="relative">
-                <Input type={show.old ? 'text' : 'password'} value={form.oldPassword} onChange={e => setForm(f => ({ ...f, oldPassword: e.target.value }))} required autoComplete="current-password" />
-                <button type="button" onClick={() => setShow(s => ({ ...s, old: !s.old }))} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground">
+                <Input
+                  type={show.old ? 'text' : 'password'}
+                  value={form.oldPassword}
+                  onChange={e => setForm(f => ({ ...f, oldPassword: e.target.value }))}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShow(s => ({ ...s, old: !s.old }))}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground"
+                >
                   {show.old ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
+
+            {/* USERNAME BARU */}
             <div>
               <Label>Username Baru</Label>
-              <Input value={form.newUsername} onChange={e => setForm(f => ({ ...f, newUsername: e.target.value }))} minLength={3} required />
+              <Input
+                value={form.newUsername}
+                onChange={e => setForm(f => ({ ...f, newUsername: e.target.value }))}
+                minLength={3}
+                required
+              />
             </div>
+
+            {/* PASSWORD BARU */}
             <div>
               <Label>Password Baru</Label>
               <div className="relative">
-                <Input type={show.new ? 'text' : 'password'} value={form.newPassword} onChange={e => setForm(f => ({ ...f, newPassword: e.target.value }))} required autoComplete="new-password" />
-                <button type="button" onClick={() => setShow(s => ({ ...s, new: !s.new }))} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground">
+                <Input
+                  type={show.new ? 'text' : 'password'}
+                  value={form.newPassword}
+                  onChange={e => setForm(f => ({ ...f, newPassword: e.target.value }))}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShow(s => ({ ...s, new: !s.new }))}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground"
+                >
                   {show.new ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
+
               <ul className="mt-2 space-y-1">
                 {checks.map((c, i) => (
-                  <li key={i} className={`text-xs flex items-center gap-1.5 ${c.ok ? 'text-green-600 dark:text-green-500' : 'text-muted-foreground'}`}>
+                  <li key={i} className={`text-xs flex items-center gap-1.5 ${c.ok ? 'text-green-600' : 'text-muted-foreground'}`}>
                     {c.ok ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />} {c.label}
                   </li>
                 ))}
               </ul>
             </div>
+
+            {/* KONFIRMASI */}
             <div>
               <Label>Konfirmasi Password Baru</Label>
               <div className="relative">
-                <Input type={show.confirm ? 'text' : 'password'} value={form.confirmPassword} onChange={e => setForm(f => ({ ...f, confirmPassword: e.target.value }))} required autoComplete="new-password" />
-                <button type="button" onClick={() => setShow(s => ({ ...s, confirm: !s.confirm }))} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground">
+                <Input
+                  type={show.confirm ? 'text' : 'password'}
+                  value={form.confirmPassword}
+                  onChange={e => setForm(f => ({ ...f, confirmPassword: e.target.value }))}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShow(s => ({ ...s, confirm: !s.confirm }))}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground"
+                >
                   {show.confirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
+
               {form.confirmPassword && form.newPassword !== form.confirmPassword && (
-                <p className="text-xs text-destructive mt-1">Password tidak cocok</p>
+                <p className="text-xs text-destructive mt-1">
+                  Password tidak cocok
+                </p>
               )}
             </div>
-            <Button type="submit" disabled={loading} className="w-full">{loading ? 'Menyimpan...' : 'Simpan Perubahan'}</Button>
+
+            <Button type="submit" disabled={loading} className="w-full">
+              {loading ? 'Menyimpan...' : 'Simpan Perubahan'}
+            </Button>
+
           </form>
         </CardContent>
       </Card>
