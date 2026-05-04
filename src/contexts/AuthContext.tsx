@@ -3,6 +3,7 @@ import React, { createContext, useContext, useEffect, useState, ReactNode } from
 interface AuthContextType {
   isLoggedIn: boolean;
   username: string | null;
+  loading: boolean; // 🔥 tambah ini
   login: (username: string) => Promise<{ ok: boolean }>;
   logout: () => Promise<void>;
 }
@@ -12,14 +13,18 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true); // 🔥 default true
 
   // 🔥 cek login dari localStorage
   useEffect(() => {
     const savedUser = localStorage.getItem('admin_user');
+
     if (savedUser) {
       setIsLoggedIn(true);
       setUsername(savedUser);
     }
+
+    setLoading(false); // 🔥 selesai cek
   }, []);
 
   const login = async (username: string) => {
@@ -36,7 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, username, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, username, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
