@@ -16,7 +16,7 @@ export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { login } = useAuth(); // 🔥 sekarang dipakai
+  const { login } = useAuth(); // 🔥 dipakai sekarang
   const { data } = useSchool();
   const navigate = useNavigate();
 
@@ -29,13 +29,14 @@ export default function Login() {
     const p = password.trim();
 
     try {
-      const { data: users, error: fetchError } = await supabase
+      // 🔍 ambil user dari Supabase
+      const { data: users, error } = await supabase
         .from('akun')
         .select('*')
         .eq('username', u)
         .limit(1);
 
-      if (fetchError) throw fetchError;
+      if (error) throw error;
 
       if (!users || users.length === 0) {
         setError('User tidak ditemukan');
@@ -45,18 +46,20 @@ export default function Login() {
 
       const user = users[0];
 
+      // 🔐 cek password
       if (user.password !== p) {
         setError('Password salah');
         setLoading(false);
         return;
       }
 
-      // 🔥 FIX UTAMA: pakai AuthContext
+      // 🔥 WAJIB: update AuthContext
       await login(user.username);
 
+      // 🚀 redirect
       navigate('/admin');
 
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
       setError('Terjadi kesalahan saat login');
     }
@@ -80,6 +83,7 @@ export default function Login() {
 
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
+
             {error && (
               <p className="text-sm text-destructive text-center">
                 {error}
@@ -94,7 +98,6 @@ export default function Login() {
                 onChange={e => setUsername(e.target.value)}
                 placeholder="Masukkan username"
                 required
-                autoComplete="username"
               />
             </div>
 
@@ -107,7 +110,6 @@ export default function Login() {
                 onChange={e => setPassword(e.target.value)}
                 placeholder="Masukkan password"
                 required
-                autoComplete="current-password"
               />
             </div>
 
@@ -126,6 +128,7 @@ export default function Login() {
                 Forgot Password?
               </button>
             </p>
+
           </form>
         </CardContent>
       </Card>
