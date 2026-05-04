@@ -11,35 +11,33 @@ import { useState, useEffect } from 'react';
 export default function AdminLogo() {
   const { data, updateLogo } = useSchool();
   const [logo, setLogo] = useState(data.logo || '');
+  const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState(data.logo || '');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchLogo();
   }, []);
 
-  // 🔥 ambil logo dari DB
   const fetchLogo = async () => {
-    const { data: dbData, error } = await supabase
+    const { data: dbData } = await supabase
       .from('logo')
       .select('*')
       .eq('id', 1)
       .maybeSingle();
 
-    if (!error && dbData) {
-      setLogo(dbData.url || '');
-
-      if (typeof updateLogo === 'function') {
-        updateLogo(dbData.url || '');
-      }
+    if (dbData) {
+      setLogo(dbData.url);
+      setPreview(dbData.url);
+      updateLogo?.(dbData.url);
     }
   };
 
-  // 🔥 upload ke Supabase Storage
   const uploadToStorage = async (file: File) => {
     const fileName = `logo-${Date.now()}`;
 
     const { error } = await supabase.storage
-      .from('logo') // bucket name
+      .from('logo')
       .upload(fileName, file);
 
     if (error) throw error;
@@ -51,161 +49,89 @@ export default function AdminLogo() {
     return data.publicUrl;
   };
 
-  // 🔥 SAVE
   const handleSave = async () => {
-    if (!logo) {
-      toast({
-        title: 'Gagal',
-        description: 'Logo wajib diunggah.',
-        variant: 'destructive'
-      });
+    if (!file && !logo) {
+      toast({ title: 'Gagal', description: 'Upload dulu logo', variant: 'destructive' });
       return;
     }
 
     setLoading(true);
 
     try {
-      const { error } = await supabase
-        .from('logo')
-        .upsert({
-          id: 1,
-          url: logo
-        });
+      let finalUrl = logo;
 
-      if (error) throw error;
-
-      if (typeof updateLogo === 'function') {
-        updateLogo(logo);
+      if (file) {
+        finalUrl = await uploadToStorage(file);
       }
 
-      toast({
-        title: 'Berhasil',
-        description: 'Logo berhasil disimpan.'
+      await supabase.from('logo').upsert({
+        id: 1,
+        url: finalUrl
       });
 
+      setLogo(finalUrl);
+      setFile(null);
+      updateLogo?.(finalUrl);
+
+      toast({ title: 'Berhasil', description: 'Logo disimpan' });
+
     } catch (err: any) {
-      console.error(err);
-      toast({
-        title: 'Gagal',
-        description: err.message || 'Terjadi kesalahan',
-        variant: 'destructive'
-      });
+      toast({ title: 'Error', description: err.message, variant: 'destructive' });
     }
 
     setLoading(false);
   };
 
-  // 🗑 DELETE
   const handleDelete = async () => {
-    setLoading(true);
-
-    try {
-      const { error } = await supabase
-        .from('logo')
-        .delete()
-        .eq('id', 1);
-
-      if (error) throw error;
-
-      setLogo('');
-
-      if (typeof updateLogo === 'function') {
-        updateLogo('');
-      }
-
-      toast({
-        title: 'Berhasil',
-        description: 'Logo berhasil dihapus.'
-      });
-
-    } catch (err: any) {
-      console.error(err);
-      toast({
-        title: 'Gagal',
-        description: err.message || 'Terjadi kesalahan',
-        variant: 'destructive'
-      });
-    }
-
-    setLoading(false);
+    await supabase.from('logo').delete().eq('id', 1);
+    setLogo('');
+    setPreview('');
+    setFile(null);
+    updateLogo?.('');
   };
 
   return (
     <div className="max-w-xl">
-      <h1 className="text-2xl font-bold text-foreground mb-2">
-        Logo Website
-      </h1>
+      <h1 className="text-2xl font-bold mb-2">Logo Website</h1>
 
       <LastModifiedInfo timestamp={data.lastModified?.logo} />
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Logo Saat Ini</CardTitle>
+          <CardTitle>Logo</CardTitle>
         </CardHeader>
 
         <CardContent className="space-y-4">
-          <div className="flex items-center gap-4">
-            {logo ? (
-              <img
-                src={logo}
-                alt="Logo"
-                className="w-16 h-16 rounded-full object-cover border"
-              />
-            ) : (
-              <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center">
-                <GraduationCap className="w-8 h-8 text-primary-foreground" />
-              </div>
-            )}
-            <p className="text-sm text-muted-foreground">
-              {logo ? 'Logo sudah diunggah' : 'Belum ada logo'}
-            </p>
-          </div>
+          {preview ? (
+            <img src={preview} className="w-16 h-16 rounded-full object-cover" />
+          ) : (
+            <GraduationCap />
+          )}
 
           <ImageUpload
-            value={logo}
-            onChange={async (file: File) => {
-              try {
-                setLoading(true);
-
-                const url = await uploadToStorage(file);
-
-                setLogo(url); // 🔥 simpan URL, bukan base64
-
-              } catch (err) {
-                console.error(err);
-                toast({
-                  title: 'Gagal upload',
-                  description: 'Upload gambar gagal',
-                  variant: 'destructive'
-                });
+            value={preview}
+            onChange={(f) => {
+              if (!f) {
+                setPreview('');
+                setFile(null);
+                return;
               }
 
-              setLoading(false);
+              setFile(f);
+              setPreview(URL.createObjectURL(f));
             }}
-            placeholder
-            required
-            recommendedSize="200×200 px (kotak)"
           />
 
           <div className="flex gap-2">
-            <Button
-              onClick={handleSave}
-              className="w-full gap-2"
-              disabled={loading}
-            >
+            <Button onClick={handleSave} disabled={loading}>
               <Save className="w-4 h-4" />
-              {loading ? 'Menyimpan...' : 'Simpan'}
+              {loading ? 'Saving...' : 'Save'}
             </Button>
 
-            <Button
-              onClick={handleDelete}
-              variant="destructive"
-              disabled={loading}
-            >
-              <Trash2 className="w-4 h-4" />
+            <Button variant="destructive" onClick={handleDelete}>
+              <Trash2 />
             </Button>
           </div>
-
         </CardContent>
       </Card>
     </div>
