@@ -16,9 +16,7 @@ export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // tetap ada, tapi tidak dipakai
-  const { login } = useAuth();
-
+  const { login } = useAuth(); // tetap ada, tidak dipakai
   const { data } = useSchool();
   const navigate = useNavigate();
 
@@ -27,25 +25,48 @@ export default function Login() {
     setError('');
     setLoading(true);
 
-    // 🔥 LOGIN KE SUPABASE (BUKAN RPC)
-    const { data: user, error } = await supabase
-      .from('akun')
-      .select('*')
-      .eq('username', username)
-      .eq('password', password)
-      .single();
+    const u = username.trim();
+    const p = password.trim();
 
-    setLoading(false);
+    try {
+      // 🔍 ambil user berdasarkan username dulu
+      const { data: users, error: fetchError } = await supabase
+        .from('akun')
+        .select('*')
+        .eq('username', u)
+        .limit(1);
 
-    if (error || !user) {
-      setError('Username atau password salah');
-      return;
+      if (fetchError) {
+        throw fetchError;
+      }
+
+      if (!users || users.length === 0) {
+        setError('User tidak ditemukan');
+        setLoading(false);
+        return;
+      }
+
+      const user = users[0];
+
+      // 🔐 cek password manual (biar jelas errornya)
+      if (user.password !== p) {
+        setError('Password salah');
+        setLoading(false);
+        return;
+      }
+
+      // ✅ simpan session sederhana
+      localStorage.setItem('admin_user', user.username);
+
+      // 🚀 masuk ke admin
+      navigate('/admin');
+
+    } catch (err: any) {
+      console.error(err);
+      setError('Terjadi kesalahan saat login');
     }
 
-    // ✅ simpan session sederhana
-    localStorage.setItem('admin_user', user.username);
-
-    navigate('/admin');
+    setLoading(false);
   };
 
   return (
@@ -64,6 +85,7 @@ export default function Login() {
 
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
+
             {error && (
               <p className="text-sm text-destructive text-center">
                 {error}
@@ -110,6 +132,7 @@ export default function Login() {
                 Forgot Password?
               </button>
             </p>
+
           </form>
         </CardContent>
       </Card>
