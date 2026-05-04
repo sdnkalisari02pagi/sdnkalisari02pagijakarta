@@ -186,20 +186,14 @@ export default function ContentAdminTable({
                 >
                   <div className="flex items-center gap-2 border rounded-lg px-4 py-2 flex-1 cursor-pointer">
                     <RadioGroupItem value="foto" id="tipe-foto" />
-                    <Label
-                      htmlFor="tipe-foto"
-                      className="flex items-center gap-2"
-                    >
+                    <Label htmlFor="tipe-foto" className="flex items-center gap-2">
                       <ImageIcon className="w-4 h-4" /> Foto
                     </Label>
                   </div>
 
                   <div className="flex items-center gap-2 border rounded-lg px-4 py-2 flex-1 cursor-pointer">
                     <RadioGroupItem value="video" id="tipe-video" />
-                    <Label
-                      htmlFor="tipe-video"
-                      className="flex items-center gap-2"
-                    >
+                    <Label htmlFor="tipe-video" className="flex items-center gap-2">
                       <Video className="w-4 h-4" /> Video
                     </Label>
                   </div>
@@ -213,19 +207,11 @@ export default function ContentAdminTable({
                     value={form.fotoUtama}
                     onChange={file => {
                       if (!file) {
-                        setForm(f => ({
-                          ...f,
-                          fotoUtama: '',
-                          _fotoFile: undefined
-                        }));
+                        setForm(f => ({ ...f, fotoUtama: '', _fotoFile: undefined }));
                         return;
                       }
                       const preview = URL.createObjectURL(file);
-                      setForm(f => ({
-                        ...f,
-                        fotoUtama: preview,
-                        _fotoFile: file
-                      }));
+                      setForm(f => ({ ...f, fotoUtama: preview, _fotoFile: file }));
                     }}
                     required
                     recommendedSize="1200×800 px (3:2)"
@@ -238,10 +224,7 @@ export default function ContentAdminTable({
                     <Input
                       value={form.videoUrl}
                       onChange={e =>
-                        setForm(f => ({
-                          ...f,
-                          videoUrl: e.target.value
-                        }))
+                        setForm(f => ({ ...f, videoUrl: e.target.value }))
                       }
                     />
                   </div>
@@ -252,19 +235,11 @@ export default function ContentAdminTable({
                       value={form.thumbnail}
                       onChange={file => {
                         if (!file) {
-                          setForm(f => ({
-                            ...f,
-                            thumbnail: '',
-                            _thumbnailFile: undefined
-                          }));
+                          setForm(f => ({ ...f, thumbnail: '', _thumbnailFile: undefined }));
                           return;
                         }
                         const preview = URL.createObjectURL(file);
-                        setForm(f => ({
-                          ...f,
-                          thumbnail: preview,
-                          _thumbnailFile: file
-                        }));
+                        setForm(f => ({ ...f, thumbnail: preview, _thumbnailFile: file }));
                       }}
                       recommendedSize="1200×800 px (3:2)"
                     />
@@ -280,6 +255,7 @@ export default function ContentAdminTable({
                 rows={4}
               />
 
+              {/* 🔥 FIX GALERI DI SINI */}
               <div>
                 <Label>Galeri</Label>
                 <GaleriUpload
@@ -296,7 +272,12 @@ export default function ContentAdminTable({
                     setForm(f => ({
                       ...f,
                       galeri: preview,
-                      _galeriFiles: files
+
+                      // 🔥 FIX: jangan overwrite, tapi merge
+                      _galeriFiles: [
+                        ...(f._galeriFiles || []),
+                        ...files
+                      ]
                     }));
                   }}
                 />
@@ -347,10 +328,7 @@ export default function ContentAdminTable({
                 <TableRow key={k.id}>
                   <TableCell>
                     {cardImg ? (
-                      <img
-                        src={cardImg}
-                        className="w-10 h-10 object-cover rounded"
-                      />
+                      <img src={cardImg} className="w-10 h-10 object-cover rounded" />
                     ) : (
                       <div className="w-10 h-10 bg-muted rounded" />
                     )}
@@ -358,7 +336,6 @@ export default function ContentAdminTable({
 
                   <TableCell>{tr(k.judul, 'id')}</TableCell>
 
-                  {/* ✅ BADGE TIPE */}
                   <TableCell>
                     <span
                       className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${
