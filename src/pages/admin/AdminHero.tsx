@@ -33,7 +33,6 @@ export default function AdminHero() {
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
-  // 🔥 FIX: amanin data dari context
   useEffect(() => {
     if (data?.hero) {
       setHero({
@@ -63,6 +62,17 @@ export default function AdminHero() {
     return data.publicUrl;
   };
 
+  // 🔥 NEW: DELETE ALL HERO FILES
+  const deleteAllHero = async () => {
+    const { data: files } = await supabase.storage.from('hero').list();
+
+    if (!files || files.length === 0) return;
+
+    const paths = files.map(f => f.name);
+
+    await supabase.storage.from('hero').remove(paths);
+  };
+
   const handleSave = async () => {
     if (!hero.images || hero.images.length === 0) {
       toast({ title: 'Gagal', description: 'Minimal 1 gambar hero.', variant: 'destructive' });
@@ -72,7 +82,10 @@ export default function AdminHero() {
     try {
       let finalImages = [...hero.images];
 
+      // 🔥 kalau ada upload baru → bersihin dulu bucket
       if (files.length > 0) {
+        await deleteAllHero(); // 🔥 CLEANUP
+
         const uploadedUrls = await Promise.all(
           files.map(file => uploadToStorage(file))
         );
@@ -141,7 +154,6 @@ export default function AdminHero() {
 
       <LastModifiedInfo timestamp={data?.lastModified?.hero} />
 
-      {/* TEXT */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Teks Hero</CardTitle>
@@ -160,7 +172,6 @@ export default function AdminHero() {
         </CardContent>
       </Card>
 
-      {/* STATS (UI tetap, label diperbaiki) */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Statistik Hero</CardTitle>
@@ -192,7 +203,6 @@ export default function AdminHero() {
         </CardContent>
       </Card>
 
-      {/* IMAGES */}
       <Card>
         <CardHeader>
           <CardTitle>Gambar Carousel ({hero.images?.length || 0})</CardTitle>
