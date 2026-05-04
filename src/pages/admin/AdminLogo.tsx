@@ -1,6 +1,6 @@
 import { useSchool } from '@/contexts/SchoolContext';
 import { supabase } from '@/lib/supabase';
-import { updateFavicon } from '@/utils/updateFavicon'; // 🔥 WAJIB
+import { updateFavicon } from '@/utils/updateFavicon';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ImageUpload from '@/components/ImageUpload';
 import { toast } from '@/hooks/use-toast';
@@ -12,15 +12,12 @@ import { useState, useEffect } from 'react';
 export default function AdminLogo() {
   const { data, updateLogo } = useSchool();
   const [logo, setLogo] = useState(data.logo || '');
-  const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState(data.logo || '');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchLogo();
   }, []);
 
-  // 🔥 SET FAVICON SETIAP LOGO BERUBAH
   useEffect(() => {
     if (logo) {
       updateFavicon(logo);
@@ -36,11 +33,16 @@ export default function AdminLogo() {
 
     if (dbData) {
       setLogo(dbData.url);
-      setPreview(dbData.url);
       updateLogo?.(dbData.url);
-
-      updateFavicon(dbData.url); // 🔥 SET SAAT LOAD
+      updateFavicon(dbData.url);
     }
+  };
+
+  // 🔥 convert base64 → file
+  const base64ToFile = async (base64: string) => {
+    const res = await fetch(base64);
+    const blob = await res.blob();
+    return new File([blob], `logo-${Date.now()}.png`, { type: blob.type });
   };
 
   const uploadToStorage = async (file: File) => {
@@ -60,7 +62,7 @@ export default function AdminLogo() {
   };
 
   const handleSave = async () => {
-    if (!file && !logo) {
+    if (!logo) {
       toast({ title: 'Gagal', description: 'Upload dulu logo', variant: 'destructive' });
       return;
     }
@@ -70,7 +72,9 @@ export default function AdminLogo() {
     try {
       let finalUrl = logo;
 
-      if (file) {
+      // 🔥 kalau masih base64 → upload dulu
+      if (logo.startsWith('data:')) {
+        const file = await base64ToFile(logo);
         finalUrl = await uploadToStorage(file);
       }
 
@@ -80,11 +84,8 @@ export default function AdminLogo() {
       });
 
       setLogo(finalUrl);
-      setPreview(finalUrl);
-      setFile(null);
       updateLogo?.(finalUrl);
-
-      updateFavicon(finalUrl); // 🔥 SET SAAT SAVE
+      updateFavicon(finalUrl);
 
       toast({ title: 'Berhasil', description: 'Logo disimpan' });
 
@@ -99,11 +100,8 @@ export default function AdminLogo() {
     await supabase.from('logo').delete().eq('id', 1);
 
     setLogo('');
-    setPreview('');
-    setFile(null);
     updateLogo?.('');
-
-    updateFavicon(''); // 🔥 RESET FAVICON
+    updateFavicon('');
   };
 
   return (
@@ -118,24 +116,19 @@ export default function AdminLogo() {
         </CardHeader>
 
         <CardContent className="space-y-4">
-          {preview ? (
-            <img src={preview} className="w-16 h-16 rounded-full object-cover" />
+          {logo ? (
+            <img src={logo} className="w-16 h-16 rounded-full object-cover" />
           ) : (
             <GraduationCap />
           )}
 
+          {/* 🔥 BALIK KE FORMAT ASLI */}
           <ImageUpload
-            value={preview}
-            onChange={(f) => {
-              if (!f) {
-                setPreview('');
-                setFile(null);
-                return;
-              }
-
-              setFile(f);
-              setPreview(URL.createObjectURL(f));
-            }}
+            value={logo}
+            onChange={setLogo}
+            placeholder
+            required
+            recommendedSize="200×200 px (kotak)"
           />
 
           <div className="flex gap-2">
