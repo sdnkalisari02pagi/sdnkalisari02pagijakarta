@@ -189,18 +189,10 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
         let foto = item._fotoFile || item.fotoUtama;
         let thumbnail = item._thumbnailFile || item.thumbnail;
 
-        // 🔥 FIX FINAL DI SINI
-        let galeri: (string | File)[] = [];
-
-        if (item._galeriFiles && item._galeriFiles.length > 0) {
-          galeri = [...item._galeriFiles];
-        }
-
-        if (item.galeri && item.galeri.length > 0) {
-          galeri = [...galeri, ...item.galeri];
-        }
-
-        galeri = galeri.filter((v, i, arr) => arr.indexOf(v) === i);
+        // 🔥 FIX FINAL GALERI
+        let galeri: (string | File)[] = item._galeriFiles?.length
+          ? item._galeriFiles
+          : item.galeri || [];
 
         if (foto instanceof File) {
           foto = await uploadFile(foto, 'foto');
@@ -213,6 +205,9 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
         const finalGaleri: string[] = [];
 
         for (const g of galeri) {
+          // 🔥 skip blob preview
+          if (typeof g === 'string' && g.startsWith('blob:')) continue;
+
           if (g instanceof File) {
             const url = await uploadFile(g, 'galeri');
             finalGaleri.push(url);
