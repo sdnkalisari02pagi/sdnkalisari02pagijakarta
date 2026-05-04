@@ -84,9 +84,9 @@ export default function AdminLogo() {
       let finalUrl = logo;
 
       // 🔥 kalau upload baru → hapus logo lama dulu
-      if (logo.startsWith('data:')) {
-        await deleteAllLogo(); // 🔥 CLEANUP
+      await deleteAllLogo();
 
+      if (logo.startsWith('data:')) {
         const file = await base64ToFile(logo);
         finalUrl = await uploadToStorage(file);
       }
