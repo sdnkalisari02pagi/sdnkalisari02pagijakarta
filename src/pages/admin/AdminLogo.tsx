@@ -1,5 +1,6 @@
 import { useSchool } from '@/contexts/SchoolContext';
 import { supabase } from '@/lib/supabase';
+import { updateFavicon } from '@/utils/updateFavicon'; // 🔥 WAJIB
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ImageUpload from '@/components/ImageUpload';
 import { toast } from '@/hooks/use-toast';
@@ -19,6 +20,13 @@ export default function AdminLogo() {
     fetchLogo();
   }, []);
 
+  // 🔥 SET FAVICON SETIAP LOGO BERUBAH
+  useEffect(() => {
+    if (logo) {
+      updateFavicon(logo);
+    }
+  }, [logo]);
+
   const fetchLogo = async () => {
     const { data: dbData } = await supabase
       .from('logo')
@@ -30,6 +38,8 @@ export default function AdminLogo() {
       setLogo(dbData.url);
       setPreview(dbData.url);
       updateLogo?.(dbData.url);
+
+      updateFavicon(dbData.url); // 🔥 SET SAAT LOAD
     }
   };
 
@@ -70,8 +80,11 @@ export default function AdminLogo() {
       });
 
       setLogo(finalUrl);
+      setPreview(finalUrl);
       setFile(null);
       updateLogo?.(finalUrl);
+
+      updateFavicon(finalUrl); // 🔥 SET SAAT SAVE
 
       toast({ title: 'Berhasil', description: 'Logo disimpan' });
 
@@ -84,10 +97,13 @@ export default function AdminLogo() {
 
   const handleDelete = async () => {
     await supabase.from('logo').delete().eq('id', 1);
+
     setLogo('');
     setPreview('');
     setFile(null);
     updateLogo?.('');
+
+    updateFavicon(''); // 🔥 RESET FAVICON
   };
 
   return (
