@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSchool, HeroData } from '@/contexts/SchoolContext';
+import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -28,24 +29,70 @@ export default function AdminHero() {
   const { data, updateHero } = useSchool();
 
   const [hero, setHero] = useState<HeroData>(data?.hero || defaultHero);
+  const [files, setFiles] = useState<File[]>([]);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
-  // 🔥 sync kalau data datang belakangan
   useEffect(() => {
     if (data?.hero) {
       setHero(data.hero);
     }
   }, [data?.hero]);
 
-  const handleSave = () => {
+  /* ================= UPLOAD ================= */
+
+  const uploadToStorage = async (file: File) => {
+    const fileName = `hero-${Date.now()}-${Math.random()}`;
+
+    const { error } = await supabase.storage
+      .from('hero') // ⚠️ pastikan bucket ada
+      .upload(fileName, file);
+
+    if (error) throw error;
+
+    const { data } = supabase.storage
+      .from('hero')
+      .getPublicUrl(fileName);
+
+    return data.publicUrl;
+  };
+
+  /* ================= ACTION ================= */
+
+  const handleSave = async () => {
     if (!hero.images || hero.images.length === 0) {
       toast({ title: 'Gagal', description: 'Minimal 1 gambar hero.', variant: 'destructive' });
       return;
     }
 
-    updateHero(hero);
-    toast({ title: 'Berhasil', description: 'Hero berhasil diperbarui.' });
+    try {
+      let finalImages = [...hero.images];
+
+      // upload file baru
+      if (files.length > 0) {
+        const uploadedUrls = await Promise.all(
+          files.map(file => uploadToStorage(file))
+        );
+
+        finalImages = [
+          ...finalImages.filter(img => !img.startsWith('blob:')),
+          ...uploadedUrls
+        ];
+      }
+
+      const finalHero = {
+        ...hero,
+        images: finalImages
+      };
+
+      updateHero(finalHero);
+      setFiles([]);
+
+      toast({ title: 'Berhasil', description: 'Hero berhasil diperbarui.' });
+
+    } catch (err: any) {
+      toast({ title: 'Error', description: err.message, variant: 'destructive' });
+    }
   };
 
   const addImage = (url: string) => {
@@ -86,13 +133,15 @@ export default function AdminHero() {
     }));
   };
 
+  /* ================= UI ================= */
+
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <h1 className="text-2xl font-bold text-foreground">Kelola Hero</h1>
 
       <LastModifiedInfo timestamp={data?.lastModified?.hero} />
 
-      {/* ================= TEKS ================= */}
+      {/* TEXT */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Teks Hero</CardTitle>
@@ -111,7 +160,7 @@ export default function AdminHero() {
         </CardContent>
       </Card>
 
-      {/* ================= STATS ================= */}
+      {/* STATS */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Statistik Hero</CardTitle>
@@ -124,80 +173,52 @@ export default function AdminHero() {
               onChange={e => setHero(h => ({ ...h, tahunBerdiri: e.target.value }))}
               placeholder="1985"
             />
-            <p className="text-xs text-muted-foreground mt-1">
-              Ditampilkan di statistik "Berdiri" pada Hero.
-            </p>
           </div>
 
-          <div className="space-y-3 pt-2 border-t">
-            <p className="text-sm font-medium">Tampilkan / Sembunyikan Statistik</p>
-
-            {[
-              { key: 'staff' as const, label: 'Guru & Staff' },
-              { key: 'students' as const, label: 'Siswa' },
-              { key: 'ekskul' as const, label: 'Ekskul' },
-              { key: 'founded' as const, label: 'Berdiri (Tahun)' },
-            ].map(s => (
-              <div key={s.key} className="flex items-center justify-between p-3 rounded-lg border">
-                <Label className="cursor-pointer">{s.label}</Label>
-                <Switch
-                  checked={hero.statsVisibility?.[s.key] ?? true}
-                  onCheckedChange={v => setVis(s.key, v)}
-                />
-              </div>
-            ))}
-          </div>
+          {['staff','students','ekskul','founded'].map((key: any) => (
+            <div key={key} className="flex justify-between">
+              <Label>{key}</Label>
+              <Switch
+                checked={hero.statsVisibility[key]}
+                onCheckedChange={v => setVis(key, v)}
+              />
+            </div>
+          ))}
         </CardContent>
       </Card>
 
-      {/* ================= IMAGES ================= */}
+      {/* IMAGES */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">
-            Gambar Carousel ({hero.images?.length || 0})
-          </CardTitle>
+          <CardTitle>Gambar Carousel ({hero.images?.length || 0})</CardTitle>
         </CardHeader>
 
         <CardContent className="space-y-4">
-          <div className="grid gap-3">
-            {(hero.images || []).map((img, i) => (
-              <div
-                key={i}
-                draggable
-                onDragStart={() => setDraggedIndex(i)}
-                onDragOver={e => { e.preventDefault(); setDragOverIndex(i); }}
-                onDrop={() => handleDrop(i)}
-                onDragEnd={() => { setDraggedIndex(null); setDragOverIndex(null); }}
-                className={`flex items-center gap-3 p-2 rounded-lg border ${
-                  dragOverIndex === i ? 'border-primary bg-primary/5' : 'border-border'
-                } ${draggedIndex === i ? 'opacity-50' : ''}`}
-              >
-                <GripVertical className="w-5 h-5 text-muted-foreground cursor-grab shrink-0" />
+          {(hero.images || []).map((img, i) => (
+            <div key={i} className="flex items-center gap-3 border p-2 rounded">
+              <GripVertical className="w-4 h-4" />
+              <img src={img} className="w-24 h-16 object-cover rounded" />
+              <span className="flex-1">Slide {i + 1}</span>
+              <Button size="icon" onClick={() => removeImage(i)}>
+                <Trash2 />
+              </Button>
+            </div>
+          ))}
 
-                <img src={img} className="w-24 h-16 object-cover rounded" />
+          <ImageUpload
+            value=""
+            onChange={(file) => {
+              if (!file) return;
 
-                <span className="text-sm text-muted-foreground flex-1">
-                  Slide {i + 1}
-                </span>
-
-                <Button variant="ghost" size="icon" onClick={() => removeImage(i)}>
-                  <Trash2 className="w-4 h-4 text-destructive" />
-                </Button>
-              </div>
-            ))}
-          </div>
-
-          <div>
-            <p className="text-sm font-medium mb-2">Tambah Gambar</p>
-
-            {/* 🔥 INI YANG DIPERBAIKI */}
-            <ImageUpload
-              value=""
-              onChange={addImage}
-              placeholder
-              recommendedSize="1920×900 px (panorama 16:7.5)"
-            />
-          </div>
+              if (typeof file !== 'string') {
+                const previewUrl = URL.createObjectURL(file);
+                addImage(previewUrl);
+                setFiles(f => [...f, file]);
+              }
+            }}
+            placeholder
+            recommendedSize="1920×900 px (panorama 16:7.5)"
+          />
         </CardContent>
       </Card>
 
