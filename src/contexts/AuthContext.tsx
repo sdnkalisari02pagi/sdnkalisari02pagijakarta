@@ -13,7 +13,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState<string | null>(null);
 
-  // 🔥 cek dari localStorage (bukan supabase auth)
+  // 🔥 cek login dari localStorage
   useEffect(() => {
     const savedUser = localStorage.getItem('admin_user');
     if (savedUser) {
