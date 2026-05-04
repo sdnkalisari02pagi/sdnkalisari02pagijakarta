@@ -1,6 +1,5 @@
 import { useSchool } from '@/contexts/SchoolContext';
 import { supabase } from '@/lib/supabase';
-import { updateFavicon } from '@/utils/updateFavicon'; // 🔥 tambahin ini
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ImageUpload from '@/components/ImageUpload';
 import { toast } from '@/hooks/use-toast';
@@ -18,13 +17,7 @@ export default function AdminLogo() {
     fetchLogo();
   }, []);
 
-  // 🔥 AUTO SET FAVICON SAAT LOGO BERUBAH
-  useEffect(() => {
-    if (logo) {
-      updateFavicon(logo);
-    }
-  }, [logo]);
-
+  // 🔥 ambil logo dari DB
   const fetchLogo = async () => {
     const { data: dbData, error } = await supabase
       .from('logo')
@@ -33,18 +26,32 @@ export default function AdminLogo() {
       .maybeSingle();
 
     if (!error && dbData) {
-      const url = dbData.url || '';
-      setLogo(url);
+      setLogo(dbData.url || '');
 
       if (typeof updateLogo === 'function') {
-        updateLogo(url);
+        updateLogo(dbData.url || '');
       }
-
-      updateFavicon(url); // 🔥 set favicon saat load
     }
   };
 
-  // 🔥 CREATE / UPDATE
+  // 🔥 upload ke Supabase Storage
+  const uploadToStorage = async (file: File) => {
+    const fileName = `logo-${Date.now()}`;
+
+    const { error } = await supabase.storage
+      .from('logo') // bucket name
+      .upload(fileName, file);
+
+    if (error) throw error;
+
+    const { data } = supabase.storage
+      .from('logo')
+      .getPublicUrl(fileName);
+
+    return data.publicUrl;
+  };
+
+  // 🔥 SAVE
   const handleSave = async () => {
     if (!logo) {
       toast({
@@ -70,8 +77,6 @@ export default function AdminLogo() {
       if (typeof updateLogo === 'function') {
         updateLogo(logo);
       }
-
-      updateFavicon(logo); // 🔥 update favicon setelah save
 
       toast({
         title: 'Berhasil',
@@ -107,8 +112,6 @@ export default function AdminLogo() {
       if (typeof updateLogo === 'function') {
         updateLogo('');
       }
-
-      updateFavicon(''); // 🔥 kosongkan favicon
 
       toast({
         title: 'Berhasil',
@@ -160,9 +163,24 @@ export default function AdminLogo() {
 
           <ImageUpload
             value={logo}
-            onChange={(val) => {
-              setLogo(val);
-              updateFavicon(val); // 🔥 preview langsung saat upload
+            onChange={async (file: File) => {
+              try {
+                setLoading(true);
+
+                const url = await uploadToStorage(file);
+
+                setLogo(url); // 🔥 simpan URL, bukan base64
+
+              } catch (err) {
+                console.error(err);
+                toast({
+                  title: 'Gagal upload',
+                  description: 'Upload gambar gagal',
+                  variant: 'destructive'
+                });
+              }
+
+              setLoading(false);
             }}
             placeholder
             required
