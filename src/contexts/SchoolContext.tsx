@@ -125,7 +125,6 @@ async function fetchAll(): Promise<SchoolData> {
         thumbnail: b.thumbnail,
         videoUrl: b.video,
 
-        // 🔥 FIX DI SINI (CUMA BAGIAN INI YANG DIUBAH)
         galeri: beritaGaleri.data
           ?.filter(g => String(g.berita_id) === String(b.id))
           .sort((a, b) => a.id - b.id)
@@ -189,7 +188,19 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
 
         let foto = item._fotoFile || item.fotoUtama;
         let thumbnail = item._thumbnailFile || item.thumbnail;
-        let galeri = item._galeriFiles || item.galeri || [];
+
+        // 🔥 FIX FINAL DI SINI
+        let galeri: (string | File)[] = [];
+
+        if (item._galeriFiles && item._galeriFiles.length > 0) {
+          galeri = [...item._galeriFiles];
+        }
+
+        if (item.galeri && item.galeri.length > 0) {
+          galeri = [...galeri, ...item.galeri];
+        }
+
+        galeri = galeri.filter((v, i, arr) => arr.indexOf(v) === i);
 
         if (foto instanceof File) {
           foto = await uploadFile(foto, 'foto');
