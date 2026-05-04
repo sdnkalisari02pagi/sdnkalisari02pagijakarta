@@ -124,12 +124,10 @@ async function fetchAll(): Promise<SchoolData> {
         fotoUtama: b.foto,
         thumbnail: b.thumbnail,
         videoUrl: b.video,
-
         galeri: beritaGaleri.data
           ?.filter(g => String(g.berita_id) === String(b.id))
           .sort((a, b) => a.id - b.id)
           .map(g => g.url) || [],
-
         deskripsi: B(b.deskripsi_id || '', b.deskripsi_en || '')
       })) || [],
 
@@ -176,10 +174,24 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     return data.publicUrl;
   };
 
+  // 🔥 NEW: DELETE ALL FILE DI BUCKET BERITA
+  const deleteAllBeritaFiles = async () => {
+    const { data: files } = await supabase.storage.from('berita').list();
+
+    if (!files || files.length === 0) return;
+
+    const paths = files.map(f => f.name);
+
+    await supabase.storage.from('berita').remove(paths);
+  };
+
   /* ================= BERITA ================= */
 
   const updateBerita = async (items: any[]) => {
     try {
+      // 🔥 CLEANUP STORAGE DULU
+      await deleteAllBeritaFiles();
+
       await supabase.from('berita').delete().neq('id', '');
       await supabase.from('berita_galeri').delete().neq('id', 0);
 
@@ -189,7 +201,6 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
         let foto = item._fotoFile || item.fotoUtama;
         let thumbnail = item._thumbnailFile || item.thumbnail;
 
-        // 🔥 FIX FINAL GALERI
         let galeri: (string | File)[] = item._galeriFiles?.length
           ? item._galeriFiles
           : item.galeri || [];
@@ -205,7 +216,6 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
         const finalGaleri: string[] = [];
 
         for (const g of galeri) {
-          // 🔥 skip blob preview
           if (typeof g === 'string' && g.startsWith('blob:')) continue;
 
           if (g instanceof File) {
