@@ -16,7 +16,9 @@ export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // tetap ada, tapi tidak dipakai
   const { login } = useAuth();
+
   const { data } = useSchool();
   const navigate = useNavigate();
 
@@ -25,7 +27,7 @@ export default function Login() {
     setError('');
     setLoading(true);
 
-    // 🔥 LOGIN KE SUPABASE
+    // 🔥 LOGIN KE SUPABASE (BUKAN RPC)
     const { data: user, error } = await supabase
       .from('akun')
       .select('*')
@@ -40,8 +42,8 @@ export default function Login() {
       return;
     }
 
-    // ✅ tetap pakai AuthContext biar struktur ga berubah
-    login(user.username);
+    // ✅ simpan session sederhana
+    localStorage.setItem('admin_user', user.username);
 
     navigate('/admin');
   };
@@ -62,7 +64,6 @@ export default function Login() {
 
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-
             {error && (
               <p className="text-sm text-destructive text-center">
                 {error}
@@ -109,7 +110,6 @@ export default function Login() {
                 Forgot Password?
               </button>
             </p>
-
           </form>
         </CardContent>
       </Card>
