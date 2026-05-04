@@ -150,81 +150,92 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   const [data, setData] = useState<SchoolData>(defaultData);
 
   useEffect(() => {
-    fetchAll()
-      .then(res => {
-        if (!res) return;
-        setData(res);
-      })
-      .catch(err => console.error(err));
+    fetchAll().then(setData);
   }, []);
 
-  /* ================= UPDATE HERO (FIXED) ================= */
+  /* ================= STORAGE HELPER ================= */
 
-  const updateHero = async (hero: any) => {
+  const uploadFile = async (file: File, prefix: string) => {
+    const fileName = `${prefix}-${Date.now()}-${Math.random()}`;
+
+    const { error } = await supabase.storage
+      .from('berita')
+      .upload(fileName, file);
+
+    if (error) throw error;
+
+    const { data } = supabase.storage
+      .from('berita')
+      .getPublicUrl(fileName);
+
+    return data.publicUrl;
+  };
+
+  /* ================= BERITA ================= */
+
+  const updateBerita = async (items: any[]) => {
     try {
-      const payloadHero = {
-        id: 1,
-        judul_id: hero?.judul?.id || '',
-        judul_en: hero?.judul?.en || '',
-        subtitle_id: hero?.subtitle?.id || '',
-        subtitle_en: hero?.subtitle?.en || '',
-        tahun: hero?.tahunBerdiri || '',
-        staff: hero?.statsVisibility?.staff ?? true,
-        students: hero?.statsVisibility?.students ?? true,
-        ekskul: hero?.statsVisibility?.ekskul ?? true,
-        founded: hero?.statsVisibility?.founded ?? true
-      };
+      await supabase.from('berita').delete().neq('id', '');
+      await supabase.from('berita_galeri').delete().neq('id', 0);
 
-      console.log('SENDING HERO:', payloadHero);
+      for (const item of items) {
+        const id = item.id || crypto.randomUUID();
 
-      const { error: heroError } = await supabase
-        .from('hero')
-        .upsert(payloadHero);
+        let foto = item.fotoUtama;
+        let thumbnail = item.thumbnail;
+        let galeri = item.galeri || [];
 
-      if (heroError) {
-        console.error('HERO ERROR:', heroError);
-        throw heroError;
-      }
+        if (foto instanceof File) {
+          foto = await uploadFile(foto, 'foto');
+        }
 
-      const { error: deleteError } = await supabase
-        .from('hero_images')
-        .delete()
-        .eq('hero_id', 1);
+        if (thumbnail instanceof File) {
+          thumbnail = await uploadFile(thumbnail, 'thumb');
+        }
 
-      if (deleteError) {
-        console.error('DELETE IMAGE ERROR:', deleteError);
-      }
+        const finalGaleri: string[] = [];
 
-      if (hero?.images?.length > 0) {
-        const payloadImages = hero.images.map((url: string) => ({
-          hero_id: 1,
-          url
-        }));
+        for (const g of galeri) {
+          if (g instanceof File) {
+            const url = await uploadFile(g, 'galeri');
+            finalGaleri.push(url);
+          } else {
+            finalGaleri.push(g);
+          }
+        }
 
-        console.log('SENDING IMAGES:', payloadImages);
+        await supabase.from('berita').insert({
+          id,
+          judul_id: item.judul?.id || '',
+          judul_en: item.judul?.en || '',
+          tanggal: item.tanggal || '',
+          tipe: item.tipe || '',
+          foto,
+          thumbnail,
+          video: item.videoUrl || '',
+          deskripsi_id: item.deskripsi?.id || '',
+          deskripsi_en: item.deskripsi?.en || ''
+        });
 
-        const { error: imgError } = await supabase
-          .from('hero_images')
-          .insert(payloadImages);
-
-        if (imgError) {
-          console.error('INSERT IMAGE ERROR:', imgError);
-          throw imgError;
+        if (finalGaleri.length > 0) {
+          await supabase.from('berita_galeri').insert(
+            finalGaleri.map(url => ({
+              berita_id: id,
+              url
+            }))
+          );
         }
       }
 
-      setData(d => ({
-        ...d,
-        hero
-      }));
+      setData(d => ({ ...d, berita: items }));
 
     } catch (err) {
-      console.error('UPDATE HERO ERROR:', err);
+      console.error('UPDATE BERITA ERROR:', err);
     }
   };
 
   return (
-    <SchoolContext.Provider value={{ data, updateHero }}>
+    <SchoolContext.Provider value={{ data, updateBerita }}>
       {children}
     </SchoolContext.Provider>
   );
