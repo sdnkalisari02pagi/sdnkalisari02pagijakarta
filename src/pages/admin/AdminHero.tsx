@@ -90,9 +90,9 @@ export default function AdminHero() {
     <div className="max-w-3xl mx-auto space-y-6">
       <h1 className="text-2xl font-bold text-foreground">Kelola Hero</h1>
 
-      {/* 🔥 aman dari undefined */}
       <LastModifiedInfo timestamp={data?.lastModified?.hero} />
 
+      {/* ================= TEKS ================= */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Teks Hero</CardTitle>
@@ -111,6 +111,7 @@ export default function AdminHero() {
         </CardContent>
       </Card>
 
+      {/* ================= STATS ================= */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Statistik Hero</CardTitle>
@@ -149,6 +150,7 @@ export default function AdminHero() {
         </CardContent>
       </Card>
 
+      {/* ================= IMAGES ================= */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">
@@ -187,7 +189,14 @@ export default function AdminHero() {
 
           <div>
             <p className="text-sm font-medium mb-2">Tambah Gambar</p>
-            <ImageUpload value="" onChange={addImage} />
+
+            {/* 🔥 INI YANG DIPERBAIKI */}
+            <ImageUpload
+              value=""
+              onChange={addImage}
+              placeholder
+              recommendedSize="1920×900 px (panorama 16:7.5)"
+            />
           </div>
         </CardContent>
       </Card>
