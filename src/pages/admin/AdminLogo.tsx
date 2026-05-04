@@ -61,6 +61,17 @@ export default function AdminLogo() {
     return data.publicUrl;
   };
 
+  // 🔥 NEW: DELETE ALL FILE DI BUCKET LOGO
+  const deleteAllLogo = async () => {
+    const { data: files } = await supabase.storage.from('logo').list();
+
+    if (!files || files.length === 0) return;
+
+    const paths = files.map(f => f.name);
+
+    await supabase.storage.from('logo').remove(paths);
+  };
+
   const handleSave = async () => {
     if (!logo) {
       toast({ title: 'Gagal', description: 'Upload dulu logo', variant: 'destructive' });
@@ -72,8 +83,10 @@ export default function AdminLogo() {
     try {
       let finalUrl = logo;
 
-      // 🔥 kalau masih base64 → upload dulu
+      // 🔥 kalau upload baru → hapus logo lama dulu
       if (logo.startsWith('data:')) {
+        await deleteAllLogo(); // 🔥 CLEANUP
+
         const file = await base64ToFile(logo);
         finalUrl = await uploadToStorage(file);
       }
@@ -99,6 +112,9 @@ export default function AdminLogo() {
   const handleDelete = async () => {
     await supabase.from('logo').delete().eq('id', 1);
 
+    // 🔥 hapus juga dari storage
+    await deleteAllLogo();
+
     setLogo('');
     updateLogo?.('');
     updateFavicon('');
@@ -122,7 +138,6 @@ export default function AdminLogo() {
             <GraduationCap />
           )}
 
-          {/* 🔥 BALIK KE FORMAT ASLI */}
           <ImageUpload
             value={logo}
             onChange={setLogo}
