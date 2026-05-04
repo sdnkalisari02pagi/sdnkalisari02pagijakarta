@@ -38,45 +38,38 @@ export default function AdminAkun() {
 
     // VALIDASI
     if (form.newPassword !== form.confirmPassword) {
-      toast({
-        title: 'Gagal',
-        description: 'Konfirmasi password tidak cocok',
-        variant: 'destructive'
-      });
+      toast({ title: 'Gagal', description: 'Konfirmasi password tidak cocok', variant: 'destructive' });
       return;
     }
 
     const strErr = validatePasswordStrength(form.newPassword);
     if (strErr) {
-      toast({
-        title: 'Gagal',
-        description: strErr,
-        variant: 'destructive'
-      });
+      toast({ title: 'Gagal', description: strErr, variant: 'destructive' });
       return;
     }
 
     setLoading(true);
 
     try {
-      // 🔍 CEK PASSWORD LAMA
-      const { data: adminData, error: fetchError } = await supabase
-        .from('admin')
+      // 🔍 AMBIL DATA DARI TABLE akun
+      const { data, error: fetchError } = await supabase
+        .from('akun')
         .select('*')
         .eq('username', username)
         .single();
 
-      if (fetchError || !adminData) {
+      if (fetchError || !data) {
         throw new Error('User tidak ditemukan');
       }
 
-      if (adminData.password !== form.oldPassword) {
+      // 🔐 CEK PASSWORD LAMA
+      if (data.password !== form.oldPassword) {
         throw new Error('Password lama salah');
       }
 
-      // ✏️ UPDATE DATA
+      // ✏️ UPDATE KE SUPABASE
       const { error: updateError } = await supabase
-        .from('admin')
+        .from('akun')
         .update({
           username: form.newUsername,
           password: form.newPassword
@@ -130,7 +123,6 @@ export default function AdminAkun() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
 
-            {/* PASSWORD LAMA */}
             <div>
               <Label>Password Lama</Label>
               <div className="relative">
@@ -150,7 +142,6 @@ export default function AdminAkun() {
               </div>
             </div>
 
-            {/* USERNAME BARU */}
             <div>
               <Label>Username Baru</Label>
               <Input
@@ -161,7 +152,6 @@ export default function AdminAkun() {
               />
             </div>
 
-            {/* PASSWORD BARU */}
             <div>
               <Label>Password Baru</Label>
               <div className="relative">
@@ -189,7 +179,6 @@ export default function AdminAkun() {
               </ul>
             </div>
 
-            {/* KONFIRMASI */}
             <div>
               <Label>Konfirmasi Password Baru</Label>
               <div className="relative">
