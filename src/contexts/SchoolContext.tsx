@@ -158,49 +158,61 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
       .catch(err => console.error(err));
   }, []);
 
-  /* ================= UPDATE HERO ================= */
+  /* ================= UPDATE HERO (FIXED) ================= */
 
   const updateHero = async (hero: any) => {
     try {
-      // 🔥 update hero utama
+      const payloadHero = {
+        id: 1,
+        judul_id: hero?.judul?.id || '',
+        judul_en: hero?.judul?.en || '',
+        subtitle_id: hero?.subtitle?.id || '',
+        subtitle_en: hero?.subtitle?.en || '',
+        tahun: hero?.tahunBerdiri || '',
+        staff: hero?.statsVisibility?.staff ?? true,
+        students: hero?.statsVisibility?.students ?? true,
+        ekskul: hero?.statsVisibility?.ekskul ?? true,
+        founded: hero?.statsVisibility?.founded ?? true
+      };
+
+      console.log('SENDING HERO:', payloadHero);
+
       const { error: heroError } = await supabase
         .from('hero')
-        .upsert({
-          id: 1,
-          judul_id: hero.judul.id,
-          judul_en: hero.judul.en,
-          subtitle_id: hero.subtitle.id,
-          subtitle_en: hero.subtitle.en,
-          tahun: hero.tahunBerdiri,
-          staff: hero.statsVisibility.staff,
-          students: hero.statsVisibility.students,
-          ekskul: hero.statsVisibility.ekskul,
-          founded: hero.statsVisibility.founded
-        });
+        .upsert(payloadHero);
 
-      if (heroError) throw heroError;
+      if (heroError) {
+        console.error('HERO ERROR:', heroError);
+        throw heroError;
+      }
 
-      // 🔥 hapus gambar lama
-      await supabase
+      const { error: deleteError } = await supabase
         .from('hero_images')
         .delete()
         .eq('hero_id', 1);
 
-      // 🔥 insert gambar baru
-      if (hero.images && hero.images.length > 0) {
-        const payload = hero.images.map((url: string) => ({
+      if (deleteError) {
+        console.error('DELETE IMAGE ERROR:', deleteError);
+      }
+
+      if (hero?.images?.length > 0) {
+        const payloadImages = hero.images.map((url: string) => ({
           hero_id: 1,
           url
         }));
 
+        console.log('SENDING IMAGES:', payloadImages);
+
         const { error: imgError } = await supabase
           .from('hero_images')
-          .insert(payload);
+          .insert(payloadImages);
 
-        if (imgError) throw imgError;
+        if (imgError) {
+          console.error('INSERT IMAGE ERROR:', imgError);
+          throw imgError;
+        }
       }
 
-      // 🔥 update state biar langsung ke UI
       setData(d => ({
         ...d,
         hero
