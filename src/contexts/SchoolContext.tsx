@@ -124,7 +124,13 @@ async function fetchAll(): Promise<SchoolData> {
         fotoUtama: b.foto,
         thumbnail: b.thumbnail,
         videoUrl: b.video,
-        galeri: beritaGaleri.data?.filter(g => g.berita_id === b.id).map(g => g.url) || [],
+
+        // 🔥 FIX DI SINI (CUMA BAGIAN INI YANG DIUBAH)
+        galeri: beritaGaleri.data
+          ?.filter(g => String(g.berita_id) === String(b.id))
+          .sort((a, b) => a.id - b.id)
+          .map(g => g.url) || [],
+
         deskripsi: B(b.deskripsi_id || '', b.deskripsi_en || '')
       })) || [],
 
@@ -181,22 +187,18 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
       for (const item of items) {
         const id = item.id || crypto.randomUUID();
 
-        // 🔥 AMBIL FILE ATAU URL
         let foto = item._fotoFile || item.fotoUtama;
         let thumbnail = item._thumbnailFile || item.thumbnail;
         let galeri = item._galeriFiles || item.galeri || [];
 
-        // 🔥 UPLOAD FOTO
         if (foto instanceof File) {
           foto = await uploadFile(foto, 'foto');
         }
 
-        // 🔥 UPLOAD THUMBNAIL
         if (thumbnail instanceof File) {
           thumbnail = await uploadFile(thumbnail, 'thumb');
         }
 
-        // 🔥 UPLOAD GALERI
         const finalGaleri: string[] = [];
 
         for (const g of galeri) {
@@ -208,7 +210,6 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
           }
         }
 
-        // 🔥 INSERT BERITA
         await supabase.from('berita').insert({
           id,
           judul_id: item.judul?.id || '',
@@ -222,7 +223,6 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
           deskripsi_en: item.deskripsi?.en || ''
         });
 
-        // 🔥 INSERT GALERI
         if (finalGaleri.length > 0) {
           await supabase.from('berita_galeri').insert(
             finalGaleri.map(url => ({
