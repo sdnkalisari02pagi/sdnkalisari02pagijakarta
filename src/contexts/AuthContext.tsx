@@ -1,10 +1,9 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { supabase } from '@/lib/supabase';
 
 interface AuthContextType {
   isLoggedIn: boolean;
   username: string | null;
-  login: (username: string, password: string) => Promise<{ ok: boolean; error?: string }>;
+  login: (username: string) => Promise<{ ok: boolean }>;
   logout: () => Promise<void>;
 }
 
@@ -14,43 +13,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState<string | null>(null);
 
-  // cek session dari supabase
+  // 🔥 cek dari localStorage (bukan supabase auth)
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) {
-        setIsLoggedIn(true);
-      }
-    });
+    const savedUser = localStorage.getItem('admin_user');
+    if (savedUser) {
+      setIsLoggedIn(true);
+      setUsername(savedUser);
+    }
   }, []);
 
-  const login = async (username: string, password: string) => {
-  const { data, error } = await supabase.rpc('login_akun', {
-    input_username: username,
-    input_password: password,
-  });
-
-  if (error || !data) {
-    return { ok: false, error: 'Username atau password salah' };
-  }
-
-  const { error: authError } = await supabase.auth.signInWithPassword({
-    email: username,
-    password: password,
-  });
-
-  if (authError) {
-    console.log(authError);
-    return { ok: false, error: 'Gagal membuat session' };
-  }
-
-  setIsLoggedIn(true);
-  setUsername(username);
-
-  return { ok: true };
-};
+  const login = async (username: string) => {
+    localStorage.setItem('admin_user', username);
+    setIsLoggedIn(true);
+    setUsername(username);
+    return { ok: true };
+  };
 
   const logout = async () => {
-    await supabase.auth.signOut();
+    localStorage.removeItem('admin_user');
     setIsLoggedIn(false);
     setUsername(null);
   };
