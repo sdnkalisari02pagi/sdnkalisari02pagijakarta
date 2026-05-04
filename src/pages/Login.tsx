@@ -16,7 +16,7 @@ export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { login } = useAuth(); // tetap ada, tidak dipakai
+  const { login } = useAuth(); // 🔥 sekarang dipakai
   const { data } = useSchool();
   const navigate = useNavigate();
 
@@ -29,16 +29,13 @@ export default function Login() {
     const p = password.trim();
 
     try {
-      // 🔍 ambil user berdasarkan username dulu
       const { data: users, error: fetchError } = await supabase
         .from('akun')
         .select('*')
         .eq('username', u)
         .limit(1);
 
-      if (fetchError) {
-        throw fetchError;
-      }
+      if (fetchError) throw fetchError;
 
       if (!users || users.length === 0) {
         setError('User tidak ditemukan');
@@ -48,17 +45,15 @@ export default function Login() {
 
       const user = users[0];
 
-      // 🔐 cek password manual (biar jelas errornya)
       if (user.password !== p) {
         setError('Password salah');
         setLoading(false);
         return;
       }
 
-      // ✅ simpan session sederhana
-      localStorage.setItem('admin_user', user.username);
+      // 🔥 FIX UTAMA: pakai AuthContext
+      await login(user.username);
 
-      // 🚀 masuk ke admin
       navigate('/admin');
 
     } catch (err: any) {
@@ -85,7 +80,6 @@ export default function Login() {
 
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-
             {error && (
               <p className="text-sm text-destructive text-center">
                 {error}
@@ -132,7 +126,6 @@ export default function Login() {
                 Forgot Password?
               </button>
             </p>
-
           </form>
         </CardContent>
       </Card>
