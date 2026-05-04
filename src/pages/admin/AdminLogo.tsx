@@ -1,5 +1,6 @@
 import { useSchool } from '@/contexts/SchoolContext';
 import { supabase } from '@/lib/supabase';
+import { updateFavicon } from '@/utils/updateFavicon'; // 🔥 tambahin ini
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ImageUpload from '@/components/ImageUpload';
 import { toast } from '@/hooks/use-toast';
@@ -17,23 +18,33 @@ export default function AdminLogo() {
     fetchLogo();
   }, []);
 
+  // 🔥 AUTO SET FAVICON SAAT LOGO BERUBAH
+  useEffect(() => {
+    if (logo) {
+      updateFavicon(logo);
+    }
+  }, [logo]);
+
   const fetchLogo = async () => {
     const { data: dbData, error } = await supabase
       .from('logo')
       .select('*')
       .eq('id', 1)
-      .maybeSingle(); // 🔥 lebih aman
+      .maybeSingle();
 
     if (!error && dbData) {
-      setLogo(dbData.url || '');
+      const url = dbData.url || '';
+      setLogo(url);
 
       if (typeof updateLogo === 'function') {
-        updateLogo(dbData.url || '');
+        updateLogo(url);
       }
+
+      updateFavicon(url); // 🔥 set favicon saat load
     }
   };
 
-  // 🔥 CREATE / UPDATE (pakai upsert)
+  // 🔥 CREATE / UPDATE
   const handleSave = async () => {
     if (!logo) {
       toast({
@@ -56,10 +67,11 @@ export default function AdminLogo() {
 
       if (error) throw error;
 
-      // update UI
       if (typeof updateLogo === 'function') {
         updateLogo(logo);
       }
+
+      updateFavicon(logo); // 🔥 update favicon setelah save
 
       toast({
         title: 'Berhasil',
@@ -95,6 +107,8 @@ export default function AdminLogo() {
       if (typeof updateLogo === 'function') {
         updateLogo('');
       }
+
+      updateFavicon(''); // 🔥 kosongkan favicon
 
       toast({
         title: 'Berhasil',
@@ -146,7 +160,10 @@ export default function AdminLogo() {
 
           <ImageUpload
             value={logo}
-            onChange={setLogo}
+            onChange={(val) => {
+              setLogo(val);
+              updateFavicon(val); // 🔥 preview langsung saat upload
+            }}
             placeholder
             required
             recommendedSize="200×200 px (kotak)"
