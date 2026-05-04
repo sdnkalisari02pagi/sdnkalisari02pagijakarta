@@ -10,7 +10,7 @@ import { useState, useEffect } from 'react';
 
 export default function AdminLogo() {
   const { data, updateLogo } = useSchool();
-  const [logo, setLogo] = useState(data.logo);
+  const [logo, setLogo] = useState(data.logo || '');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -22,15 +22,18 @@ export default function AdminLogo() {
       .from('logo')
       .select('*')
       .eq('id', 1)
-      .single();
+      .maybeSingle(); // 🔥 lebih aman
 
     if (!error && dbData) {
-      setLogo(dbData.url);
-      updateLogo(dbData.url);
+      setLogo(dbData.url || '');
+
+      if (typeof updateLogo === 'function') {
+        updateLogo(dbData.url || '');
+      }
     }
   };
 
-  // 🔥 CREATE / UPDATE
+  // 🔥 CREATE / UPDATE (pakai upsert)
   const handleSave = async () => {
     if (!logo) {
       toast({
@@ -44,31 +47,19 @@ export default function AdminLogo() {
     setLoading(true);
 
     try {
-      // cek dulu ada data atau tidak
-      const { data: existing } = await supabase
+      const { error } = await supabase
         .from('logo')
-        .select('*')
-        .eq('id', 1)
-        .single();
+        .upsert({
+          id: 1,
+          url: logo
+        });
 
-      if (existing) {
-        // 🔄 UPDATE
-        const { error } = await supabase
-          .from('logo')
-          .update({ url: logo })
-          .eq('id', 1);
+      if (error) throw error;
 
-        if (error) throw error;
-      } else {
-        // ➕ CREATE
-        const { error } = await supabase
-          .from('logo')
-          .insert({ id: 1, url: logo });
-
-        if (error) throw error;
+      // update UI
+      if (typeof updateLogo === 'function') {
+        updateLogo(logo);
       }
-
-      updateLogo(logo);
 
       toast({
         title: 'Berhasil',
@@ -79,7 +70,7 @@ export default function AdminLogo() {
       console.error(err);
       toast({
         title: 'Gagal',
-        description: err.message,
+        description: err.message || 'Terjadi kesalahan',
         variant: 'destructive'
       });
     }
@@ -100,7 +91,10 @@ export default function AdminLogo() {
       if (error) throw error;
 
       setLogo('');
-      updateLogo('');
+
+      if (typeof updateLogo === 'function') {
+        updateLogo('');
+      }
 
       toast({
         title: 'Berhasil',
@@ -111,7 +105,7 @@ export default function AdminLogo() {
       console.error(err);
       toast({
         title: 'Gagal',
-        description: err.message,
+        description: err.message || 'Terjadi kesalahan',
         variant: 'destructive'
       });
     }
