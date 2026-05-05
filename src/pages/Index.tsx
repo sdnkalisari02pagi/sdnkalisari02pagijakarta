@@ -12,6 +12,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {Bo
 
 export default function Index() {const { data } = useSchool();
 const { t: translate, lang } = useLanguage();
+const translate = typeof t === 'function' ? t : (key: string) => key;                                 
 const sambutanRef = useScrollAnimation();
 const keunggulanRef = useScrollAnimation();
 const ekstrakurikulerRef = useScrollAnimation();
