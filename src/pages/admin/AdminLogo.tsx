@@ -12,8 +12,8 @@ import { useState, useEffect } from 'react';
 export default function AdminLogo() {
   const { data, updateLogo } = useSchool();
 
-  // 🔥 sekarang bisa string ATAU File
   const [logo, setLogo] = useState<string | File>(data.logo || '');
+  const [preview, setPreview] = useState<string>('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -21,8 +21,13 @@ export default function AdminLogo() {
   }, []);
 
   useEffect(() => {
-    if (typeof logo === 'string' && logo) {
-      updateFavicon(logo);
+    if (typeof logo === 'string') {
+      setPreview(logo);
+      if (logo) updateFavicon(logo);
+    } else if (logo instanceof File) {
+      const url = URL.createObjectURL(logo);
+      setPreview(url);
+      return () => URL.revokeObjectURL(url);
     }
   }, [logo]);
 
@@ -35,17 +40,22 @@ export default function AdminLogo() {
 
     if (dbData) {
       setLogo(dbData.url);
+      setPreview(dbData.url);
       updateLogo?.(dbData.url);
       updateFavicon(dbData.url);
     }
   };
 
+  // 🔥 FIX: pakai path tetap → auto replace
   const uploadToStorage = async (file: File) => {
-    const fileName = `logo-${Date.now()}`;
+    const filePath = `logo`; // 🔥 satu file saja
 
     const { error } = await supabase.storage
       .from('logo')
-      .upload(fileName, file);
+      .upload(filePath, file, {
+        upsert: true, // replace file lama
+        contentType: file.type
+      });
 
     if (error) {
       console.error('UPLOAD ERROR:', error);
@@ -54,19 +64,10 @@ export default function AdminLogo() {
 
     const { data } = supabase.storage
       .from('logo')
-      .getPublicUrl(fileName);
+      .getPublicUrl(filePath);
 
-    return data.publicUrl;
-  };
-
-  const deleteAllLogo = async () => {
-    const { data: files } = await supabase.storage.from('logo').list();
-
-    if (!files || files.length === 0) return;
-
-    const paths = files.map(f => f.name);
-
-    await supabase.storage.from('logo').remove(paths);
+    // 🔥 cache bust biar nggak ke-cache browser
+    return data.publicUrl + `?t=${Date.now()}`;
   };
 
   const handleSave = async () => {
@@ -80,14 +81,9 @@ export default function AdminLogo() {
     try {
       let finalUrl = '';
 
-      // 🔥 kalau File → upload
       if (logo instanceof File) {
         finalUrl = await uploadToStorage(logo);
-
-        // 🔥 hapus lama setelah upload sukses
-        //await deleteAllLogo();
       } else {
-        // 🔥 kalau string (URL lama)
         finalUrl = logo;
       }
 
@@ -101,6 +97,8 @@ export default function AdminLogo() {
       if (error) throw error;
 
       setLogo(finalUrl);
+      setPreview(finalUrl);
+
       updateLogo?.(finalUrl);
       updateFavicon(finalUrl);
 
@@ -115,11 +113,13 @@ export default function AdminLogo() {
   };
 
   const handleDelete = async () => {
+    // 🔥 hapus 1 file saja
+    await supabase.storage.from('logo').remove(['logo']);
+
     await supabase.from('logo').delete().eq('id', 1);
 
-    await deleteAllLogo();
-
     setLogo('');
+    setPreview('');
     updateLogo?.('');
     updateFavicon('');
   };
@@ -136,9 +136,9 @@ export default function AdminLogo() {
         </CardHeader>
 
         <CardContent className="space-y-4">
-          {logo ? (
+          {preview ? (
             <img
-              src={typeof logo === 'string' ? logo : URL.createObjectURL(logo)}
+              src={preview}
               className="w-16 h-16 rounded-full object-cover"
             />
           ) : (
@@ -146,7 +146,7 @@ export default function AdminLogo() {
           )}
 
           <ImageUpload
-            value={typeof logo === 'string' ? logo : URL.createObjectURL(logo)}
+            value={preview}
             onChange={setLogo}
             placeholder
             required
