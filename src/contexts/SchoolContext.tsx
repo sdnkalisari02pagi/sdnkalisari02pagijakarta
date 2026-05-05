@@ -21,7 +21,7 @@ export interface SchoolData {
   kontak: any;
   lastModified: {
     footer: string | null;
-    logo: string | null; // ✅ tambah
+    logo: string | null;
   };
   footer: any;
   siswa: any[];
@@ -72,7 +72,7 @@ const defaultData: SchoolData = {
   },
   lastModified: {
     footer: null,
-    logo: null // ✅ tambah
+    logo: null
   },
   siswa: []
 };
@@ -149,10 +149,9 @@ async function fetchAll(): Promise<SchoolData> {
 
       lastModified: {
         footer: footer.data?.updated_at || null,
-        logo: logo.data?.updated_at || null // ✅ tambah
+        logo: logo.data?.updated_at || null
       },
 
-      // fallback (tidak diubah)
       prestasi: [],
       ekstrakurikuler: [],
       dokumen: [],
@@ -240,14 +239,14 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
 
   /* ================= LOGO ================= */
 
-  const updateLogo = (url: string) => {
+  const updateLogo = (url: string, updatedAt?: string) => {
     setData(d => ({
       ...d,
       logo: url,
-    lastModified: {
-      ...d.lastModified,
-      logo: updatedAt || d.lastModified.logo
-    }
+      lastModified: {
+        ...d.lastModified,
+        logo: updatedAt ?? d.lastModified.logo ?? null
+      }
     }));
   };
 
