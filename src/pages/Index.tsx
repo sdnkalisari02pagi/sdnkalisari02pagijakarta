@@ -39,60 +39,64 @@ return (
   <div className="absolute top-1/2 -right-32 w-80 h-80 rounded-full bg-secondary/10 blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
   <div className="absolute -bottom-16 left-1/3 w-64 h-64 rounded-full bg-primary/5 blur-2xl animate-pulse" style={{ animationDelay: '2s' }} />
 
-  <section>
-    <div className="container mx-auto px-4 relative z-10">
-      <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
-        <div className="space-y-6 animate-fade-in-up">
-          <div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-gradient mb-4">{tr(hero.judul, lang)}</h1>
-            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-lg">{tr(hero.subtitle, lang)}</p>
-          </div>
+  <section className="relative py-12 md:py-24 overflow-hidden hero-gradient">
+        <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-primary/10 blur-3xl animate-pulse" />
+        <div className="absolute top-1/2 -right-32 w-80 h-80 rounded-full bg-secondary/10 blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute -bottom-16 left-1/3 w-64 h-64 rounded-full bg-primary/5 blur-2xl animate-pulse" style={{ animationDelay: '2s' }} />
 
-          <div className="flex flex-wrap gap-3 pt-2">
-            <Link to="/kontak"><Button size="lg" className="gap-2">{t('hero_cta_feedback')} <ArrowRight className="w-4 h-4" /></Button></Link>
-            <Link to="/profil?tab=pegawai"><Button size="lg" variant="outline" className="gap-2"><Users className="w-4 h-4" /> {t('hero_cta_staff')}</Button></Link>
-          </div>
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
+            <div className="space-y-6 animate-fade-in-up">
+              <div>
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-gradient mb-4">{tr(hero.judul, lang)}</h1>
+                <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-lg">{tr(hero.subtitle, lang)}</p>
+              </div>
 
-          {stats.length > 0 && (
-            <div className={`grid ${gridColsMap[stats.length] || 'grid-cols-4'} gap-3 pt-4`}>
-              {stats.map((s) => (
-                <div key={s.key} className="flex items-center gap-2 bg-background rounded-xl px-3 py-3 shadow-sm border border-border">
-                  <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                    <s.icon className="w-4 h-4 text-primary" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-lg font-bold leading-none text-foreground">{s.value}</p>
-                    <p className="text-[10px] text-muted-foreground truncate">{s.label}</p>
-                  </div>
+              <div className="flex flex-wrap gap-3 pt-2">
+                <Link to="/kontak"><Button size="lg" className="gap-2">{t('hero_cta_feedback')} <ArrowRight className="w-4 h-4" /></Button></Link>
+                <Link to="/profil?tab=pegawai"><Button size="lg" variant="outline" className="gap-2"><Users className="w-4 h-4" /> {t('hero_cta_staff')}</Button></Link>
+              </div>
+
+              {stats.length > 0 && (
+                <div className={`grid ${gridColsMap[stats.length] || 'grid-cols-4'} gap-3 pt-4`}>
+                  {stats.map((s) => (
+                    <div key={s.key} className="flex items-center gap-2 bg-background rounded-xl px-3 py-3 shadow-sm border border-border">
+                      <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                        <s.icon className="w-4 h-4 text-primary" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-lg font-bold leading-none text-foreground">{s.value}</p>
+                        <p className="text-[10px] text-muted-foreground truncate">{s.label}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
-          )}
-        </div>
 
-        <div className="relative animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-          <div className="relative rounded-2xl overflow-hidden shadow-xl aspect-[4/3] w-full max-w-2xl mx-auto">
-            {images.map((img, i) => (
-              <img key={i} src={img} alt={`Slide ${i + 1}`} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out" style={{ opacity: i === currentSlide ? 1 : 0 }} />
-            ))}
-            {images.length > 1 && (
-              <>
-                <button onClick={prevSlide} className="absolute left-3 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-background/60 backdrop-blur-sm text-foreground hover:bg-background/80 transition-colors shadow-md" aria-label="Previous"><ChevronLeft className="w-5 h-5" /></button>
-                <button onClick={nextSlide} className="absolute right-3 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-background/60 backdrop-blur-sm text-foreground hover:bg-background/80 transition-colors shadow-md" aria-label="Next"><ChevronRight className="w-5 h-5" /></button>
-              </>
-            )}
-          </div>
-          {images.length > 1 && (
-            <div className="flex justify-center gap-2 mt-4">
-              {images.map((_, i) => (
-                <button key={i} onClick={() => setCurrentSlide(i)} className={`w-2.5 h-2.5 rounded-full transition-all ${i === currentSlide ? 'bg-primary w-6' : 'bg-primary/30'}`} aria-label={`Slide ${i + 1}`} />
-              ))}
+            <div className="relative animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+              <div className="relative rounded-2xl overflow-hidden shadow-xl aspect-[4/3]">
+                {images.map((img, i) => (
+                  <img key={i} src={img} alt={`Slide ${i + 1}`} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out" style={{ opacity: i === currentSlide ? 1 : 0 }} />
+                ))}
+                {images.length > 1 && (
+                  <>
+                    <button onClick={prevSlide} className="absolute left-3 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-background/60 backdrop-blur-sm text-foreground hover:bg-background/80 transition-colors shadow-md" aria-label="Previous"><ChevronLeft className="w-5 h-5" /></button>
+                    <button onClick={nextSlide} className="absolute right-3 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-background/60 backdrop-blur-sm text-foreground hover:bg-background/80 transition-colors shadow-md" aria-label="Next"><ChevronRight className="w-5 h-5" /></button>
+                  </>
+                )}
+              </div>
+              {images.length > 1 && (
+                <div className="flex justify-center gap-2 mt-4">
+                  {images.map((_, i) => (
+                    <button key={i} onClick={() => setCurrentSlide(i)} className={`w-2.5 h-2.5 rounded-full transition-all ${i === currentSlide ? 'bg-primary w-6' : 'bg-primary/30'}`} aria-label={`Slide ${i + 1}`} />
+                  ))}
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
-      </div>
-    </div>
-  </section>
+      </section>
 
   {/* SEMUA BAGIAN DI BAWAH INI SAMA PERSIS DENGAN CODE LU */}
 
