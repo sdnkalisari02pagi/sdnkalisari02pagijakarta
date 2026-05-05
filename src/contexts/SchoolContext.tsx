@@ -176,8 +176,6 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     fetchAll().then(setData);
   }, []);
 
-  /* ================= BERITA ================= */
-
   const updateBerita = async (items: any[]) => {
     try {
       for (const item of items) {
@@ -204,7 +202,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  /* ================= FOOTER ================= */
+  /* ================= FOOTER (FIXED) ================= */
 
   const updateFooter = async (form: any) => {
     try {
@@ -228,7 +226,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
         footer: form,
         lastModified: {
           ...d.lastModified,
-          footer: new Date().toISOString()
+          footer: d.lastModified.footer // ✅ FIX (hapus new Date)
         }
       }));
 
