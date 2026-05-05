@@ -174,14 +174,6 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     return data.publicUrl;
   };
 
-  // ⚠️ TIDAK DIPAKAI LAGI (BIAR GA BUG)
-  const deleteAllBeritaFiles = async () => {
-    const { data: files } = await supabase.storage.from('berita').list();
-    if (!files || files.length === 0) return;
-    const paths = files.map(f => f.name);
-    await supabase.storage.from('berita').remove(paths);
-  };
-
   /* ================= BERITA ================= */
 
   const updateBerita = async (items: any[]) => {
@@ -192,17 +184,17 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
         let foto = item.fotoUtama;
         let thumbnail = item.thumbnail;
 
-        // upload foto
+        // ✅ upload foto kalau ada file
         if (item._fotoFile instanceof File) {
           foto = await uploadFile(item._fotoFile, 'foto');
         }
 
-        // upload thumbnail
+        // ✅ upload thumbnail
         if (item._thumbnailFile instanceof File) {
           thumbnail = await uploadFile(item._thumbnailFile, 'thumb');
         }
 
-        // galeri
+        // ✅ galeri
         let galeri: (string | File)[] =
           item._galeriFiles?.length > 0
             ? item._galeriFiles
@@ -221,7 +213,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
           }
         }
 
-        // 🔥 UPSERT (AMAN)
+        // ✅ upsert berita
         await supabase.from('berita').upsert({
           id,
           judul_id: item.judul?.id || '',
@@ -235,7 +227,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
           deskripsi_en: item.deskripsi?.en || ''
         });
 
-        // 🔥 reset galeri per berita
+        // ✅ reset galeri per berita
         await supabase
           .from('berita_galeri')
           .delete()
