@@ -101,7 +101,6 @@ async function fetchAll(): Promise<SchoolData> {
     ]);
 
     return {
-      ...defaultData,
 
       logo: logo.data?.url || '',
 
@@ -148,7 +147,16 @@ async function fetchAll(): Promise<SchoolData> {
 
       lastModified: {
         footer: footer.data?.updated_at || null
-      }
+      },
+
+      // fallback biar ga undefined (tidak ubah struktur)
+      prestasi: [],
+      ekstrakurikuler: [],
+      dokumen: [],
+      profil: defaultData.profil,
+      sambutan: defaultData.sambutan,
+      kontak: defaultData.kontak,
+      siswa: []
     };
 
   } catch (err) {
