@@ -19,6 +19,9 @@ export interface SchoolData {
   profil: any;
   sambutan: any;
   kontak: any;
+  lastModified: {
+  footer: string | null;
+  };
   footer: any;
   siswa: any[];
 }
@@ -65,6 +68,9 @@ const defaultData: SchoolData = {
     youtube: '',
     tiktok: '',
     copyright: ''
+  },
+  lastModified: {
+    footer: null
   },
   siswa: []
 };
