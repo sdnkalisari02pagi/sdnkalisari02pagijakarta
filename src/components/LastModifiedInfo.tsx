@@ -3,9 +3,7 @@ import { Clock } from 'lucide-react';
 function formatDate(iso: string) {
   const date = new Date(iso);
 
-  // fallback aman kalau timezone browser ngaco
-  const formatted = date.toLocaleString('id-ID', {
-    timeZone: 'Asia/Jakarta',
+  return date.toLocaleString('id-ID', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -13,6 +11,7 @@ function formatDate(iso: string) {
     minute: '2-digit',
     hour12: false
   });
+}
 
   // kalau somehow masih undefined / invalid
   if (formatted === 'Invalid Date') {
