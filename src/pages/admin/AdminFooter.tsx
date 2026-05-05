@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSchool } from '@/contexts/SchoolContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -13,6 +13,11 @@ export default function AdminFooter() {
   const { data, updateFooter } = useSchool();
   const [form, setForm] = useState(data.footer);
   const { toast } = useToast();
+
+  // ✅ FIX: sync state saat data dari context berubah
+  useEffect(() => {
+    setForm(data.footer);
+  }, [data.footer]);
 
   const handleSave = () => {
     if (!form.namaSekolah.trim()) {
@@ -30,15 +35,62 @@ export default function AdminFooter() {
       <LastModifiedInfo timestamp={data.lastModified.footer} />
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2"><LayoutTemplate className="w-5 h-5" /> Konten Footer</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <LayoutTemplate className="w-5 h-5" /> Konten Footer
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div><Label>Nama Sekolah</Label><Input value={form.namaSekolah} onChange={e => setForm({ ...form, namaSekolah: e.target.value })} /></div>
-          <BilingualInput label="Deskripsi" value={form.deskripsi} onChange={v => setForm({ ...form, deskripsi: v })} multiline rows={3} />
-          <div><Label>Link Instagram</Label><Input value={form.instagram} onChange={e => setForm({ ...form, instagram: e.target.value })} placeholder="https://instagram.com/..." /></div>
-          <div><Label>Link YouTube</Label><Input value={form.youtube} onChange={e => setForm({ ...form, youtube: e.target.value })} placeholder="https://youtube.com/..." /></div>
-          <div><Label>Link TikTok</Label><Input value={form.tiktok || ''} onChange={e => setForm({ ...form, tiktok: e.target.value })} placeholder="https://www.tiktok.com/@..." /></div>
-          <div><Label>Teks Copyright</Label><Input value={form.copyright} onChange={e => setForm({ ...form, copyright: e.target.value })} /></div>
+          <div>
+            <Label>Nama Sekolah</Label>
+            <Input
+              value={form.namaSekolah}
+              onChange={e => setForm({ ...form, namaSekolah: e.target.value })}
+            />
+          </div>
+
+          <BilingualInput
+            label="Deskripsi"
+            value={form.deskripsi}
+            onChange={v => setForm({ ...form, deskripsi: v })}
+            multiline
+            rows={3}
+          />
+
+          <div>
+            <Label>Link Instagram</Label>
+            <Input
+              value={form.instagram}
+              onChange={e => setForm({ ...form, instagram: e.target.value })}
+              placeholder="https://instagram.com/..."
+            />
+          </div>
+
+          <div>
+            <Label>Link YouTube</Label>
+            <Input
+              value={form.youtube}
+              onChange={e => setForm({ ...form, youtube: e.target.value })}
+              placeholder="https://youtube.com/..."
+            />
+          </div>
+
+          <div>
+            <Label>Link TikTok</Label>
+            <Input
+              value={form.tiktok || ''}
+              onChange={e => setForm({ ...form, tiktok: e.target.value })}
+              placeholder="https://www.tiktok.com/@..."
+            />
+          </div>
+
+          <div>
+            <Label>Teks Copyright</Label>
+            <Input
+              value={form.copyright}
+              onChange={e => setForm({ ...form, copyright: e.target.value })}
+            />
+          </div>
+
           <Button onClick={handleSave}>Simpan</Button>
         </CardContent>
       </Card>
