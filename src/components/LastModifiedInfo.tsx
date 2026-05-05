@@ -1,9 +1,14 @@
 import { Clock } from 'lucide-react';
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('id-ID', {
-    day: 'numeric', month: 'long', year: 'numeric',
-    hour: '2-digit', minute: '2-digit',
+  return new Date(iso).toLocaleString('id-ID', {
+    timeZone: 'Asia/Jakarta', // ✅ FIX timezone
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false // biar format 24 jam (06.52)
   });
 }
 
