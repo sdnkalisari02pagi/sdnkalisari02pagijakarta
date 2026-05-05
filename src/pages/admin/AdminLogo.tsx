@@ -41,7 +41,7 @@ export default function AdminLogo() {
     if (dbData) {
       setLogo(dbData.url);
       setPreview(dbData.url);
-      updateLogo?.(dbData.url);
+      updateLogo?.(dbData.url, dbData.updated_at);
       updateFavicon(dbData.url);
     }
   };
