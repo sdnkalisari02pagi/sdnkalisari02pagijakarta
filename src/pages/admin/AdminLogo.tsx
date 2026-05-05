@@ -85,7 +85,7 @@ export default function AdminLogo() {
         finalUrl = await uploadToStorage(logo);
 
         // 🔥 hapus lama setelah upload sukses
-        await deleteAllLogo();
+        //await deleteAllLogo();
       } else {
         // 🔥 kalau string (URL lama)
         finalUrl = logo;
