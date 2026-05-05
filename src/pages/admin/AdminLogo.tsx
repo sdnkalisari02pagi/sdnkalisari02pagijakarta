@@ -46,19 +46,22 @@ export default function AdminLogo() {
   };
 
   const uploadToStorage = async (file: File) => {
-    const fileName = `logo-${Date.now()}`;
+  const fileName = `logo-${Date.now()}`;
 
-    const { error } = await supabase.storage
-      .from('logo')
-      .upload(fileName, file);
+  const { error } = await supabase.storage
+    .from('logo')
+    .upload(fileName, file);
 
-    if (error) throw error;
+  if (error) {
+    console.error('UPLOAD ERROR:', error);
+    throw error;
+  }
 
-    const { data } = supabase.storage
-      .from('logo')
-      .getPublicUrl(fileName);
+  const { data } = supabase.storage
+    .from('logo')
+    .getPublicUrl(fileName);
 
-    return data.publicUrl;
+  return data.publicUrl;
   };
 
   // 🔥 NEW: DELETE ALL FILE DI BUCKET LOGO
@@ -73,41 +76,48 @@ export default function AdminLogo() {
   };
 
   const handleSave = async () => {
-    if (!logo) {
-      toast({ title: 'Gagal', description: 'Upload dulu logo', variant: 'destructive' });
-      return;
+  if (!logo) {
+    toast({ title: 'Gagal', description: 'Upload dulu logo', variant: 'destructive' });
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    let finalUrl = logo;
+
+    // 🔥 upload dulu, JANGAN hapus dulu
+    if (logo.startsWith('data:')) {
+      const file = await base64ToFile(logo);
+      finalUrl = await uploadToStorage(file);
     }
 
-    setLoading(true);
+    // 🔥 baru hapus file lama
+    await deleteAllLogo();
 
-    try {
-      let finalUrl = logo;
-
-      // 🔥 kalau upload baru → hapus logo lama dulu
-      await deleteAllLogo();
-
-      if (logo.startsWith('data:')) {
-        const file = await base64ToFile(logo);
-        finalUrl = await uploadToStorage(file);
-      }
-
-      await supabase.from('logo').upsert({
+    // 🔥 INSERT DB + CEK ERROR
+    const { error } = await supabase
+      .from('logo')
+      .upsert({
         id: 1,
         url: finalUrl
       });
 
-      setLogo(finalUrl);
-      updateLogo?.(finalUrl);
-      updateFavicon(finalUrl);
+    if (error) throw error;
 
-      toast({ title: 'Berhasil', description: 'Logo disimpan' });
+    setLogo(finalUrl);
+    updateLogo?.(finalUrl);
+    updateFavicon(finalUrl);
 
-    } catch (err: any) {
-      toast({ title: 'Error', description: err.message, variant: 'destructive' });
-    }
+    toast({ title: 'Berhasil', description: 'Logo disimpan' });
 
-    setLoading(false);
-  };
+      } catch (err: any) {
+        console.error(err);
+        toast({ title: 'Error', description: err.message, variant: 'destructive' });
+      }
+    
+      setLoading(false);
+    };
 
   const handleDelete = async () => {
     await supabase.from('logo').delete().eq('id', 1);
