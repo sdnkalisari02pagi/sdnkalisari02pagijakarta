@@ -20,8 +20,19 @@ export interface SchoolData {
   sambutan: any;
   kontak: any;
   lastModified: {
-    footer: string | null;
     logo: string | null;
+    footer: string | null;
+    hero: string | null;
+    keunggulan: string | null;
+    pegawai: string | null;
+    berita: string | null;
+    prestasi: string | null;
+    ekstrakurikuler: string | null;
+    dokumen: string | null;
+    profil: string | null;
+    sambutan: string | null;
+    kontak: string | null;
+    siswa: string | null;
   };
   footer: any;
   siswa: any[];
@@ -71,8 +82,19 @@ const defaultData: SchoolData = {
     copyright: ''
   },
   lastModified: {
+    logo: null,
     footer: null,
-    logo: null
+    hero: null,
+    keunggulan: null,
+    pegawai: null,
+    berita: null,
+    prestasi: null,
+    ekstrakurikuler: null,
+    dokumen: null,
+    profil: null,
+    sambutan: null,
+    kontak: null,
+    siswa: null
   },
   siswa: []
 };
@@ -87,60 +109,39 @@ async function fetchAll(): Promise<SchoolData> {
   try {
     const [
       logo,
-      hero, heroImages, keunggulan, pegawai, jabatan,
-      berita, beritaGaleri,
+      hero,
+      keunggulan,
+      pegawai,
+      berita,
       footer
     ] = await Promise.all([
       supabase.from('logo').select('*').limit(1).maybeSingle(),
       supabase.from('hero').select('*').limit(1).maybeSingle(),
-      supabase.from('hero_images').select('*'),
       supabase.from('keunggulan').select('*'),
       supabase.from('pegawai').select('*'),
-      supabase.from('jabatan_list').select('*'),
       supabase.from('berita').select('*'),
-      supabase.from('berita_galeri').select('*'),
       supabase.from('footer').select('*').limit(1).maybeSingle()
     ]);
 
     return {
-
       logo: logo.data?.url || '',
 
       hero: hero.data ? {
-        images: heroImages.data?.map(i => i.url) || [],
+        images: [],
         judul: B(hero.data.judul_id || '', hero.data.judul_en || ''),
         subtitle: B(hero.data.subtitle_id || '', hero.data.subtitle_en || ''),
         tahunBerdiri: hero.data.tahun || '',
-        statsVisibility: {
-          staff: hero.data.staff ?? true,
-          students: hero.data.students ?? true,
-          ekskul: hero.data.ekskul ?? true,
-          founded: hero.data.founded ?? true
-        }
+        statsVisibility: {}
       } : defaultData.hero,
 
       keunggulan: keunggulan.data || [],
       pegawai: pegawai.data || [],
-      jabatanList: jabatan.data?.map(j => B(j.nama_id || '', j.nama_en || '')) || [],
-
-      berita: berita.data?.map(b => ({
-        id: b.id,
-        judul: B(b.judul_id || '', b.judul_en || ''),
-        tanggal: b.tanggal,
-        tipe: b.tipe,
-        fotoUtama: b.foto,
-        thumbnail: b.thumbnail,
-        videoUrl: b.video,
-        galeri: beritaGaleri.data
-          ?.filter(g => String(g.berita_id) === String(b.id))
-          .sort((a, b) => a.id - b.id)
-          .map(g => g.url) || [],
-        deskripsi: B(b.deskripsi_id || '', b.deskripsi_en || '')
-      })) || [],
+      jabatanList: [],
+      berita: berita.data || [],
 
       footer: footer.data ? {
         namaSekolah: footer.data.nama || '',
-        deskripsi: B(footer.data.deskripsi_id || '', footer.data.deskripsi_en || ''),
+        deskripsi: B('', ''),
         instagram: footer.data.instagram || '',
         youtube: footer.data.youtube || '',
         tiktok: footer.data.tiktok || '',
@@ -148,8 +149,19 @@ async function fetchAll(): Promise<SchoolData> {
       } : defaultData.footer,
 
       lastModified: {
+        logo: logo.data?.updated_at || null,
         footer: footer.data?.updated_at || null,
-        logo: logo.data?.updated_at || null
+        hero: hero.data?.updated_at || null,
+        keunggulan: keunggulan.data?.[0]?.updated_at || null,
+        pegawai: pegawai.data?.[0]?.updated_at || null,
+        berita: berita.data?.[0]?.updated_at || null,
+        prestasi: null,
+        ekstrakurikuler: null,
+        dokumen: null,
+        profil: null,
+        sambutan: null,
+        kontak: null,
+        siswa: null
       },
 
       prestasi: [],
@@ -176,80 +188,44 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     fetchAll().then(setData);
   }, []);
 
-  const updateBerita = async (items: any[]) => {
-    try {
-      for (const item of items) {
-        const id = item.id || crypto.randomUUID();
-
-        await supabase.from('berita').upsert({
-          id,
-          judul_id: item.judul?.id || '',
-          judul_en: item.judul?.en || '',
-          tanggal: item.tanggal || '',
-          tipe: item.tipe || '',
-          foto: item.fotoUtama,
-          thumbnail: item.thumbnail,
-          video: item.videoUrl || '',
-          deskripsi_id: item.deskripsi?.id || '',
-          deskripsi_en: item.deskripsi?.en || ''
-        });
-      }
-
-      setData(d => ({ ...d, berita: items }));
-
-    } catch (err) {
-      console.error('UPDATE BERITA ERROR:', err);
-    }
-  };
-
-  /* ================= FOOTER (FIXED) ================= */
-
   const updateFooter = async (form: any) => {
-    try {
-      const { error } = await supabase
-        .from('footer')
-        .upsert({
-          id: 1,
-          nama: form.namaSekolah,
-          deskripsi_id: form.deskripsi?.id || '',
-          deskripsi_en: form.deskripsi?.en || '',
-          instagram: form.instagram,
-          youtube: form.youtube,
-          tiktok: form.tiktok,
-          copyright: form.copyright,
-        });
+    const { error } = await supabase.from('footer').upsert({ id: 1 });
+    if (error) return;
 
-      if (error) throw error;
-
-      setData(d => ({
-        ...d,
-        footer: form,
-        lastModified: {
-          ...d.lastModified,
-          footer: d.lastModified.footer // ✅ FIX (hapus new Date)
-        }
-      }));
-
-    } catch (err) {
-      console.error('UPDATE FOOTER ERROR:', err);
-    }
+    setData(d => ({
+      ...d,
+      footer: form,
+      lastModified: {
+        ...d.lastModified,
+        footer: d.lastModified.footer // 🔒 tidak berubah manual
+      }
+    }));
   };
-
-  /* ================= LOGO ================= */
 
   const updateLogo = (url: string, updatedAt?: string) => {
     setData(d => ({
       ...d,
       logo: url,
       lastModified: {
-        ...d.lastModified,
-        logo: updatedAt ?? d.lastModified.logo ?? null
+        footer: d.lastModified.footer, // 🔒 aman
+        logo: updatedAt ?? d.lastModified.logo,
+        hero: d.lastModified.hero,
+        keunggulan: d.lastModified.keunggulan,
+        pegawai: d.lastModified.pegawai,
+        berita: d.lastModified.berita,
+        prestasi: d.lastModified.prestasi,
+        ekstrakurikuler: d.lastModified.ekstrakurikuler,
+        dokumen: d.lastModified.dokumen,
+        profil: d.lastModified.profil,
+        sambutan: d.lastModified.sambutan,
+        kontak: d.lastModified.kontak,
+        siswa: d.lastModified.siswa
       }
     }));
   };
 
   return (
-    <SchoolContext.Provider value={{ data, updateBerita, updateFooter, updateLogo }}>
+    <SchoolContext.Provider value={{ data, updateFooter, updateLogo }}>
       {children}
     </SchoolContext.Provider>
   );
