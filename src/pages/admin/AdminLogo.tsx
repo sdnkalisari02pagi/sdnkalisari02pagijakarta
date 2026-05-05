@@ -11,7 +11,9 @@ import { useState, useEffect } from 'react';
 
 export default function AdminLogo() {
   const { data, updateLogo } = useSchool();
-  const [logo, setLogo] = useState(data.logo || '');
+
+  // 🔥 sekarang bisa string ATAU File
+  const [logo, setLogo] = useState<string | File>(data.logo || '');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -19,7 +21,7 @@ export default function AdminLogo() {
   }, []);
 
   useEffect(() => {
-    if (logo) {
+    if (typeof logo === 'string' && logo) {
       updateFavicon(logo);
     }
   }, [logo]);
@@ -38,33 +40,25 @@ export default function AdminLogo() {
     }
   };
 
-  // 🔥 convert base64 → file
-  const base64ToFile = async (base64: string) => {
-    const res = await fetch(base64);
-    const blob = await res.blob();
-    return new File([blob], `logo-${Date.now()}.png`, { type: blob.type });
-  };
-
   const uploadToStorage = async (file: File) => {
-  const fileName = `logo-${Date.now()}`;
+    const fileName = `logo-${Date.now()}`;
 
-  const { error } = await supabase.storage
-    .from('logo')
-    .upload(fileName, file);
+    const { error } = await supabase.storage
+      .from('logo')
+      .upload(fileName, file);
 
-  if (error) {
-    console.error('UPLOAD ERROR:', error);
-    throw error;
-  }
+    if (error) {
+      console.error('UPLOAD ERROR:', error);
+      throw error;
+    }
 
-  const { data } = supabase.storage
-    .from('logo')
-    .getPublicUrl(fileName);
+    const { data } = supabase.storage
+      .from('logo')
+      .getPublicUrl(fileName);
 
-  return data.publicUrl;
+    return data.publicUrl;
   };
 
-  // 🔥 NEW: DELETE ALL FILE DI BUCKET LOGO
   const deleteAllLogo = async () => {
     const { data: files } = await supabase.storage.from('logo').list();
 
@@ -76,53 +70,53 @@ export default function AdminLogo() {
   };
 
   const handleSave = async () => {
-  if (!logo) {
-    toast({ title: 'Gagal', description: 'Upload dulu logo', variant: 'destructive' });
-    return;
-  }
-
-  setLoading(true);
-
-  try {
-    let finalUrl = logo;
-
-    // 🔥 upload dulu, JANGAN hapus dulu
-    if (logo.startsWith('data:')) {
-      const file = await base64ToFile(logo);
-      finalUrl = await uploadToStorage(file);
+    if (!logo) {
+      toast({ title: 'Gagal', description: 'Upload dulu logo', variant: 'destructive' });
+      return;
     }
 
-    // 🔥 baru hapus file lama
-    await deleteAllLogo();
+    setLoading(true);
 
-    // 🔥 INSERT DB + CEK ERROR
-    const { error } = await supabase
-      .from('logo')
-      .upsert({
-        id: 1,
-        url: finalUrl
-      });
+    try {
+      let finalUrl = '';
 
-    if (error) throw error;
+      // 🔥 kalau File → upload
+      if (logo instanceof File) {
+        finalUrl = await uploadToStorage(logo);
 
-    setLogo(finalUrl);
-    updateLogo?.(finalUrl);
-    updateFavicon(finalUrl);
-
-    toast({ title: 'Berhasil', description: 'Logo disimpan' });
-
-      } catch (err: any) {
-        console.error(err);
-        toast({ title: 'Error', description: err.message, variant: 'destructive' });
+        // 🔥 hapus lama setelah upload sukses
+        await deleteAllLogo();
+      } else {
+        // 🔥 kalau string (URL lama)
+        finalUrl = logo;
       }
-    
-      setLoading(false);
-    };
+
+      const { error } = await supabase
+        .from('logo')
+        .upsert({
+          id: 1,
+          url: finalUrl
+        });
+
+      if (error) throw error;
+
+      setLogo(finalUrl);
+      updateLogo?.(finalUrl);
+      updateFavicon(finalUrl);
+
+      toast({ title: 'Berhasil', description: 'Logo disimpan' });
+
+    } catch (err: any) {
+      console.error(err);
+      toast({ title: 'Error', description: err.message, variant: 'destructive' });
+    }
+
+    setLoading(false);
+  };
 
   const handleDelete = async () => {
     await supabase.from('logo').delete().eq('id', 1);
 
-    // 🔥 hapus juga dari storage
     await deleteAllLogo();
 
     setLogo('');
@@ -143,13 +137,16 @@ export default function AdminLogo() {
 
         <CardContent className="space-y-4">
           {logo ? (
-            <img src={logo} className="w-16 h-16 rounded-full object-cover" />
+            <img
+              src={typeof logo === 'string' ? logo : URL.createObjectURL(logo)}
+              className="w-16 h-16 rounded-full object-cover"
+            />
           ) : (
             <GraduationCap />
           )}
 
           <ImageUpload
-            value={logo}
+            value={typeof logo === 'string' ? logo : URL.createObjectURL(logo)}
             onChange={setLogo}
             placeholder
             required
