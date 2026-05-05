@@ -11,7 +11,7 @@ import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {BookOpen, Users, Star, Shield, Award, Heart, Lightbulb, Target, Smile, Globe, Sparkles, Zap,};
 
 export default function Index() {const { data } = useSchool();
-const { t, lang } = useLanguage();
+const { t: translate, lang } = useLanguage();
 const sambutanRef = useScrollAnimation();
 const keunggulanRef = useScrollAnimation();
 const ekstrakurikulerRef = useScrollAnimation();
@@ -53,8 +53,8 @@ return (
               </div>
 
               <div className="flex flex-wrap gap-3 pt-2">
-                <Link to="/kontak"><Button size="lg" className="gap-2">{t('hero_cta_feedback')} <ArrowRight className="w-4 h-4" /></Button></Link>
-                <Link to="/profil?tab=pegawai"><Button size="lg" variant="outline" className="gap-2"><Users className="w-4 h-4" /> {t('hero_cta_staff')}</Button></Link>
+                <Link to="/kontak"><Button size="lg" className="gap-2">{translate('hero_cta_feedback')} <ArrowRight className="w-4 h-4" /></Button></Link>
+                <Link to="/profil?tab=pegawai"><Button size="lg" variant="outline" className="gap-2"><Users className="w-4 h-4" /> {translate('hero_cta_staff')}</Button></Link>
               </div>
 
               {stats.length > 0 && (
@@ -102,7 +102,7 @@ return (
 
   <section className="py-12 md:py-20 bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10" ref={sambutanRef}>
     <div className="container mx-auto px-4">
-      <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 md:mb-12 text-foreground scroll-animate">{t('section_sambutan')}</h2>
+      <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 md:mb-12 text-foreground scroll-animate">{translate('section_sambutan')}</h2>
       <div className="flex flex-col md:flex-row items-center gap-6 md:gap-10 max-w-4xl mx-auto scroll-animate delay-200">
         <div className="w-48 h-56 sm:w-56 sm:h-64 rounded-xl overflow-hidden shadow-xl border-4 border-background shrink-0">
           <img src={data.sambutan.foto} alt={data.sambutan.nama} className="w-full h-full object-cover" />
@@ -110,7 +110,7 @@ return (
         <div className="border-l-4 border-primary pl-4 sm:pl-6">
           <Quote className="w-8 h-8 text-secondary mb-3" />
           <h3 className="text-xl font-semibold text-primary mb-1">{data.sambutan.nama}</h3>
-          <span className="inline-block bg-primary/15 text-primary text-xs font-medium px-3 py-1 rounded-full mb-4">{t('section_kepala_sekolah')}</span>
+          <span className="inline-block bg-primary/15 text-primary text-xs font-medium px-3 py-1 rounded-full mb-4">{translate('section_kepala_sekolah')}</span>
           <p className="text-muted-foreground whitespace-pre-line leading-relaxed">{sambutanText.substring(0, 300)}...</p>
         </div>
       </div>
@@ -119,7 +119,7 @@ return (
 
   <section className="py-12 md:py-16" ref={keunggulanRef}>
     <div className="container mx-auto px-4">
-      <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 md:mb-10 text-foreground scroll-animate">{t('section_keunggulan')}</h2>
+      <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 md:mb-10 text-foreground scroll-animate">{translate('section_keunggulan')}</h2>
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {data.keunggulan.map((item, i) => {
           const IconComp = iconMap[item.icon] || Star;
@@ -141,7 +141,7 @@ return (
 
   <section className="py-12 md:py-16 bg-gradient-to-br from-secondary/10 via-accent/10 to-primary/10" ref={ekstrakurikulerRef}>
     <div className="container mx-auto px-4">
-      <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 md:mb-10 text-foreground scroll-animate">{t('section_ekstrakurikuler')}</h2>
+      <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 md:mb-10 text-foreground scroll-animate">{translate('section_ekstrakurikuler')}</h2>
       <div className="relative scroll-animate delay-200">
         {totalEkskulPages > 1 && (
           <>
