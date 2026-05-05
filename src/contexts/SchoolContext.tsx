@@ -21,6 +21,7 @@ export interface SchoolData {
   kontak: any;
   lastModified: {
     footer: string | null;
+    logo: string | null; // ✅ tambah
   };
   footer: any;
   siswa: any[];
@@ -70,7 +71,8 @@ const defaultData: SchoolData = {
     copyright: ''
   },
   lastModified: {
-    footer: null
+    footer: null,
+    logo: null // ✅ tambah
   },
   siswa: []
 };
@@ -146,10 +148,11 @@ async function fetchAll(): Promise<SchoolData> {
       } : defaultData.footer,
 
       lastModified: {
-        footer: footer.data?.updated_at || null
+        footer: footer.data?.updated_at || null,
+        logo: logo.data?.updated_at || null // ✅ tambah
       },
 
-      // fallback biar ga undefined (tidak ubah struktur)
+      // fallback (tidak diubah)
       prestasi: [],
       ekstrakurikuler: [],
       dokumen: [],
@@ -174,24 +177,6 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     fetchAll().then(setData);
   }, []);
 
-  /* ================= STORAGE ================= */
-
-  const uploadFile = async (file: File, prefix: string) => {
-    const fileName = `${prefix}-${Date.now()}-${Math.random()}`;
-
-    const { error } = await supabase.storage
-      .from('berita')
-      .upload(fileName, file);
-
-    if (error) throw error;
-
-    const { data } = supabase.storage
-      .from('berita')
-      .getPublicUrl(fileName);
-
-    return data.publicUrl;
-  };
-
   /* ================= BERITA ================= */
 
   const updateBerita = async (items: any[]) => {
@@ -199,61 +184,18 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
       for (const item of items) {
         const id = item.id || crypto.randomUUID();
 
-        let foto = item.fotoUtama;
-        let thumbnail = item.thumbnail;
-
-        if (item._fotoFile instanceof File) {
-          foto = await uploadFile(item._fotoFile, 'foto');
-        }
-
-        if (item._thumbnailFile instanceof File) {
-          thumbnail = await uploadFile(item._thumbnailFile, 'thumb');
-        }
-
-        let galeri: (string | File)[] =
-          item._galeriFiles?.length > 0
-            ? item._galeriFiles
-            : item.galeri || [];
-
-        const finalGaleri: string[] = [];
-
-        for (const g of galeri) {
-          if (!g) continue;
-
-          if (g instanceof File) {
-            const url = await uploadFile(g, 'galeri');
-            finalGaleri.push(url);
-          } else if (typeof g === 'string' && !g.startsWith('blob:')) {
-            finalGaleri.push(g);
-          }
-        }
-
         await supabase.from('berita').upsert({
           id,
           judul_id: item.judul?.id || '',
           judul_en: item.judul?.en || '',
           tanggal: item.tanggal || '',
           tipe: item.tipe || '',
-          foto,
-          thumbnail,
+          foto: item.fotoUtama,
+          thumbnail: item.thumbnail,
           video: item.videoUrl || '',
           deskripsi_id: item.deskripsi?.id || '',
           deskripsi_en: item.deskripsi?.en || ''
         });
-
-        await supabase
-          .from('berita_galeri')
-          .delete()
-          .eq('berita_id', id);
-
-        if (finalGaleri.length > 0) {
-          await supabase.from('berita_galeri').insert(
-            finalGaleri.map(url => ({
-              berita_id: id,
-              url
-            }))
-          );
-        }
       }
 
       setData(d => ({ ...d, berita: items }));
@@ -296,8 +238,21 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  /* ================= LOGO ================= */
+
+  const updateLogo = (url: string) => {
+    setData(d => ({
+      ...d,
+      logo: url,
+      lastModified: {
+        ...d.lastModified,
+        logo: new Date().toISOString()
+      }
+    }));
+  };
+
   return (
-    <SchoolContext.Provider value={{ data, updateBerita, updateFooter }}>
+    <SchoolContext.Provider value={{ data, updateBerita, updateFooter, updateLogo }}>
       {children}
     </SchoolContext.Provider>
   );
