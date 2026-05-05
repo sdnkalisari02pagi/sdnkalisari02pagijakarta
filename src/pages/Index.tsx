@@ -71,7 +71,7 @@ return (
         </div>
 
         <div className="relative animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-          <div className="relative rounded-2xl overflow-hidden shadow-xl aspect-[4/3] w-full max-w-2xl">
+          <div className="relative rounded-2xl overflow-hidden shadow-xl aspect-[4/3] w-full max-w-2xl mx-auto">
             {images.map((img, i) => (
               <img key={i} src={img} alt={`Slide ${i + 1}`} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out" style={{ opacity: i === currentSlide ? 1 : 0 }} />
             ))}
