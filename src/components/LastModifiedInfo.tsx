@@ -1,7 +1,11 @@
 import { Clock } from 'lucide-react';
 
 function formatDate(iso: string) {
-  const date = new Date(iso);
+  if (!iso) return '';
+
+  // 🔥 Fix parsing: ubah "2026-05-05 08:07:00" → ISO valid + WIB
+  const fixed = iso.replace(' ', 'T') + '+07:00';
+  const date = new Date(fixed);
 
   const formatted = date.toLocaleString('id-ID', {
     day: 'numeric',
@@ -12,10 +16,10 @@ function formatDate(iso: string) {
     hour12: false
   });
 
-  // fallback kalau invalid
+  // fallback kalau parsing gagal
   if (formatted === 'Invalid Date') {
-    const wib = new Date(date.getTime() + 7 * 60 * 60 * 1000);
-    return wib.toLocaleString('id-ID', {
+    const d = new Date(iso);
+    return d.toLocaleString('id-ID', {
       day: 'numeric',
       month: 'long',
       year: 'numeric',
@@ -30,6 +34,7 @@ function formatDate(iso: string) {
 
 export default function LastModifiedInfo({ timestamp }: { timestamp?: string }) {
   if (!timestamp) return null;
+
   return (
     <p className="flex items-center gap-1.5 text-sm text-muted-foreground mb-4">
       <Clock className="w-3.5 h-3.5" />
