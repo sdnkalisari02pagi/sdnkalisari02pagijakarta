@@ -99,7 +99,19 @@ export default function AdminLogo() {
       setLogo(finalUrl);
       setPreview(finalUrl);
 
-      updateLogo?.(finalUrl);
+      // ❌ jangan langsung update state
+      // updateLogo?.(finalUrl);
+      
+      // ✅ paksa ambil ulang dari DB biar konsisten
+      const { data: dbData } = await supabase
+        .from('logo')
+        .select('*')
+        .eq('id', 1)
+        .maybeSingle();
+      
+      if (dbData) {
+        updateLogo?.(dbData.url);
+      }
       updateFavicon(finalUrl);
 
       toast({ title: 'Berhasil', description: 'Logo disimpan' });
