@@ -250,6 +250,34 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const updateFooter = async (form: any) => {
+  try {
+    const { error } = await supabase
+      .from('footer')
+      .upsert({
+        id: 1,
+        nama: form.namaSekolah,
+        deskripsi_id: form.deskripsi?.id || '',
+        deskripsi_en: form.deskripsi?.en || '',
+        instagram: form.instagram,
+        youtube: form.youtube,
+        tiktok: form.tiktok,
+        copyright: form.copyright,
+      });
+
+    if (error) throw error;
+
+    // update state biar langsung ke-refresh
+    setData(d => ({
+      ...d,
+      footer: form
+    }));
+
+  } catch (err) {
+    console.error('UPDATE FOOTER ERROR:', err);
+  }
+};
+  
   return (
     <SchoolContext.Provider value={{ data, updateBerita }}>
       {children}
