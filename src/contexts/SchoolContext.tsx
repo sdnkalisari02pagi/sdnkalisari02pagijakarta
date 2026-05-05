@@ -113,14 +113,16 @@ async function fetchAll(): Promise<SchoolData> {
       keunggulan,
       pegawai,
       berita,
-      footer
+      footer,
+      sambutan
     ] = await Promise.all([
       supabase.from('logo').select('*').limit(1).maybeSingle(),
       supabase.from('hero').select('*').limit(1).maybeSingle(),
       supabase.from('keunggulan').select('*'),
       supabase.from('pegawai').select('*'),
       supabase.from('berita').select('*'),
-      supabase.from('footer').select('*').limit(1).maybeSingle()
+      supabase.from('footer').select('*').limit(1).maybeSingle(),
+      supabase.from('sambutan').select('*').limit(1).maybeSingle()
     ]);
 
     return {
@@ -148,6 +150,12 @@ async function fetchAll(): Promise<SchoolData> {
         copyright: footer.data.copyright || ''
       } : defaultData.footer,
 
+      sambutan: sambutan.data ? {
+        nama: sambutan.data.nama || '',
+        foto: sambutan.data.foto || '',
+        teks: B(sambutan.data.teks_id || '', sambutan.data.teks_en || '')
+      } : defaultData.sambutan,
+
       lastModified: {
         logo: logo.data?.updated_at || null,
         footer: footer.data?.updated_at || null,
@@ -159,7 +167,7 @@ async function fetchAll(): Promise<SchoolData> {
         ekstrakurikuler: null,
         dokumen: null,
         profil: null,
-        sambutan: null,
+        sambutan: sambutan.data?.updated_at || null,
         kontak: null,
         siswa: null
       },
@@ -168,7 +176,6 @@ async function fetchAll(): Promise<SchoolData> {
       ekstrakurikuler: [],
       dokumen: [],
       profil: defaultData.profil,
-      sambutan: defaultData.sambutan,
       kontak: defaultData.kontak,
       siswa: []
     };
@@ -197,7 +204,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
       footer: form,
       lastModified: {
         ...d.lastModified,
-        footer: d.lastModified.footer // 🔒 tidak berubah manual
+        footer: d.lastModified.footer
       }
     }));
   };
@@ -207,25 +214,51 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
       ...d,
       logo: url,
       lastModified: {
-        footer: d.lastModified.footer, // 🔒 aman
-        logo: updatedAt ?? d.lastModified.logo,
-        hero: d.lastModified.hero,
-        keunggulan: d.lastModified.keunggulan,
-        pegawai: d.lastModified.pegawai,
-        berita: d.lastModified.berita,
-        prestasi: d.lastModified.prestasi,
-        ekstrakurikuler: d.lastModified.ekstrakurikuler,
-        dokumen: d.lastModified.dokumen,
-        profil: d.lastModified.profil,
-        sambutan: d.lastModified.sambutan,
-        kontak: d.lastModified.kontak,
-        siswa: d.lastModified.siswa
+        ...d.lastModified,
+        logo: updatedAt ?? d.lastModified.logo
+      }
+    }));
+  };
+
+  /* ================= SAMBUTAN CRUD ================= */
+
+  const updateSambutan = async (form: any) => {
+    const payload = {
+      id: 1,
+      nama: form.nama,
+      foto: form.foto,
+      teks_id: form.teks?.id || '',
+      teks_en: form.teks?.en || ''
+    };
+
+    const { data: result, error } = await supabase
+      .from('sambutan')
+      .upsert(payload)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('SAMBUTAN ERROR:', error);
+      return;
+    }
+
+    setData(d => ({
+      ...d,
+      sambutan: form,
+      lastModified: {
+        ...d.lastModified,
+        sambutan: result.updated_at
       }
     }));
   };
 
   return (
-    <SchoolContext.Provider value={{ data, updateFooter, updateLogo }}>
+    <SchoolContext.Provider value={{
+      data,
+      updateFooter,
+      updateLogo,
+      updateSambutan
+    }}>
       {children}
     </SchoolContext.Provider>
   );
