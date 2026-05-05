@@ -243,7 +243,11 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   const updateLogo = (url: string) => {
     setData(d => ({
       ...d,
-      logo: url
+      logo: url,
+    lastModified: {
+      ...d.lastModified,
+      logo: updatedAt || d.lastModified.logo
+    }
     }));
   };
 
