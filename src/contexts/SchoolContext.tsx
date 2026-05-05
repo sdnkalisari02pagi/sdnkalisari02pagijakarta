@@ -174,58 +174,50 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     return data.publicUrl;
   };
 
-  // 🔥 NEW: DELETE ALL FILE DI BUCKET BERITA
-  const deleteAllBeritaFiles = async () => {
-    const { data: files } = await supabase.storage.from('berita').list();
-
-    if (!files || files.length === 0) return;
-
-    const paths = files.map(f => f.name);
-
-    await supabase.storage.from('berita').remove(paths);
-  };
-
   /* ================= BERITA ================= */
 
   const updateBerita = async (items: any[]) => {
     try {
-      // 🔥 CLEANUP STORAGE DULU
-      await deleteAllBeritaFiles();
-
-      await supabase.from('berita').delete().neq('id', '');
+      // ✅ HANYA CLEAR DATABASE (AMAN)
       await supabase.from('berita_galeri').delete().neq('id', 0);
+      await supabase.from('berita').delete().neq('id', '');
 
       for (const item of items) {
         const id = item.id || crypto.randomUUID();
 
-        let foto = item._fotoFile || item.fotoUtama;
-        let thumbnail = item._thumbnailFile || item.thumbnail;
+        let foto = item.fotoUtama;
+        let thumbnail = item.thumbnail;
 
-        let galeri: (string | File)[] = item._galeriFiles?.length
-          ? item._galeriFiles
-          : item.galeri || [];
-
-        if (foto instanceof File) {
-          foto = await uploadFile(foto, 'foto');
+        // upload foto
+        if (item._fotoFile instanceof File) {
+          foto = await uploadFile(item._fotoFile, 'foto');
         }
 
-        if (thumbnail instanceof File) {
-          thumbnail = await uploadFile(thumbnail, 'thumb');
+        // upload thumbnail
+        if (item._thumbnailFile instanceof File) {
+          thumbnail = await uploadFile(item._thumbnailFile, 'thumb');
         }
+
+        // galeri
+        let galeri: (string | File)[] =
+          item._galeriFiles?.length > 0
+            ? item._galeriFiles
+            : item.galeri || [];
 
         const finalGaleri: string[] = [];
 
         for (const g of galeri) {
-          if (typeof g === 'string' && g.startsWith('blob:')) continue;
+          if (!g) continue;
 
           if (g instanceof File) {
             const url = await uploadFile(g, 'galeri');
             finalGaleri.push(url);
-          } else {
+          } else if (typeof g === 'string' && !g.startsWith('blob:')) {
             finalGaleri.push(g);
           }
         }
 
+        // insert berita
         await supabase.from('berita').insert({
           id,
           judul_id: item.judul?.id || '',
@@ -239,6 +231,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
           deskripsi_en: item.deskripsi?.en || ''
         });
 
+        // insert galeri
         if (finalGaleri.length > 0) {
           await supabase.from('berita_galeri').insert(
             finalGaleri.map(url => ({
