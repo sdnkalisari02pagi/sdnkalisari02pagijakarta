@@ -276,10 +276,10 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   } catch (err) {
     console.error('UPDATE FOOTER ERROR:', err);
   }
-};
+  };
   
   return (
-    <SchoolContext.Provider value={{ data, updateBerita }}>
+    <SchoolContext.Provider value={{ data, updateBerita, updateFooter }}>
       {children}
     </SchoolContext.Provider>
   );
