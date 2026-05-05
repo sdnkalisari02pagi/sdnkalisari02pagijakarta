@@ -1,4 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';import { Link } from 'react-router-dom';import { useSchool } from '@/contexts/SchoolContext';import { useLanguage } from '@/contexts/LanguageContext';import { tr } from '@/lib/i18n';import { Users, BookOpen, Star, Shield, ArrowRight, ChevronLeft, ChevronRight, Award, Quote, GraduationCap, Calendar, Heart, Lightbulb, Target, Smile, Globe, Sparkles, Zap, Play } from 'lucide-react';import { Button } from '@/components/ui/button';import { Card, CardContent } from '@/components/ui/card';import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+import { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
+import { useSchool } from '@/contexts/SchoolContext';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { tr } from '@/lib/i18n';
+import { Users, BookOpen, Star, Shield, ArrowRight, ChevronLeft, ChevronRight, Award, Quote, GraduationCap, Calendar, Heart, Lightbulb, Target, Smile, Globe, Sparkles, Zap, Play } from 'lucide-react';import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {BookOpen, Users, Star, Shield, Award, Heart, Lightbulb, Target, Smile, Globe, Sparkles, Zap,};
 
