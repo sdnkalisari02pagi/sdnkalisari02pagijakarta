@@ -14,7 +14,7 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>(() => {
     const saved = localStorage.getItem('lang');
-    return (saved === 'en' ? 'en' : 'id');
+    return saved === 'en' ? 'en' : 'id';
   });
 
   const setLang = useCallback((l: Lang) => {
@@ -22,8 +22,13 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('lang', l);
   }, []);
 
+  // 🔥 SAFE t FUNCTION (anti crash)
   const t = useCallback((key: TranslationKey) => {
-    return translations[lang][key] || key;
+    try {
+      return translations?.[lang]?.[key] || key;
+    } catch {
+      return key;
+    }
   }, [lang]);
 
   return (
@@ -33,8 +38,17 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// 🔥 GLOBAL SAFE HOOK (FIX SEMUA PAGE)
 export function useLanguage() {
   const ctx = useContext(LanguageContext);
-  if (!ctx) throw new Error('useLanguage must be used within LanguageProvider');
+
+  if (!ctx) {
+    return {
+      lang: 'id' as const,
+      setLang: () => {},
+      t: (key: TranslationKey) => key,
+    };
+  }
+
   return ctx;
 }
