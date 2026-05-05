@@ -3,7 +3,7 @@ import { Clock } from 'lucide-react';
 function formatDate(iso: string) {
   const date = new Date(iso);
 
-  return date.toLocaleString('id-ID', {
+  const formatted = date.toLocaleString('id-ID', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -11,9 +11,8 @@ function formatDate(iso: string) {
     minute: '2-digit',
     hour12: false
   });
-}
 
-  // kalau somehow masih undefined / invalid
+  // fallback kalau invalid
   if (formatted === 'Invalid Date') {
     const wib = new Date(date.getTime() + 7 * 60 * 60 * 1000);
     return wib.toLocaleString('id-ID', {
