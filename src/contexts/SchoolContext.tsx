@@ -20,7 +20,7 @@ export interface SchoolData {
   sambutan: any;
   kontak: any;
   lastModified: {
-  footer: string | null;
+    footer: string | null;
   };
   footer: any;
   siswa: any[];
@@ -144,7 +144,11 @@ async function fetchAll(): Promise<SchoolData> {
         youtube: footer.data.youtube || '',
         tiktok: footer.data.tiktok || '',
         copyright: footer.data.copyright || ''
-      } : defaultData.footer
+      } : defaultData.footer,
+
+      lastModified: {
+        footer: footer.data?.updated_at || null
+      }
     };
 
   } catch (err) {
@@ -190,17 +194,14 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
         let foto = item.fotoUtama;
         let thumbnail = item.thumbnail;
 
-        // ✅ upload foto kalau ada file
         if (item._fotoFile instanceof File) {
           foto = await uploadFile(item._fotoFile, 'foto');
         }
 
-        // ✅ upload thumbnail
         if (item._thumbnailFile instanceof File) {
           thumbnail = await uploadFile(item._thumbnailFile, 'thumb');
         }
 
-        // ✅ galeri
         let galeri: (string | File)[] =
           item._galeriFiles?.length > 0
             ? item._galeriFiles
@@ -219,7 +220,6 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
           }
         }
 
-        // ✅ upsert berita
         await supabase.from('berita').upsert({
           id,
           judul_id: item.judul?.id || '',
@@ -233,7 +233,6 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
           deskripsi_en: item.deskripsi?.en || ''
         });
 
-        // ✅ reset galeri per berita
         await supabase
           .from('berita_galeri')
           .delete()
@@ -256,34 +255,39 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  /* ================= FOOTER ================= */
+
   const updateFooter = async (form: any) => {
-  try {
-    const { error } = await supabase
-      .from('footer')
-      .upsert({
-        id: 1,
-        nama: form.namaSekolah,
-        deskripsi_id: form.deskripsi?.id || '',
-        deskripsi_en: form.deskripsi?.en || '',
-        instagram: form.instagram,
-        youtube: form.youtube,
-        tiktok: form.tiktok,
-        copyright: form.copyright,
-      });
+    try {
+      const { error } = await supabase
+        .from('footer')
+        .upsert({
+          id: 1,
+          nama: form.namaSekolah,
+          deskripsi_id: form.deskripsi?.id || '',
+          deskripsi_en: form.deskripsi?.en || '',
+          instagram: form.instagram,
+          youtube: form.youtube,
+          tiktok: form.tiktok,
+          copyright: form.copyright,
+        });
 
-    if (error) throw error;
+      if (error) throw error;
 
-    // update state biar langsung ke-refresh
-    setData(d => ({
-      ...d,
-      footer: form
-    }));
+      setData(d => ({
+        ...d,
+        footer: form,
+        lastModified: {
+          ...d.lastModified,
+          footer: new Date().toISOString()
+        }
+      }));
 
-  } catch (err) {
-    console.error('UPDATE FOOTER ERROR:', err);
-  }
+    } catch (err) {
+      console.error('UPDATE FOOTER ERROR:', err);
+    }
   };
-  
+
   return (
     <SchoolContext.Provider value={{ data, updateBerita, updateFooter }}>
       {children}
