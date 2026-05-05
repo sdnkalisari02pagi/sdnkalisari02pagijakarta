@@ -5,7 +5,7 @@ import { toast } from '@/hooks/use-toast';
 
 interface ImageUploadProps {
   value: string; // URL / preview
-  onChange: (file: File | null) => void; // 🔥 sekarang File
+  onChange: (file: File | null) => void; // tetap File
   required?: boolean;
   recommendedSize?: string;
 }
@@ -25,20 +25,35 @@ export default function ImageUpload({ value, onChange, required, recommendedSize
       return;
     }
 
-    onChange(file); // 🔥 langsung kirim File
+    onChange(file);
   };
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) processFile(file);
+
+    // penting: reset supaya bisa pilih file yang sama lagi
     e.target.value = '';
   };
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
+    e.stopPropagation(); // 🔥 fix bug drag bubbling
+
     setDragOver(false);
+
     const file = e.dataTransfer.files?.[0];
     if (file) processFile(file);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragOver(true);
+  };
+
+  const handleDragLeave = () => {
+    setDragOver(false);
   };
 
   const isMissing = required && !value;
@@ -46,8 +61,8 @@ export default function ImageUpload({ value, onChange, required, recommendedSize
   return (
     <div
       className="space-y-2"
-      onDragOver={e => { e.preventDefault(); setDragOver(true); }}
-      onDragLeave={() => setDragOver(false)}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
       <input
@@ -62,6 +77,7 @@ export default function ImageUpload({ value, onChange, required, recommendedSize
         <div className="relative inline-block">
           <img src={value} alt="Preview" className="w-32 h-32 object-cover rounded-lg border" />
           <button
+            type="button" // 🔥 biar aman kalau di dalam form
             onClick={() => onChange(null)}
             className="absolute -top-2 -right-2 bg-destructive text-white rounded-full p-1"
           >
