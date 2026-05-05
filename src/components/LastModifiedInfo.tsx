@@ -1,15 +1,33 @@
 import { Clock } from 'lucide-react';
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleString('id-ID', {
-    timeZone: 'Asia/Jakarta', // ✅ FIX timezone
+  const date = new Date(iso);
+
+  // fallback aman kalau timezone browser ngaco
+  const formatted = date.toLocaleString('id-ID', {
+    timeZone: 'Asia/Jakarta',
     day: 'numeric',
     month: 'long',
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
-    hour12: false // biar format 24 jam (06.52)
+    hour12: false
   });
+
+  // kalau somehow masih undefined / invalid
+  if (formatted === 'Invalid Date') {
+    const wib = new Date(date.getTime() + 7 * 60 * 60 * 1000);
+    return wib.toLocaleString('id-ID', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+  }
+
+  return formatted;
 }
 
 export default function LastModifiedInfo({ timestamp }: { timestamp?: string }) {
