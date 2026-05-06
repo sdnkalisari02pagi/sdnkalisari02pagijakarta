@@ -110,6 +110,7 @@ async function fetchAll(): Promise<SchoolData> {
     const [
       logo,
       hero,
+      heroImages,
       keunggulan,
       pegawai,
       berita,
@@ -118,6 +119,7 @@ async function fetchAll(): Promise<SchoolData> {
     ] = await Promise.all([
       supabase.from('logo').select('*').limit(1).maybeSingle(),
       supabase.from('hero').select('*').limit(1).maybeSingle(),
+      supabase.from('hero_images').select('*').eq('hero_id', 1).order('id'),
       supabase.from('keunggulan').select('*'),
       supabase.from('pegawai').select('*'),
       supabase.from('berita').select('*'),
@@ -129,11 +131,16 @@ async function fetchAll(): Promise<SchoolData> {
       logo: logo.data?.url || '',
 
       hero: hero.data ? {
-        images: [],
+        images: heroImages.data?.map(i => i.url) || [],
         judul: B(hero.data.judul_id || '', hero.data.judul_en || ''),
         subtitle: B(hero.data.subtitle_id || '', hero.data.subtitle_en || ''),
         tahunBerdiri: hero.data.tahun || '',
-        statsVisibility: {}
+        statsVisibility: hero.data.stats_visibility ||{
+          staff: true,
+          students: true,
+          ekskul: true,
+          founded: true
+        }
       } : defaultData.hero,
 
       keunggulan: keunggulan.data || [],
@@ -228,7 +235,6 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     subtitle_id: form.subtitle?.id || '',
     subtitle_en: form.subtitle?.en || '',
     tahun: form.tahunBerdiri || '',
-    images: form.images || [],
     stats_visibility: form.statsVisibility || {}
   };
 
@@ -243,6 +249,22 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     return;
   }
 
+  await supabase
+  .from('hero_images')
+  .delete()
+  .eq('hero_id', 1);
+
+  if (form.images?.length) {
+    await supabase
+      .from('hero_images')
+      .insert(
+        form.images.map((url: string) => ({
+          hero_id: 1,
+          url
+        }))
+      );
+  }
+    
   setData(d => ({
     ...d,
     hero: form,
