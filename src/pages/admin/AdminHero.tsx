@@ -25,6 +25,19 @@ const defaultHero: HeroData = {
   }
 };
 
+export interface HeroData {
+  judul: Bilingual;
+  subtitle: Bilingual;
+  images: string[];
+  tahunBerdiri: string;
+  statsVisibility: {
+    staff: boolean;
+    students: boolean;
+    ekskul: boolean;
+    founded: boolean;
+  };
+}
+
 export default function AdminHero() {
   const { data, updateHero } = useSchool();
 
