@@ -220,6 +220,39 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     }));
   };
 
+  const updateHero = async (form: any) => {
+  const payload = {
+    id: 1,
+    judul_id: form.judul?.id || '',
+    judul_en: form.judul?.en || '',
+    subtitle_id: form.subtitle?.id || '',
+    subtitle_en: form.subtitle?.en || '',
+    tahun: form.tahunBerdiri || '',
+    images: form.images || [],
+    stats_visibility: form.statsVisibility || {}
+  };
+
+  const { data: result, error } = await supabase
+    .from('hero')
+    .upsert(payload)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('HERO ERROR:', error);
+    return;
+  }
+
+  setData(d => ({
+    ...d,
+    hero: form,
+    lastModified: {
+      ...d.lastModified,
+      hero: result.updated_at
+    }
+  }));
+  };
+
   /* ================= SAMBUTAN CRUD ================= */
 
   const updateSambutan = async (form: any) => {
@@ -257,7 +290,8 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
       data,
       updateFooter,
       updateLogo,
-      updateSambutan
+      updateSambutan,
+      updateHero
     }}>
       {children}
     </SchoolContext.Provider>
