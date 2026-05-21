@@ -128,11 +128,9 @@ export default function AdminHero() {
 
   setHero(h => ({
     ...h,
-    images: h.images?.includes(url)
-      ? h.images
-      : [...(h.images || []), url]
+    images: [...(h.images || []), url]
   }));
-  };
+};
 
   const removeImage = (index: number) => {
     setHero(h => ({
