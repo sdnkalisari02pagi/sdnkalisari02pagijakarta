@@ -231,17 +231,40 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   };
 
   const updateHero = async (form: any) => {
-    await supabase.from('hero').upsert({
-      id: 1, judul_id: form.judul?.id || '', judul_en: form.judul?.en || '', subtitle_id: form.subtitle?.id || '', subtitle_en: form.subtitle?.en || '',
-      tahun: form.tahunBerdiri || '', staff: form.statsVisibility?.staff ?? true, students: form.statsVisibility?.students ?? true,
-      ekskul: form.statsVisibility?.ekskul ?? true, founded: form.statsVisibility?.founded ?? true
-    });
-    await supabase.from('hero_images').delete().eq('hero_id', 1);
-    if (form.images?.length) {
-      await supabase.from('hero_images').insert(form.images.map((url: string) => ({ hero_id: 1, url })));
-    }
-    updateLocal('hero', form, 'hero');
-  };
+  await supabase.from('hero').upsert({
+    id: 1,
+    judul_id: form.judul?.id || '',
+    judul_en: form.judul?.en || '',
+    subtitle_id: form.subtitle?.id || '',
+    subtitle_en: form.subtitle?.en || '',
+    tahun: form.tahunBerdiri || '',
+    staff: form.statsVisibility?.staff ?? true,
+    students: form.statsVisibility?.students ?? true,
+    ekskul: form.statsVisibility?.ekskul ?? true,
+    founded: form.statsVisibility?.founded ?? true
+  });
+
+  await supabase.from('hero_images').delete().eq('hero_id', 1);
+
+  if (form.images?.length) {
+    const uniqueImages = [
+      ...new Set(
+        form.images.filter(
+          (url: string) => url && url.trim() !== ''
+        )
+      )
+    ];
+
+    await supabase.from('hero_images').insert(
+      uniqueImages.map((url: string) => ({
+        hero_id: 1,
+        url
+      }))
+    );
+  }
+
+  updateLocal('hero', form, 'hero');
+};
 
   const updateSambutan = async (form: any) => {
     await supabase.from('sambutan').upsert({ id: 1, nama: form.nama, foto: form.foto, teks_id: form.teks?.id || '', teks_en: form.teks?.en || '' });
