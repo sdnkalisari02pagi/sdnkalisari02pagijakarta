@@ -17,8 +17,10 @@ export default function AdminLogo() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchLogo();
-  }, []);
+    if (data.logo && typeof logo === 'string') {
+      setLogo(data.logo);
+    }
+  }, [data.logo]);
 
   useEffect(() => {
     if (typeof logo === 'string') {
@@ -30,21 +32,6 @@ export default function AdminLogo() {
       return () => URL.revokeObjectURL(url);
     }
   }, [logo]);
-
-  const fetchLogo = async () => {
-    const { data: dbData } = await supabase
-      .from('logo')
-      .select('*')
-      .eq('id', 1)
-      .maybeSingle();
-
-    if (dbData) {
-      setLogo(dbData.url);
-      setPreview(dbData.url);
-      updateLogo?.(dbData.url, dbData.updated_at);
-      updateFavicon(dbData.url);
-    }
-  };
 
   // 🔥 FIX: pakai path tetap → auto replace
   const uploadToStorage = async (file: File) => {
@@ -110,7 +97,7 @@ export default function AdminLogo() {
         .maybeSingle();
       
       if (dbData) {
-        updateLogo?.(dbData.url);
+        updateLogo?.(dbData.url); // Ini hanya update context
       }
       updateFavicon(finalUrl);
 
