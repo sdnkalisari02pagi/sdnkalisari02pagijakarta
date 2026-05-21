@@ -238,7 +238,16 @@ export default function AdminHero() {
               if (typeof file !== 'string') {
                 const previewUrl = URL.createObjectURL(file);
                 addImage(previewUrl);
-                setFiles(f => [...f, file]);
+                setFiles(f => {
+                    const exists = f.some(
+                      x =>
+                        x.name === file.name &&
+                        x.size === file.size &&
+                        x.lastModified === file.lastModified
+                    );
+                  
+                    return exists ? f : [...f, file];
+                  });
               }
             }}
             placeholder
