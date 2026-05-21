@@ -297,11 +297,20 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
 
   const updatePegawai = async (form: any[]) => {
     const ids = form.map(f => f.id);
-    if (ids.length > 0) await supabase.from('pegawai').delete().not('id', 'in', `(${ids.map(id => `"${id}"`).join(',')})`);
-    else await supabase.from('pegawai').delete().neq('id', 'null');
-    if (form.length > 0) await supabase.from('pegawai').upsert(form.map(f => ({
-      id: f.id, nama: f.nama, jabatan: f.jabatan, foto: f.foto
-    })));
+    if (ids.length > 0) {
+      const { error } = await supabase.from('pegawai').delete().not('id', 'in', `(${ids.map(id => `"${id}"`).join(',')})`);
+      if (error) throw error;
+    } else {
+      const { error } = await supabase.from('pegawai').delete().neq('id', 'null');
+      if (error) throw error;
+    }
+    
+    if (form.length > 0) {
+      const { error } = await supabase.from('pegawai').upsert(form.map(f => ({
+        id: f.id, nama: f.nama, jabatan: f.jabatan, foto: f.foto
+      })));
+      if (error) throw error;
+    }
     updateLocal('pegawai', form, 'pegawai');
   };
 

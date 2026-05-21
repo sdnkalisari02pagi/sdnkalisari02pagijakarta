@@ -68,6 +68,10 @@ export default function AdminPegawai() {
         await updatePegawai([...data.pegawai, { id: Date.now().toString(), ...form, lastModified: now }]);
       }
       setDialogOpen(false);
+      toast({ title: 'Berhasil', description: 'Data pegawai disimpan.' });
+    } catch (err: any) {
+      console.error(err);
+      toast({ title: 'Gagal', description: err.message || 'Terjadi kesalahan', variant: 'destructive' });
     } finally {
       setIsSaving(false);
     }
