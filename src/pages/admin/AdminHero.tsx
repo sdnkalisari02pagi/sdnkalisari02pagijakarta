@@ -103,10 +103,7 @@ export default function AdminHero() {
           files.map(file => uploadToStorage(file))
         );
 
-        finalImages = [
-          ...finalImages.filter(img => !img.startsWith('blob:')),
-          ...uploadedUrls
-        ];
+        finalImages = uploadedUrls;
       }
 
       updateHero({
