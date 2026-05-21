@@ -109,7 +109,7 @@ async function fetchAll(): Promise<SchoolData> {
     ] = await Promise.all([
       supabase.from('logo').select('*').limit(1).maybeSingle(),
       supabase.from('hero').select('*').limit(1).maybeSingle(),
-      supabase.from('hero_images').select('*').order('id'),
+      supabase.from('hero_images').select('*').eq('hero_id', 1).order('id'),
       supabase.from('keunggulan').select('*'),
       supabase.from('pegawai').select('*'),
       supabase.from('jabatan_list').select('*'),
