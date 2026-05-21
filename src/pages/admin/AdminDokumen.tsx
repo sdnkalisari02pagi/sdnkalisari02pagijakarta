@@ -10,6 +10,7 @@ import { toast } from '@/hooks/use-toast';
 import LastModifiedInfo from '@/components/LastModifiedInfo';
 import BilingualInput from '@/components/BilingualInput';
 import { tr, toBilingual } from '@/lib/i18n';
+import { uploadFileToSupabase } from '@/lib/supabase';
 
 export default function AdminDokumen() {
   const { data, updateDokumen } = useSchool();
@@ -23,7 +24,7 @@ export default function AdminDokumen() {
 
   const ACCEPTED_TYPES = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'image/jpeg', 'image/png', 'image/webp'];
 
-  const processFile = (file: File) => {
+  const processFile = async (file: File) => {
     if (file.size > 10 * 1024 * 1024) {
       toast({ title: 'Gagal', description: 'Ukuran file maksimal 10MB.', variant: 'destructive' });
       return;
@@ -32,12 +33,16 @@ export default function AdminDokumen() {
       toast({ title: 'Gagal', description: 'Format file tidak didukung.', variant: 'destructive' });
       return;
     }
-    const reader = new FileReader();
-    reader.onload = () => {
-      setForm(f => ({ ...f, url: reader.result as string }));
+
+    toast({ title: 'Mengunggah...', description: 'Mohon tunggu sebentar.' });
+    const uploadedUrl = await uploadFileToSupabase(file);
+    if (uploadedUrl) {
+      setForm(f => ({ ...f, url: uploadedUrl }));
       setFileName(file.name);
-    };
-    reader.readAsDataURL(file);
+      toast({ title: 'Berhasil', description: 'File siap disimpan.' });
+    } else {
+      toast({ title: 'Gagal', description: 'Terjadi kesalahan saat mengunggah.', variant: 'destructive' });
+    }
   };
 
   const filtered = data.dokumen.filter(d => tr(d.nama, 'id').toLowerCase().includes(search.toLowerCase()));

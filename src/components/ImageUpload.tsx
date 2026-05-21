@@ -1,11 +1,12 @@
 import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Upload, X } from 'lucide-react';
+import { Upload, X, Loader2 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { uploadFileToSupabase } from '@/lib/supabase';
 
 interface ImageUploadProps {
   value: string; // URL / preview
-  onChange: (file: File | null) => void; // tetap File
+  onChange: (url: string) => void;
   required?: boolean;
   recommendedSize?: string;
 }
@@ -13,8 +14,9 @@ interface ImageUploadProps {
 export default function ImageUpload({ value, onChange, required, recommendedSize }: ImageUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
-  const processFile = (file: File) => {
+  const processFile = async (file: File) => {
     if (file.size > 2 * 1024 * 1024) {
       toast({ title: 'Gagal', description: 'Ukuran file maksimal 2MB.', variant: 'destructive' });
       return;
@@ -25,21 +27,30 @@ export default function ImageUpload({ value, onChange, required, recommendedSize
       return;
     }
 
-    onChange(file);
+    setIsUploading(true);
+    try {
+      const url = await uploadFileToSupabase(file);
+      if (url) {
+        onChange(url);
+      } else {
+        toast({ title: 'Gagal', description: 'Gagal mengupload gambar', variant: 'destructive' });
+      }
+    } catch (e) {
+      toast({ title: 'Error', description: 'Terjadi kesalahan saat upload', variant: 'destructive' });
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) processFile(file);
-
-    // penting: reset supaya bisa pilih file yang sama lagi
     e.target.value = '';
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    e.stopPropagation(); // 🔥 fix bug drag bubbling
-
+    e.stopPropagation();
     setDragOver(false);
 
     const file = e.dataTransfer.files?.[0];
@@ -73,12 +84,17 @@ export default function ImageUpload({ value, onChange, required, recommendedSize
         onChange={handleFile}
       />
 
-      {value ? (
+      {isUploading ? (
+        <div className="w-full min-h-[8rem] rounded-lg border flex flex-col items-center justify-center gap-2 bg-muted/20">
+          <Loader2 className="w-6 h-6 animate-spin text-primary" />
+          <p className="text-sm text-muted-foreground">Mengupload...</p>
+        </div>
+      ) : value ? (
         <div className="relative inline-block">
           <img src={value} alt="Preview" className="w-32 h-32 object-cover rounded-lg border" />
           <button
-            type="button" // 🔥 biar aman kalau di dalam form
-            onClick={() => onChange(null)}
+            type="button"
+            onClick={() => onChange('')}
             className="absolute -top-2 -right-2 bg-destructive text-white rounded-full p-1"
           >
             <X className="w-3 h-3" />
@@ -100,7 +116,7 @@ export default function ImageUpload({ value, onChange, required, recommendedSize
         </div>
       )}
 
-      <Button type="button" variant="outline" size="sm" onClick={() => inputRef.current?.click()}>
+      <Button type="button" variant="outline" size="sm" onClick={() => inputRef.current?.click()} disabled={isUploading}>
         Upload
       </Button>
 
@@ -110,3 +126,4 @@ export default function ImageUpload({ value, onChange, required, recommendedSize
     </div>
   );
 }
+

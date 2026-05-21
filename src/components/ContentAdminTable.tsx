@@ -205,14 +205,7 @@ export default function ContentAdminTable({
                   <Label>Foto Utama (Card)</Label>
                   <ImageUpload
                     value={form.fotoUtama}
-                    onChange={file => {
-                      if (!file) {
-                        setForm(f => ({ ...f, fotoUtama: '', _fotoFile: undefined }));
-                        return;
-                      }
-                      const preview = URL.createObjectURL(file);
-                      setForm(f => ({ ...f, fotoUtama: preview, _fotoFile: file }));
-                    }}
+                    onChange={url => setForm(f => ({ ...f, fotoUtama: url }))}
                     required
                     recommendedSize="1200×800 px (3:2)"
                   />
@@ -233,14 +226,7 @@ export default function ContentAdminTable({
                     <Label>Thumbnail (opsional)</Label>
                     <ImageUpload
                       value={form.thumbnail}
-                      onChange={file => {
-                        if (!file) {
-                          setForm(f => ({ ...f, thumbnail: '', _thumbnailFile: undefined }));
-                          return;
-                        }
-                        const preview = URL.createObjectURL(file);
-                        setForm(f => ({ ...f, thumbnail: preview, _thumbnailFile: file }));
-                      }}
+                      onChange={url => setForm(f => ({ ...f, thumbnail: url }))}
                       recommendedSize="1200×800 px (3:2)"
                     />
                   </div>
@@ -255,31 +241,11 @@ export default function ContentAdminTable({
                 rows={4}
               />
 
-              {/* 🔥 FIX GALERI DI SINI */}
               <div>
                 <Label>Galeri</Label>
                 <GaleriUpload
-                  value={form.galeri}
-                  onChange={items => {
-                    const preview = items.map(i =>
-                      i instanceof File ? URL.createObjectURL(i) : i
-                    );
-
-                    const files = items.filter(
-                      i => i instanceof File
-                    ) as File[];
-
-                    setForm(f => ({
-                      ...f,
-                      galeri: preview,
-
-                      // 🔥 FIX: jangan overwrite, tapi merge
-                      _galeriFiles: [
-                        ...(f._galeriFiles || []),
-                        ...files
-                      ]
-                    }));
-                  }}
+                  value={form.galeri as string[]}
+                  onChange={urls => setForm(f => ({ ...f, galeri: urls }))}
                 />
               </div>
 

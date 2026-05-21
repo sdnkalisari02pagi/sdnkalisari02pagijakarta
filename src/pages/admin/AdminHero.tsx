@@ -235,7 +235,9 @@ export default function AdminHero() {
             onChange={(file) => {
               if (!file) return;
 
-              if (typeof file !== 'string') {
+              if (typeof file === 'string') {
+                addImage(file);
+              } else {
                 const previewUrl = URL.createObjectURL(file);
                 addImage(previewUrl);
                 setFiles(f => {
