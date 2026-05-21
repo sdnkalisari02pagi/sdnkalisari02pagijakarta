@@ -124,12 +124,14 @@ export default function AdminHero() {
   };
 
   const addImage = (url: string) => {
-    if (!url) return;
+  if (!url) return;
 
-    setHero(h => ({
-      ...h,
-      images: [...(h.images || []), url]
-    }));
+  setHero(h => ({
+    ...h,
+    images: h.images?.includes(url)
+      ? h.images
+      : [...(h.images || []), url]
+  }));
   };
 
   const removeImage = (index: number) => {
