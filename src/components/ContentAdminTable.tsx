@@ -29,7 +29,7 @@ import {
 } from 'lucide-react';
 import ImageUpload from '@/components/ImageUpload';
 import GaleriUpload from '@/components/GaleriUpload';
-import LastModifiedInfo from '@/components/LastModifiedInfo';
+import LastModifiedInfo, { formatDate } from '@/components/LastModifiedInfo';
 import BilingualInput from '@/components/BilingualInput';
 import { tr, toBilingual } from '@/lib/i18n';
 import { getVideoThumbnail } from '@/lib/videoEmbed';
@@ -285,6 +285,7 @@ export default function ContentAdminTable({
               <TableHead>Judul</TableHead>
               <TableHead>Tipe</TableHead>
               <TableHead>Tanggal</TableHead>
+              <TableHead>Terakhir Diubah</TableHead>
               <TableHead className="text-right">Aksi</TableHead>
             </TableRow>
           </TableHeader>
@@ -330,6 +331,10 @@ export default function ContentAdminTable({
                   </TableCell>
 
                   <TableCell>{k.tanggal}</TableCell>
+
+                  <TableCell className="text-xs text-muted-foreground">
+                    {k.lastModified ? formatDate(k.lastModified) : k.updated_at ? formatDate(k.updated_at) : '-'}
+                  </TableCell>
 
                   <TableCell className="text-right space-x-2">
                     <Button size="sm" onClick={() => openEdit(k)}>

@@ -8,7 +8,7 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@
 import { Search, Plus, Pencil, Trash2 } from 'lucide-react';
 import ImageUpload from '@/components/ImageUpload';
 import GaleriUpload from '@/components/GaleriUpload';
-import LastModifiedInfo from '@/components/LastModifiedInfo';
+import LastModifiedInfo, { formatDate } from '@/components/LastModifiedInfo';
 import BilingualInput from '@/components/BilingualInput';
 import { tr, toBilingual } from '@/lib/i18n';
 import { toast } from '@/hooks/use-toast';
@@ -150,6 +150,7 @@ export default function AdminEkskul() {
               <TableHead>Foto</TableHead>
               <TableHead>Nama</TableHead>
               <TableHead>Pelatih</TableHead>
+              <TableHead>Terakhir Diubah</TableHead>
               <TableHead className="text-right">Aksi</TableHead>
             </TableRow>
           </TableHeader>
@@ -160,6 +161,9 @@ export default function AdminEkskul() {
                 <TableCell className="font-medium">{tr(e.nama, 'id')}</TableCell>
                 <TableCell className="text-sm text-muted-foreground">
                   {(e.pelatih || []).map(p => tr(p.nama, 'id')).filter(Boolean).join(', ') || '—'}
+                </TableCell>
+                <TableCell className="text-xs text-muted-foreground">
+                  {e.lastModified ? formatDate(e.lastModified) : e.updated_at ? formatDate(e.updated_at) : '-'}
                 </TableCell>
                 <TableCell className="text-right space-x-2">
                   <Button size="sm" variant="outline" onClick={() => openEdit(e)}><Pencil className="w-3 h-3" /></Button>

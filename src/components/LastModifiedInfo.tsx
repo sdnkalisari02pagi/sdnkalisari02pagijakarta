@@ -1,6 +1,6 @@
 import { Clock } from 'lucide-react';
 
-function formatDate(iso: string) {
+export function formatDate(iso: string | undefined | null) {
   if (!iso) return '';
 
   // Convert ' ' to 'T' just in case

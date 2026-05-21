@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { Search, Plus, Pencil, Trash2, GripVertical, Settings } from 'lucide-react';
 import ImageUpload from '@/components/ImageUpload';
-import LastModifiedInfo from '@/components/LastModifiedInfo';
+import LastModifiedInfo, { formatDate } from '@/components/LastModifiedInfo';
 import BilingualInput from '@/components/BilingualInput';
 import { toast } from '@/hooks/use-toast';
 import { tr, toBilingual } from '@/lib/i18n';
@@ -230,6 +230,7 @@ export default function AdminPegawai() {
               <TableHead>Foto</TableHead>
               <TableHead>Nama</TableHead>
               <TableHead>Jabatan</TableHead>
+              <TableHead>Terakhir Diubah</TableHead>
               <TableHead className="text-right">Aksi</TableHead>
             </TableRow>
           </TableHeader>
@@ -251,6 +252,9 @@ export default function AdminPegawai() {
                   <TableCell><img src={p.foto} alt={p.nama} className="w-10 h-10 rounded-full object-cover" /></TableCell>
                   <TableCell className="font-medium">{p.nama}</TableCell>
                   <TableCell>{p.jabatan}</TableCell>
+                  <TableCell className="text-xs text-muted-foreground">
+                    {p.lastModified ? formatDate(p.lastModified) : p.updated_at ? formatDate(p.updated_at) : '-'}
+                  </TableCell>
                   <TableCell className="text-right space-x-1">
                     <Button size="sm" variant="outline" onClick={() => openEdit(p)}><Pencil className="w-3 h-3" /></Button>
                     <Button size="sm" variant="destructive" onClick={() => handleDelete(p.id)}><Trash2 className="w-3 h-3" /></Button>

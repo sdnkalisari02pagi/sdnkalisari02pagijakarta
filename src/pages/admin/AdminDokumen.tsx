@@ -7,7 +7,7 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Plus, Pencil, Trash2, Search, Upload, FileText, X } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import LastModifiedInfo from '@/components/LastModifiedInfo';
+import LastModifiedInfo, { formatDate } from '@/components/LastModifiedInfo';
 import BilingualInput from '@/components/BilingualInput';
 import { tr, toBilingual } from '@/lib/i18n';
 import { uploadFileToSupabase } from '@/lib/supabase';
@@ -108,15 +108,17 @@ export default function AdminDokumen() {
       <div className="relative max-w-md mb-6"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" /><Input placeholder="Cari..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10" /></div>
       <div className="rounded-lg border bg-background">
         <Table>
-          <TableHeader><TableRow><TableHead>Nama</TableHead><TableHead>Tanggal</TableHead><TableHead className="text-right">Aksi</TableHead></TableRow></TableHeader>
+          <TableHeader><TableRow><TableHead>Nama Dokumen</TableHead><TableHead>Tanggal</TableHead><TableHead>Terakhir Diubah</TableHead><TableHead className="text-right">Aksi</TableHead></TableRow></TableHeader>
           <TableBody>
             {filtered.map(d => (
               <TableRow key={d.id}>
                 <TableCell>
                   {tr(d.nama, 'id')}
-                  {d.lastModified && <span className="block text-xs text-muted-foreground">Diubah: {new Date(d.lastModified).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>}
                 </TableCell>
                 <TableCell>{new Date(d.tanggal).toLocaleDateString('id-ID')}</TableCell>
+                <TableCell className="text-xs text-muted-foreground">
+                  {d.lastModified ? formatDate(d.lastModified) : (d as any).updated_at ? formatDate((d as any).updated_at) : '-'}
+                </TableCell>
                 <TableCell className="text-right space-x-2">
                   <Button size="sm" variant="outline" onClick={() => openEdit(d)}><Pencil className="w-3 h-3" /></Button>
                   <Button size="sm" variant="destructive" onClick={() => handleDelete(d.id)}><Trash2 className="w-3 h-3" /></Button>

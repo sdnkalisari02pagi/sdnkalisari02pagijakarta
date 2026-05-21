@@ -38,10 +38,10 @@ export interface SchoolData {
   siswa: any[];
 }
 
-export type KelasSiswa = { id: string; kelas: string; jumlah: number };
-export type Pegawai = { id: string; nama: string; jabatan: string; foto: string; lastModified?: string };
+export type KelasSiswa = { id: string; kelas: string; jumlah: number; updated_at?: string; lastModified?: string };
+export type Pegawai = { id: string; nama: string; jabatan: string; foto: string; updated_at?: string; lastModified?: string };
 export type ContentTipe = 'foto' | 'video';
-export type Berita = { id: string; judul: Bilingual; tanggal: string; tipe: ContentTipe; fotoUtama: string; thumbnail?: string; videoUrl?: string; galeri?: string[]; deskripsi: Bilingual; lastModified?: string };
+export type Berita = { id: string; judul: Bilingual; tanggal: string; tipe: ContentTipe; fotoUtama: string; thumbnail?: string; videoUrl?: string; galeri?: string[]; deskripsi: Bilingual; updated_at?: string; lastModified?: string };
 export type Prestasi = Berita;
 
 /* ================= DEFAULT ================= */
@@ -158,21 +158,24 @@ async function fetchAll(): Promise<SchoolData> {
         id: b.id, judul: B(b.judul_id, b.judul_en), tanggal: b.tanggal, tipe: b.tipe,
         fotoUtama: b.foto, thumbnail: b.thumbnail || '', videoUrl: b.video || '',
         deskripsi: B(b.deskripsi_id, b.deskripsi_en),
-        galeri: (beritaGaleri.data || []).filter(g => g.berita_id === b.id).map(g => g.url)
+        galeri: (beritaGaleri.data || []).filter(g => g.berita_id === b.id).map(g => g.url),
+        updated_at: b.updated_at
       })),
       prestasi: (prestasi.data || []).map(p => ({
         id: p.id, judul: B(p.judul_id, p.judul_en), tanggal: p.tanggal, tipe: p.tipe,
         fotoUtama: p.foto, thumbnail: p.thumbnail || '', videoUrl: p.video || '',
         deskripsi: B(p.deskripsi_id, p.deskripsi_en),
-        galeri: (prestasiGaleri.data || []).filter(g => g.prestasi_id === p.id).map(g => g.url)
+        galeri: (prestasiGaleri.data || []).filter(g => g.prestasi_id === p.id).map(g => g.url),
+        updated_at: p.updated_at
       })),
       ekstrakurikuler: (ekstrakurikuler.data || []).map(e => ({
         id: e.id, nama: B(e.nama_id, e.nama_en), foto: e.foto, fotoUtama: e.foto_utama,
         deskripsi: B(e.deskripsi_id, e.deskripsi_en),
-        galeri: (ekskulGaleri.data || []).filter(g => g.ekskul_id === e.id).map(g => g.url)
+        galeri: (ekskulGaleri.data || []).filter(g => g.ekskul_id === e.id).map(g => g.url),
+        updated_at: e.updated_at
       })),
       dokumen: (dokumen.data || []).map(d => ({
-        id: d.id, nama: B(d.nama_id, d.nama_en), tanggal: d.tanggal, url: d.url
+        id: d.id, nama: B(d.nama_id, d.nama_en), tanggal: d.tanggal, url: d.url, updated_at: d.updated_at
       })),
       profil: profil.data ? {
         sejarah: B(profil.data.sejarah_id, profil.data.sejarah_en),

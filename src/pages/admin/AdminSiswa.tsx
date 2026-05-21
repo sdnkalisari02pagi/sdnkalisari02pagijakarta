@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Plus, Pencil, Trash2, GraduationCap, GripVertical } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import LastModifiedInfo from '@/components/LastModifiedInfo';
+import LastModifiedInfo, { formatDate } from '@/components/LastModifiedInfo';
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -22,6 +22,9 @@ function SortableRow({ k, onEdit, onDelete }: { k: KelasSiswa; onEdit: () => voi
       </td>
       <td className="px-3 py-3 font-medium">{k.kelas}</td>
       <td className="px-3 py-3">{k.jumlah}</td>
+      <td className="px-3 py-3 text-xs text-muted-foreground">
+        {k.lastModified ? formatDate(k.lastModified) : k.updated_at ? formatDate(k.updated_at) : '-'}
+      </td>
       <td className="px-3 py-3 text-right space-x-2">
         <Button size="sm" variant="outline" onClick={onEdit}><Pencil className="w-3 h-3" /></Button>
         <Button size="sm" variant="destructive" onClick={onDelete}><Trash2 className="w-3 h-3" /></Button>
@@ -110,6 +113,7 @@ export default function AdminSiswa() {
                   <th className="px-3 py-2 text-left w-10"></th>
                   <th className="px-3 py-2 text-left">Kelas</th>
                   <th className="px-3 py-2 text-left">Jumlah</th>
+                  <th className="px-3 py-2 text-left">Terakhir Diubah</th>
                   <th className="px-3 py-2 text-right">Aksi</th>
                 </tr>
               </thead>
