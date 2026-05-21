@@ -230,7 +230,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     updateLocal('logo', url, 'logo');
   };
 
-  const updateHero = async (form: any) => {
+ const updateHero = async (form: any) => {
   await supabase.from('hero').upsert({
     id: 1,
     judul_id: form.judul?.id || '',
@@ -247,13 +247,12 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   await supabase.from('hero_images').delete().eq('hero_id', 1);
 
   if (form.images?.length) {
-    const uniqueImages = [
-      ...new Set(
-        form.images.filter(
-          (url: string) => url && url.trim() !== ''
-        )
-      )
-    ];
+    const uniqueImages = form.images.filter(
+      (url: string, index: number, self: string[]) =>
+        url &&
+        url.trim() !== '' &&
+        self.indexOf(url) === index
+    );
 
     await supabase.from('hero_images').insert(
       uniqueImages.map((url: string) => ({
