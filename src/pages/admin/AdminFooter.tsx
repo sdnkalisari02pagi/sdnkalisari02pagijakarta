@@ -12,6 +12,7 @@ import { LayoutTemplate } from 'lucide-react';
 export default function AdminFooter() {
   const { data, updateFooter } = useSchool();
   const [form, setForm] = useState(data.footer);
+  const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
 
   // ✅ FIX: sync state saat data dari context berubah
@@ -19,13 +20,18 @@ export default function AdminFooter() {
     setForm(data.footer);
   }, [data.footer]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form.namaSekolah.trim()) {
       toast({ title: 'Error', description: 'Nama sekolah tidak boleh kosong', variant: 'destructive' });
       return;
     }
-    updateFooter(form);
-    toast({ title: 'Berhasil', description: 'Footer berhasil disimpan' });
+    setIsSaving(true);
+    try {
+      await updateFooter(form);
+      toast({ title: 'Berhasil', description: 'Footer berhasil disimpan' });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -91,7 +97,7 @@ export default function AdminFooter() {
             />
           </div>
 
-          <Button onClick={handleSave}>Simpan</Button>
+          <Button onClick={handleSave} disabled={isSaving}>{isSaving ? 'Menyimpan...' : 'Simpan'}</Button>
         </CardContent>
       </Card>
     </div>

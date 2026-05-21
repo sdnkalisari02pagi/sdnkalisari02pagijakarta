@@ -26,6 +26,8 @@ export default function AdminPegawai() {
   const [editJabValue, setEditJabValue] = useState({ id: '', en: '' });
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isSavingJabatan, setIsSavingJabatan] = useState(false);
 
   const isFiltering = search !== '' || filterJabatan !== 'all';
   const filtered = data.pegawai.filter(p => {
@@ -52,18 +54,23 @@ export default function AdminPegawai() {
   const openAdd = () => { setEditItem(null); setForm({ nama: '', jabatan: '', foto: '' }); setDialogOpen(true); };
   const openEdit = (p: Pegawai) => { setEditItem(p); setForm({ nama: p.nama, jabatan: p.jabatan, foto: p.foto }); setDialogOpen(true); };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form.nama || !form.jabatan || !form.foto) {
       toast({ title: 'Gagal', description: 'Nama, jabatan & foto wajib diisi.', variant: 'destructive' });
       return;
     }
-    const now = new Date().toISOString();
-    if (editItem) {
-      updatePegawai(data.pegawai.map(p => p.id === editItem.id ? { ...p, ...form, lastModified: now } : p));
-    } else {
-      updatePegawai([...data.pegawai, { id: Date.now().toString(), ...form, lastModified: now }]);
+    setIsSaving(true);
+    try {
+      const now = new Date().toISOString();
+      if (editItem) {
+        await updatePegawai(data.pegawai.map(p => p.id === editItem.id ? { ...p, ...form, lastModified: now } : p));
+      } else {
+        await updatePegawai([...data.pegawai, { id: Date.now().toString(), ...form, lastModified: now }]);
+      }
+      setDialogOpen(false);
+    } finally {
+      setIsSaving(false);
     }
-    setDialogOpen(false);
   };
 
   const handleDelete = (id: string) => { if (confirm('Hapus pegawai ini?')) updatePegawai(data.pegawai.filter(p => p.id !== id)); };
@@ -80,20 +87,25 @@ export default function AdminPegawai() {
     toast({ title: 'Jabatan berhasil ditambahkan' });
   };
 
-  const handleSaveEditJabatan = () => {
+  const handleSaveEditJabatan = async () => {
     if (editJabIdx === null) return;
     const id = editJabValue.id.trim();
     if (!id) return;
-    const oldId = tr(data.jabatanList[editJabIdx], 'id');
-    const newList = [...data.jabatanList];
-    newList[editJabIdx] = { id, en: editJabValue.en.trim() };
-    updateJabatanList(newList);
-    // sync pegawai whose jabatan matches old ID
-    if (oldId !== id) {
-      updatePegawai(data.pegawai.map(p => p.jabatan === oldId ? { ...p, jabatan: id } : p));
+    setIsSavingJabatan(true);
+    try {
+      const oldId = tr(data.jabatanList[editJabIdx], 'id');
+      const newList = [...data.jabatanList];
+      newList[editJabIdx] = { id, en: editJabValue.en.trim() };
+      await updateJabatanList(newList);
+      // sync pegawai whose jabatan matches old ID
+      if (oldId !== id) {
+        await updatePegawai(data.pegawai.map(p => p.jabatan === oldId ? { ...p, jabatan: id } : p));
+      }
+      setEditJabIdx(null);
+      toast({ title: 'Jabatan diperbarui' });
+    } finally {
+      setIsSavingJabatan(false);
     }
-    setEditJabIdx(null);
-    toast({ title: 'Jabatan diperbarui' });
   };
 
   const handleDeleteJabatan = (idx: number) => {
@@ -139,7 +151,7 @@ export default function AdminPegawai() {
                           <>
                             <BilingualInput value={editJabValue} onChange={setEditJabValue} />
                             <div className="flex gap-2">
-                              <Button size="sm" onClick={handleSaveEditJabatan}>Simpan</Button>
+                              <Button size="sm" onClick={handleSaveEditJabatan} disabled={isSavingJabatan}>{isSavingJabatan ? '...' : 'Simpan'}</Button>
                               <Button size="sm" variant="ghost" onClick={() => setEditJabIdx(null)}>Batal</Button>
                             </div>
                           </>
@@ -185,7 +197,7 @@ export default function AdminPegawai() {
                   </Select>
                 </div>
                 <div><Label>Foto</Label><ImageUpload value={form.foto} onChange={url => setForm(f => ({ ...f, foto: url }))} placeholder required recommendedSize="300×400 px (3:4)" /></div>
-                <Button onClick={handleSave} className="w-full">Simpan</Button>
+                <Button onClick={handleSave} className="w-full" disabled={isSaving}>{isSaving ? 'Menyimpan...' : 'Simpan'}</Button>
               </div>
             </DialogContent>
           </Dialog>

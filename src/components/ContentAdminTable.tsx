@@ -63,7 +63,7 @@ const emptyForm = (): FormState => ({
 interface Props {
   title: string;
   items: Berita[];
-  onChange: (items: Berita[]) => void;
+  onChange: (items: Berita[]) => Promise<void> | void;
   lastModified?: string;
 }
 
@@ -77,6 +77,7 @@ export default function ContentAdminTable({
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editItem, setEditItem] = useState<Berita | null>(null);
   const [form, setForm] = useState<FormState>(emptyForm());
+  const [isSaving, setIsSaving] = useState(false);
 
   const filtered = items.filter(k =>
     tr(k.judul, 'id').toLowerCase().includes(search.toLowerCase())
@@ -103,7 +104,7 @@ export default function ContentAdminTable({
     setDialogOpen(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form.judul.id || !form.tanggal) return;
 
     if (form.tipe === 'foto' && !form.fotoUtama) {
@@ -116,22 +117,27 @@ export default function ContentAdminTable({
       return;
     }
 
-    const now = new Date().toISOString();
+    setIsSaving(true);
+    try {
+      const now = new Date().toISOString();
 
-    if (editItem) {
-      onChange(
-        items.map(k =>
-          k.id === editItem.id ? { ...k, ...form, lastModified: now } : k
-        )
-      );
-    } else {
-      onChange([
-        ...items,
-        { id: Date.now().toString(), ...form, lastModified: now }
-      ]);
+      if (editItem) {
+        await onChange(
+          items.map(k =>
+            k.id === editItem.id ? { ...k, ...form, lastModified: now } : k
+          )
+        );
+      } else {
+        await onChange([
+          ...items,
+          { id: Date.now().toString(), ...form, lastModified: now }
+        ]);
+      }
+
+      setDialogOpen(false);
+    } finally {
+      setIsSaving(false);
     }
-
-    setDialogOpen(false);
   };
 
   const handleDelete = (id: string) => {
@@ -249,8 +255,8 @@ export default function ContentAdminTable({
                 />
               </div>
 
-              <Button onClick={handleSave} className="w-full">
-                Simpan
+              <Button onClick={handleSave} className="w-full" disabled={isSaving}>
+                {isSaving ? 'Menyimpan...' : 'Simpan'}
               </Button>
             </div>
           </DialogContent>

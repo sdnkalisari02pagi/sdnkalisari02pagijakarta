@@ -12,10 +12,16 @@ import BilingualInput from '@/components/BilingualInput';
 export default function AdminSambutan() {
   const { data, updateSambutan } = useSchool();
   const [form, setForm] = useState({ ...data.sambutan });
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleSave = () => {
-    updateSambutan(form);
-    toast({ title: 'Berhasil', description: 'Sambutan berhasil diperbarui.' });
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await updateSambutan(form);
+      toast({ title: 'Berhasil', description: 'Sambutan berhasil diperbarui.' });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -28,7 +34,7 @@ export default function AdminSambutan() {
           <div><Label>Foto</Label><ImageUpload value={form.foto} onChange={url => setForm(f => ({ ...f, foto: url }))} placeholder required recommendedSize="600×800 px (3:4)" /></div>
           <BilingualInput label="Teks Sambutan" value={form.teks} onChange={v => setForm(f => ({ ...f, teks: v }))} multiline rows={10} />
         </CardContent></Card>
-        <Button onClick={handleSave}>Simpan Perubahan</Button>
+        <Button onClick={handleSave} disabled={isSaving}>{isSaving ? 'Menyimpan...' : 'Simpan Perubahan'}</Button>
       </div>
     </div>
   );

@@ -35,6 +35,7 @@ export default function AdminSiswa() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editItem, setEditItem] = useState<KelasSiswa | null>(null);
   const [form, setForm] = useState({ kelas: '', jumlah: 0 });
+  const [isSaving, setIsSaving] = useState(false);
 
   const total = data.siswa.reduce((s, k) => s + (Number(k.jumlah) || 0), 0);
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
@@ -42,15 +43,20 @@ export default function AdminSiswa() {
   const openAdd = () => { setEditItem(null); setForm({ kelas: '', jumlah: 0 }); setDialogOpen(true); };
   const openEdit = (k: KelasSiswa) => { setEditItem(k); setForm({ kelas: k.kelas, jumlah: k.jumlah }); setDialogOpen(true); };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form.kelas.trim() || form.jumlah < 0) {
       toast({ title: 'Gagal', description: 'Nama kelas wajib & jumlah ≥ 0', variant: 'destructive' });
       return;
     }
-    if (editItem) updateSiswa(data.siswa.map(k => k.id === editItem.id ? { ...k, ...form } : k));
-    else updateSiswa([...data.siswa, { id: Date.now().toString(), ...form }]);
-    setDialogOpen(false);
-    toast({ title: 'Berhasil', description: 'Data siswa diperbarui.' });
+    setIsSaving(true);
+    try {
+      if (editItem) await updateSiswa(data.siswa.map(k => k.id === editItem.id ? { ...k, ...form } : k));
+      else await updateSiswa([...data.siswa, { id: Date.now().toString(), ...form }]);
+      setDialogOpen(false);
+      toast({ title: 'Berhasil', description: 'Data siswa diperbarui.' });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleDelete = (id: string) => { if (confirm('Hapus kelas ini?')) updateSiswa(data.siswa.filter(k => k.id !== id)); };
@@ -74,7 +80,7 @@ export default function AdminSiswa() {
             <div className="space-y-4">
               <div><Label>Nama Kelas</Label><Input value={form.kelas} onChange={e => setForm(f => ({ ...f, kelas: e.target.value }))} placeholder="Kelas 1A" /></div>
               <div><Label>Jumlah Siswa</Label><Input type="number" min={0} value={form.jumlah} onChange={e => setForm(f => ({ ...f, jumlah: Number(e.target.value) || 0 }))} /></div>
-              <Button onClick={handleSave} className="w-full">Simpan</Button>
+              <Button onClick={handleSave} className="w-full" disabled={isSaving}>{isSaving ? 'Menyimpan...' : 'Simpan'}</Button>
             </div>
           </DialogContent>
         </Dialog>

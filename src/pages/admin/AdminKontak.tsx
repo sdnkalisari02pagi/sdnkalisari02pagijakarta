@@ -11,10 +11,16 @@ import BilingualInput from '@/components/BilingualInput';
 export default function AdminKontak() {
   const { data, updateKontak } = useSchool();
   const [form, setForm] = useState({ ...data.kontak });
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleSave = () => {
-    updateKontak(form);
-    toast({ title: 'Berhasil', description: 'Kontak berhasil diperbarui.' });
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await updateKontak(form);
+      toast({ title: 'Berhasil', description: 'Kontak berhasil diperbarui.' });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -31,7 +37,7 @@ export default function AdminKontak() {
           <div><Label>TikTok URL</Label><Input value={form.tiktok || ''} onChange={e => setForm(f => ({ ...f, tiktok: e.target.value }))} placeholder="https://www.tiktok.com/@..." /></div>
           <div><Label>Google Maps Embed URL</Label><Input value={form.mapsEmbed} onChange={e => setForm(f => ({ ...f, mapsEmbed: e.target.value }))} /></div>
         </CardContent></Card>
-        <Button onClick={handleSave}>Simpan Perubahan</Button>
+        <Button onClick={handleSave} disabled={isSaving}>{isSaving ? 'Menyimpan...' : 'Simpan Perubahan'}</Button>
       </div>
     </div>
   );

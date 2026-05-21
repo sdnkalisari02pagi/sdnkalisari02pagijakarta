@@ -32,6 +32,7 @@ export const iconMap: Record<string, React.ComponentType<{ className?: string }>
 export default function AdminKeunggulan() {
   const { data, updateKeunggulan } = useSchool();
   const [items, setItems] = useState<Keunggulan[]>(data.keunggulan);
+  const [isSaving, setIsSaving] = useState(false);
 
   const addItem = () => {
     setItems([...items, { id: Date.now().toString(), icon: 'Star', title: { id: '', en: '' }, desc: { id: '', en: '' } }]);
@@ -43,11 +44,16 @@ export default function AdminKeunggulan() {
     setItems(items.map(i => i.id === id ? { ...i, [field]: value } : i));
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const valid = items.every(i => tr(i.title, 'id').trim() && tr(i.desc, 'id').trim());
     if (!valid) { toast.error('Semua judul dan deskripsi (ID) harus diisi'); return; }
-    updateKeunggulan(items);
-    toast.success('Keunggulan berhasil disimpan');
+    setIsSaving(true);
+    try {
+      await updateKeunggulan(items);
+      toast.success('Keunggulan berhasil disimpan');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -106,7 +112,7 @@ export default function AdminKeunggulan() {
         );
       })}
 
-      <Button onClick={handleSave} className="w-full" size="lg">Simpan Perubahan</Button>
+      <Button onClick={handleSave} className="w-full" size="lg" disabled={isSaving}>{isSaving ? 'Menyimpan...' : 'Simpan Perubahan'}</Button>
     </div>
   );
 }

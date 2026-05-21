@@ -86,12 +86,15 @@ export default function AdminHero() {
     await supabase.storage.from('hero').remove(paths);
   };
 
+  const [isSaving, setIsSaving] = useState(false);
+
   const handleSave = async () => {
     if (!hero.images || hero.images.length === 0) {
       toast({ title: 'Gagal', description: 'Minimal 1 gambar hero.', variant: 'destructive' });
       return;
     }
 
+    setIsSaving(true);
     try {
       let finalImages = [...hero.images];
 
@@ -106,7 +109,7 @@ export default function AdminHero() {
         finalImages = uploadedUrls;
       }
 
-      updateHero({
+      await updateHero({
         ...hero,
         images: finalImages
       });
@@ -117,6 +120,8 @@ export default function AdminHero() {
 
     } catch (err: any) {
       toast({ title: 'Error', description: err.message, variant: 'destructive' });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -258,8 +263,8 @@ export default function AdminHero() {
         </CardContent>
       </Card>
 
-      <Button onClick={handleSave} className="w-full">
-        Simpan
+      <Button onClick={handleSave} className="w-full" disabled={isSaving}>
+        {isSaving ? 'Menyimpan...' : 'Simpan'}
       </Button>
     </div>
   );

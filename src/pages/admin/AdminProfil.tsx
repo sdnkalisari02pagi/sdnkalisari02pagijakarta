@@ -13,6 +13,7 @@ import { tr, toBilingual } from '@/lib/i18n';
 export default function AdminProfil() {
   const { data, updateProfil } = useSchool();
   const [form, setForm] = useState({ ...data.profil });
+  const [isSaving, setIsSaving] = useState(false);
 
   const misiText = form.misi.map(m => tr(m, 'id')).join('\n');
   const misiTextEn = form.misi.map(m => tr(m, 'en')).join('\n');
@@ -26,9 +27,14 @@ export default function AdminProfil() {
     setForm(f => ({ ...f, misi: merged }));
   };
 
-  const handleSave = () => {
-    updateProfil(form);
-    toast({ title: 'Berhasil', description: 'Profil sekolah berhasil diperbarui.' });
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await updateProfil(form);
+      toast({ title: 'Berhasil', description: 'Profil sekolah berhasil diperbarui.' });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -62,7 +68,7 @@ export default function AdminProfil() {
           <Label>Foto Sekolah (Sejarah)</Label>
           <ImageUpload value={form.fotoSekolah} onChange={url => setForm(f => ({ ...f, fotoSekolah: url }))} placeholder required recommendedSize="1600×900 px (16:9)" />
         </CardContent></Card>
-        <Button onClick={handleSave}>Simpan Perubahan</Button>
+        <Button onClick={handleSave} disabled={isSaving}>{isSaving ? 'Menyimpan...' : 'Simpan Perubahan'}</Button>
       </div>
     </div>
   );

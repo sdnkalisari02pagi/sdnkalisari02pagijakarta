@@ -20,6 +20,7 @@ export default function AdminDokumen() {
   const [form, setForm] = useState<{ nama: { id: string; en: string }; tanggal: string; url: string }>({ nama: { id: '', en: '' }, tanggal: '', url: '#' });
   const [fileName, setFileName] = useState('');
   const [dragOver, setDragOver] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const ACCEPTED_TYPES = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'image/jpeg', 'image/png', 'image/webp'];
@@ -50,15 +51,20 @@ export default function AdminDokumen() {
   const openAdd = () => { setEditItem(null); setForm({ nama: { id: '', en: '' }, tanggal: '', url: '#' }); setFileName(''); setDialogOpen(true); };
   const openEdit = (d: Dokumen) => { setEditItem(d); setForm({ nama: toBilingual(d.nama), tanggal: d.tanggal, url: d.url }); setFileName(''); setDialogOpen(true); };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form.nama.id || !form.tanggal) return;
-    const now = new Date().toISOString();
-    if (editItem) {
-      updateDokumen(data.dokumen.map(d => d.id === editItem.id ? { ...d, ...form, lastModified: now } : d));
-    } else {
-      updateDokumen([...data.dokumen, { id: Date.now().toString(), ...form, lastModified: now }]);
+    setIsSaving(true);
+    try {
+      const now = new Date().toISOString();
+      if (editItem) {
+        await updateDokumen(data.dokumen.map(d => d.id === editItem.id ? { ...d, ...form, lastModified: now } : d));
+      } else {
+        await updateDokumen([...data.dokumen, { id: Date.now().toString(), ...form, lastModified: now }]);
+      }
+      setDialogOpen(false);
+    } finally {
+      setIsSaving(false);
     }
-    setDialogOpen(false);
   };
 
   const handleDelete = (id: string) => { if (confirm('Hapus?')) updateDokumen(data.dokumen.filter(d => d.id !== id)); };
@@ -93,7 +99,7 @@ export default function AdminDokumen() {
                   </div>
                 )}
               </div>
-              <Button onClick={handleSave} className="w-full">Simpan</Button>
+              <Button onClick={handleSave} className="w-full" disabled={isSaving}>{isSaving ? 'Menyimpan...' : 'Simpan'}</Button>
             </div>
           </DialogContent>
         </Dialog>

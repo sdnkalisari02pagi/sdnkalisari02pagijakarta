@@ -29,6 +29,7 @@ export default function AdminEkskul() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editItem, setEditItem] = useState<Ekstrakurikuler | null>(null);
   const [form, setForm] = useState<FormState>(empty());
+  const [isSaving, setIsSaving] = useState(false);
 
   const filtered = data.ekstrakurikuler.filter(e => tr(e.nama, 'id').toLowerCase().includes(search.toLowerCase()));
 
@@ -58,7 +59,7 @@ export default function AdminEkskul() {
     pelatih: f.pelatih.map((p, idx) => idx === i ? { ...p, ...patch } : p),
   }));
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form.nama.id) {
       toast({ title: 'Gagal', description: 'Nama wajib diisi.', variant: 'destructive' });
       return;
@@ -67,23 +68,28 @@ export default function AdminEkskul() {
       toast({ title: 'Gagal', description: 'Foto Utama wajib diisi.', variant: 'destructive' });
       return;
     }
-    const now = new Date().toISOString();
-    const payload: Ekstrakurikuler = {
-      id: editItem?.id || Date.now().toString(),
-      nama: form.nama,
-      foto: form.fotoUtama, // legacy mirror
-      fotoUtama: form.fotoUtama,
-      deskripsi: form.deskripsi,
-      galeri: form.galeri,
-      pelatih: form.pelatih,
-      lastModified: now,
-    };
-    if (editItem) {
-      updateEkstrakurikuler(data.ekstrakurikuler.map(e => e.id === editItem.id ? payload : e));
-    } else {
-      updateEkstrakurikuler([...data.ekstrakurikuler, payload]);
+    setIsSaving(true);
+    try {
+      const now = new Date().toISOString();
+      const payload: Ekstrakurikuler = {
+        id: editItem?.id || Date.now().toString(),
+        nama: form.nama,
+        foto: form.fotoUtama, // legacy mirror
+        fotoUtama: form.fotoUtama,
+        deskripsi: form.deskripsi,
+        galeri: form.galeri,
+        pelatih: form.pelatih,
+        lastModified: now,
+      };
+      if (editItem) {
+        await updateEkstrakurikuler(data.ekstrakurikuler.map(e => e.id === editItem.id ? payload : e));
+      } else {
+        await updateEkstrakurikuler([...data.ekstrakurikuler, payload]);
+      }
+      setDialogOpen(false);
+    } finally {
+      setIsSaving(false);
     }
-    setDialogOpen(false);
   };
 
   const handleDelete = (id: string) => { if (confirm('Hapus?')) updateEkstrakurikuler(data.ekstrakurikuler.filter(e => e.id !== id)); };
@@ -128,7 +134,7 @@ export default function AdminEkskul() {
               </div>
 
               <div><Label>Galeri</Label><GaleriUpload value={form.galeri} onChange={galeri => setForm(f => ({ ...f, galeri }))} /></div>
-              <Button onClick={handleSave} className="w-full">Simpan</Button>
+              <Button onClick={handleSave} className="w-full" disabled={isSaving}>{isSaving ? 'Menyimpan...' : 'Simpan'}</Button>
             </div>
           </DialogContent>
         </Dialog>
