@@ -338,11 +338,10 @@ export default function ContentAdminTable({
 
                   <TableCell>
                     <span
-                      className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${
-                        k.tipe === 'foto'
+                      className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${k.tipe === 'foto'
                           ? 'bg-blue-100 text-blue-600'
                           : 'bg-red-100 text-red-600'
-                      }`}
+                        }`}
                     >
                       {k.tipe === 'foto' ? (
                         <>
