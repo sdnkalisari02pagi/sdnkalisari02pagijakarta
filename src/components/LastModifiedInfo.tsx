@@ -3,11 +3,23 @@ import { Clock } from 'lucide-react';
 function formatDate(iso: string) {
   if (!iso) return '';
 
-  // 🔥 Fix parsing: ubah "2026-05-05 08:07:00" → ISO valid + WIB
-  const fixed = iso.replace(' ', 'T') + '+07:00';
-  const date = new Date(fixed);
+  // Convert ' ' to 'T' just in case
+  let fixed = iso.replace(' ', 'T');
+  
+  // Supabase returns timestamps without timezone (like "2026-05-21T08:17:00.123") which are implicitly UTC.
+  // If the string doesn't explicitly contain a timezone indicator (+, -, or Z) in the time part, we append 'Z'.
+  const timePart = fixed.split('T')[1] || '';
+  if (!timePart.includes('+') && !timePart.includes('-') && !timePart.endsWith('Z')) {
+    fixed += 'Z';
+  }
 
-  const formatted = date.toLocaleString('id-ID', {
+  const date = new Date(fixed);
+  
+  if (isNaN(date.getTime())) {
+    return 'Waktu tidak valid';
+  }
+
+  return date.toLocaleString('id-ID', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -15,21 +27,6 @@ function formatDate(iso: string) {
     minute: '2-digit',
     hour12: false
   });
-
-  // fallback kalau parsing gagal
-  if (formatted === 'Invalid Date') {
-    const d = new Date(iso);
-    return d.toLocaleString('id-ID', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    });
-  }
-
-  return formatted;
 }
 
 export default function LastModifiedInfo({ timestamp }: { timestamp?: string }) {
