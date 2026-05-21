@@ -99,6 +99,13 @@ const SchoolContext = createContext<any>(undefined);
 
 /* ================= FETCH ================= */
 
+const getMaxTimestamp = (arr: any[] | null) => {
+  if (!arr || arr.length === 0) return null;
+  const timestamps = arr.map(item => item.updated_at).filter(Boolean);
+  if (timestamps.length === 0) return null;
+  return timestamps.sort().reverse()[0];
+};
+
 async function fetchAll(): Promise<SchoolData> {
   try {
     const [
@@ -188,10 +195,10 @@ async function fetchAll(): Promise<SchoolData> {
       siswa: siswa.data || [],
       lastModified: {
         logo: logo.data?.updated_at || null, footer: footer.data?.updated_at || null, hero: hero.data?.updated_at || null,
-        keunggulan: keunggulan.data?.[0]?.updated_at || null, pegawai: pegawai.data?.[0]?.updated_at || null,
-        berita: berita.data?.[0]?.updated_at || null, prestasi: prestasi.data?.[0]?.updated_at || null,
-        ekstrakurikuler: ekstrakurikuler.data?.[0]?.updated_at || null, dokumen: dokumen.data?.[0]?.updated_at || null,
-        profil: profil.data?.updated_at || null, sambutan: sambutan.data?.updated_at || null, kontak: kontak.data?.updated_at || null, siswa: null
+        keunggulan: getMaxTimestamp(keunggulan.data), pegawai: getMaxTimestamp(pegawai.data),
+        berita: getMaxTimestamp(berita.data), prestasi: getMaxTimestamp(prestasi.data),
+        ekstrakurikuler: getMaxTimestamp(ekstrakurikuler.data), dokumen: getMaxTimestamp(dokumen.data),
+        profil: profil.data?.updated_at || null, sambutan: sambutan.data?.updated_at || null, kontak: kontak.data?.updated_at || null, siswa: getMaxTimestamp(siswa.data)
       }
     };
   } catch (err) {
