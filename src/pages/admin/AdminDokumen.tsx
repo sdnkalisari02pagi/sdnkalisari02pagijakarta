@@ -109,7 +109,9 @@ export default function AdminDokumen() {
                         <img src={form.url} alt="Preview" className="object-contain h-full" />
                       </div>
                     ) : form.url.match(/\.(pdf)$/i) ? (
-                      <iframe src={form.url} className="w-full h-[300px] rounded-lg border" title="Preview" />
+                      <iframe src={`${form.url}#view=FitH`} className="w-full h-[300px] rounded-lg border bg-white" title="Preview" />
+                    ) : form.url.match(/\.(doc|docx|xls|xlsx)$/i) ? (
+                      <iframe src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(form.url)}`} className="w-full h-[300px] rounded-lg border bg-white" title="Preview" />
                     ) : (
                       <div className="h-[100px] w-full rounded-lg border flex flex-col items-center justify-center bg-muted/10">
                         <FileText className="w-8 h-8 text-muted-foreground mb-2" />
@@ -152,6 +154,10 @@ export default function AdminDokumen() {
                     ) : d.url.match(/\.(pdf)$/i) ? (
                       <div className="w-12 h-12 rounded border overflow-hidden relative bg-white">
                         <iframe src={`${d.url}#page=1&view=Fit&toolbar=0&navpanes=0&scrollbar=0`} className="absolute top-0 left-0 origin-top-left pointer-events-none" style={{ width: '480px', height: '480px', transform: 'scale(0.1)' }} title="PDF Thumbnail" tabIndex={-1} />
+                      </div>
+                    ) : d.url.match(/\.(doc|docx|xls|xlsx)$/i) ? (
+                      <div className="w-12 h-12 rounded border overflow-hidden relative bg-white">
+                        <iframe src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(d.url)}`} className="absolute top-0 left-0 origin-top-left pointer-events-none" style={{ width: '480px', height: '480px', transform: 'scale(0.1)' }} title="Office Thumbnail" tabIndex={-1} />
                       </div>
                     ) : (
                       <div className="w-12 h-12 bg-muted rounded flex items-center justify-center border">
