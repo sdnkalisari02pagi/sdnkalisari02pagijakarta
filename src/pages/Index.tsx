@@ -134,8 +134,8 @@ return (
                 <div className="w-14 h-14 rounded-full bg-primary mx-auto mb-4 flex items-center justify-center">
                   <IconComp className="w-7 h-7 text-primary-foreground" />
                 </div>
-                <h3 className="font-semibold text-foreground mb-2">{tr(item.title, lang)}</h3>
-                <p className="text-sm text-muted-foreground">{tr(item.desc, lang)}</p>
+                <h3 className="font-semibold text-foreground mb-2">{tr(item.judul, lang)}</h3>
+                <p className="text-sm text-muted-foreground">{tr(item.deskripsi, lang)}</p>
               </CardContent>
             </Card>
           );
