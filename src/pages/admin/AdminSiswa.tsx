@@ -53,8 +53,9 @@ export default function AdminSiswa() {
     }
     setIsSaving(true);
     try {
-      if (editItem) await updateSiswa(data.siswa.map(k => k.id === editItem.id ? { ...k, ...form } : k));
-      else await updateSiswa([...data.siswa, { id: Date.now().toString(), ...form }]);
+      const now = new Date().toISOString();
+      if (editItem) await updateSiswa(data.siswa.map(k => k.id === editItem.id ? { ...k, ...form, lastModified: now } : k));
+      else await updateSiswa([...data.siswa, { id: Date.now().toString(), ...form, lastModified: now }]);
       setDialogOpen(false);
       toast({ title: 'Berhasil', description: 'Data siswa diperbarui.' });
     } catch (err: any) {
