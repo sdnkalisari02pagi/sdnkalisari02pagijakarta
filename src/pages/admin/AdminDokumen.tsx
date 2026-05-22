@@ -149,6 +149,10 @@ export default function AdminDokumen() {
                   <a href={d.url} target="_blank" rel="noreferrer" className="block hover:opacity-80 transition-opacity">
                     {d.url.match(/\.(jpg|jpeg|png|webp|gif)$/i) ? (
                       <img src={d.url} alt="Preview" className="w-12 h-12 object-cover rounded border bg-muted/20" />
+                    ) : d.url.match(/\.(pdf)$/i) ? (
+                      <div className="w-12 h-12 rounded border overflow-hidden relative bg-white">
+                        <iframe src={`${d.url}#page=1&view=Fit&toolbar=0&navpanes=0&scrollbar=0`} className="absolute top-0 left-0 origin-top-left pointer-events-none" style={{ width: '480px', height: '480px', transform: 'scale(0.1)' }} title="PDF Thumbnail" tabIndex={-1} />
+                      </div>
                     ) : (
                       <div className="w-12 h-12 bg-muted rounded flex items-center justify-center border">
                         <FileText className="w-6 h-6 text-muted-foreground" />
