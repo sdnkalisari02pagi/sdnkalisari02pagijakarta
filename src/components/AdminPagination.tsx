@@ -36,6 +36,7 @@ export default function AdminPagination({
             {[10, 20, 50, 100].map(size => (
               <SelectItem key={size} value={size.toString()}>{size}</SelectItem>
             ))}
+            <SelectItem value="999999">All</SelectItem>
           </SelectContent>
         </Select>
       </div>
