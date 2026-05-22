@@ -26,26 +26,22 @@ export default function AdminPagination({
 
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between px-2 py-4 border-t gap-4">
-      <div className="flex items-center space-x-2">
-        <span className="text-sm text-muted-foreground font-medium">Page Size:</span>
-        <Select value={pageSize.toString()} onValueChange={(val) => onPageSizeChange(Number(val))}>
-          <SelectTrigger className="h-8 w-[70px]">
-            <SelectValue placeholder={pageSize} />
-          </SelectTrigger>
-          <SelectContent side="top">
-            {[10, 20, 50, 100].map(size => (
-              <SelectItem key={size} value={size.toString()}>{size}</SelectItem>
-            ))}
-            <SelectItem value="999999">All</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="flex items-center space-x-4 sm:space-x-6 lg:space-x-8">
-        <div className="flex items-center justify-center text-sm font-medium text-muted-foreground">
-          {startItem} to {endItem} of {totalItems}
+      <div className="flex flex-wrap items-center gap-6">
+        <div className="flex items-center space-x-2">
+          <span className="text-sm text-muted-foreground font-medium">Page Size:</span>
+          <Select value={pageSize.toString()} onValueChange={(val) => onPageSizeChange(Number(val))}>
+            <SelectTrigger className="h-8 w-[70px]">
+              <SelectValue placeholder={pageSize === 999999 ? 'All' : pageSize} />
+            </SelectTrigger>
+            <SelectContent side="top">
+              {[10, 20, 50, 100].map(size => (
+                <SelectItem key={size} value={size.toString()}>{size}</SelectItem>
+              ))}
+              <SelectItem value="999999">All</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
-        
+
         <div className="flex items-center space-x-2">
           <Button
             variant="outline"
@@ -85,6 +81,10 @@ export default function AdminPagination({
             <ChevronsRight className="h-4 w-4" />
           </Button>
         </div>
+      </div>
+
+      <div className="flex items-center justify-center text-sm font-medium text-muted-foreground">
+        {startItem} to {endItem} of {totalItems}
       </div>
     </div>
   );

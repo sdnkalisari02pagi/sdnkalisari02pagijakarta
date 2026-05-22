@@ -25,25 +25,21 @@ export default function PaginationBar({ total, page, perPage, onPageChange, onPe
 
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between px-2 py-4 border-t gap-4 mt-6">
-      <div className="flex items-center space-x-2">
-        <span className="text-sm text-muted-foreground font-medium">{t('per_halaman')}:</span>
-        <Select value={String(perPage)} onValueChange={v => onPerPageChange(v === 'all' ? 'all' : Number(v))}>
-          <SelectTrigger className="h-8 w-[70px]">
-            <SelectValue placeholder={perPage === 'all' ? t('semua') : perPage} />
-          </SelectTrigger>
-          <SelectContent side="top">
-            {options.map(opt => (
-              <SelectItem key={String(opt)} value={String(opt)}>{opt === 'all' ? t('semua') : opt}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="flex items-center space-x-4 sm:space-x-6 lg:space-x-8">
-        <div className="flex items-center justify-center text-sm font-medium text-muted-foreground">
-          {start} – {end} / {total}
+      <div className="flex flex-wrap items-center gap-6">
+        <div className="flex items-center space-x-2">
+          <span className="text-sm text-muted-foreground font-medium">{t('per_halaman')}:</span>
+          <Select value={String(perPage)} onValueChange={v => onPerPageChange(v === 'all' ? 'all' : Number(v))}>
+            <SelectTrigger className="h-8 w-[70px]">
+              <SelectValue placeholder={perPage === 'all' ? t('semua') : perPage} />
+            </SelectTrigger>
+            <SelectContent side="top">
+              {options.map(opt => (
+                <SelectItem key={String(opt)} value={String(opt)}>{opt === 'all' ? t('semua') : opt}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
-        
+
         {(!isAll && totalPages > 1) && (
           <div className="flex items-center space-x-2">
             <Button
@@ -85,6 +81,10 @@ export default function PaginationBar({ total, page, perPage, onPageChange, onPe
             </Button>
           </div>
         )}
+      </div>
+
+      <div className="flex items-center justify-center text-sm font-medium text-muted-foreground">
+        {start} – {end} / {total}
       </div>
     </div>
   );
