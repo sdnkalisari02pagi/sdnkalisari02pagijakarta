@@ -65,7 +65,7 @@ const defaultData: SchoolData = {
   profil: {
     sejarah: B('', ''),
     visi: B('', ''),
-    misi: [],
+    misi: B('', ''),
     tujuan: B('', ''),
     fotoSekolah: ''
   },
@@ -111,7 +111,7 @@ async function fetchAll(): Promise<SchoolData> {
     const [
       logo, hero, heroImages, keunggulan, pegawai, jabatanList,
       berita, beritaGaleri, prestasi, prestasiGaleri,
-      ekstrakurikuler, ekskulGaleri, dokumen, profil, profilMisi,
+      ekstrakurikuler, ekskulGaleri, dokumen, profil,
       sambutan, kontak, footer, siswa, pelatih
     ] = await Promise.all([
       supabase.from('logo').select('*').limit(1).maybeSingle(),
@@ -128,7 +128,6 @@ async function fetchAll(): Promise<SchoolData> {
       supabase.from('ekstrakurikuler_galeri').select('*'),
       supabase.from('dokumen').select('*'),
       supabase.from('profil').select('*').limit(1).maybeSingle(),
-      supabase.from('profil_misi').select('*'),
       supabase.from('sambutan').select('*').limit(1).maybeSingle(),
       supabase.from('kontak').select('*').limit(1).maybeSingle(),
       supabase.from('footer').select('*').limit(1).maybeSingle(),
@@ -184,9 +183,9 @@ async function fetchAll(): Promise<SchoolData> {
       profil: profil.data ? {
         sejarah: B(profil.data.sejarah_id, profil.data.sejarah_en),
         visi: B(profil.data.visi_id, profil.data.visi_en),
-        misi: (profilMisi.data || []).filter(m => m.profil_id === profil.data.id).map(m => B(m.misi_id, m.misi_en)),
+        misi: B(profil.data.misi_id || '', profil.data.misi_en || ''),
         tujuan: B(profil.data.tujuan_id, profil.data.tujuan_en),
-        fotoSekolah: profil.data.foto
+        fotoSekolah: profil.data.foto,
       } : defaultData.profil,
       sambutan: sambutan.data ? {
         nama: sambutan.data.nama || '', foto: sambutan.data.foto || '', teks: B(sambutan.data.teks_id || '', sambutan.data.teks_en || '')
@@ -476,18 +475,12 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     const { error: profErr } = await supabase.from('profil').upsert({
       id: 1, sejarah_id: form.sejarah?.id || '', sejarah_en: form.sejarah?.en || '',
       visi_id: form.visi?.id || '', visi_en: form.visi?.en || '',
+      misi_id: form.misi?.id || '', misi_en: form.misi?.en || '',
       tujuan_id: form.tujuan?.id || '', tujuan_en: form.tujuan?.en || '',
       foto: form.fotoSekolah || '', updated_at: new Date().toISOString()
     });
     if (profErr) throw profErr;
 
-    const { error: delErr } = await supabase.from('profil_misi').delete().eq('profil_id', 1);
-    if (delErr) throw delErr;
-
-    if (form.misi?.length) {
-      const { error: insErr } = await supabase.from('profil_misi').insert(form.misi.map((m: any) => ({ profil_id: 1, misi_id: m.id || '', misi_en: m.en || '' })));
-      if (insErr) throw insErr;
-    }
     updateLocal('profil', form, 'profil');
   };
 

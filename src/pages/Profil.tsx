@@ -97,13 +97,9 @@ export default function Profil() {
             <Card>
               <CardContent className="pt-6">
                 <h3 className="font-semibold text-lg text-foreground mb-2">{t("profil_misi")}</h3>
-                <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
-                  {data.profil.misi.map((m, i) => (
-                    <li key={i}>
-                      <LinkedText text={tr(m, lang)} />
-                    </li>
-                  ))}
-                </ol>
+                <div className="text-muted-foreground">
+                  <LinkedText text={tr(data.profil.misi, lang)} />
+                </div>
               </CardContent>
             </Card>
             <Card>
