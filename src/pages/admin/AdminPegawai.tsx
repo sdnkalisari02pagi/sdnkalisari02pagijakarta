@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSchool, Pegawai } from '@/contexts/SchoolContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -12,11 +12,14 @@ import LastModifiedInfo, { formatDate } from '@/components/LastModifiedInfo';
 import BilingualInput from '@/components/BilingualInput';
 import { toast } from '@/hooks/use-toast';
 import { tr, toBilingual } from '@/lib/i18n';
+import AdminPagination from '@/components/AdminPagination';
 
 export default function AdminPegawai() {
   const { data, updatePegawai, updateJabatanList } = useSchool();
   const [search, setSearch] = useState('');
   const [filterJabatan, setFilterJabatan] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [editItem, setEditItem] = useState<Pegawai | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [jabatanDialogOpen, setJabatanDialogOpen] = useState(false);
@@ -29,12 +32,18 @@ export default function AdminPegawai() {
   const [isSaving, setIsSaving] = useState(false);
   const [isSavingJabatan, setIsSavingJabatan] = useState(false);
 
-  const isFiltering = search !== '' || filterJabatan !== 'all';
+  const isFiltering = search !== '' || filterJabatan !== 'all' || currentPage > 1;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, filterJabatan]);
+
   const filtered = data.pegawai.filter(p => {
     const ms = p.nama.toLowerCase().includes(search.toLowerCase());
     const mf = filterJabatan === 'all' || p.jabatan === filterJabatan;
     return ms && mf;
   });
+  const paginatedData = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   // jabatan ID values used by pegawai (we store p.jabatan as the ID-language string for backward compat)
   const jabatanIdList = data.jabatanList.map(j => tr(j, 'id'));
@@ -235,7 +244,7 @@ export default function AdminPegawai() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filtered.map((p) => {
+            {paginatedData.map((p) => {
               const realIndex = data.pegawai.findIndex(x => x.id === p.id);
               return (
                 <TableRow
@@ -264,6 +273,13 @@ export default function AdminPegawai() {
             })}
           </TableBody>
         </Table>
+        <AdminPagination 
+          currentPage={currentPage}
+          totalItems={filtered.length}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={(size) => { setPageSize(size); setCurrentPage(1); }}
+        />
       </div>
     </div>
   );

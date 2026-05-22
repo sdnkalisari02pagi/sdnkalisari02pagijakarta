@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Berita, ContentTipe } from '@/contexts/SchoolContext';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
@@ -34,6 +34,7 @@ import LastModifiedInfo, { formatDate } from '@/components/LastModifiedInfo';
 import BilingualInput from '@/components/BilingualInput';
 import { tr, toBilingual } from '@/lib/i18n';
 import { getVideoThumbnail } from '@/lib/videoEmbed';
+import AdminPagination from '@/components/AdminPagination';
 
 interface FormState {
   judul: { id: string; en: string };
@@ -79,10 +80,17 @@ export default function ContentAdminTable({
   const [editItem, setEditItem] = useState<Berita | null>(null);
   const [form, setForm] = useState<FormState>(emptyForm());
   const [isSaving, setIsSaving] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
 
   const filtered = items.filter(k =>
     tr(k.judul, 'id').toLowerCase().includes(search.toLowerCase())
   );
+  const paginatedData = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const openAdd = () => {
     setEditItem(null);
@@ -300,7 +308,7 @@ export default function ContentAdminTable({
           </TableHeader>
 
           <TableBody>
-            {filtered.map(k => {
+            {paginatedData.map(k => {
               const cardImg =
                 k.tipe === 'video'
                   ? k.thumbnail || getVideoThumbnail(k.videoUrl)
@@ -362,6 +370,13 @@ export default function ContentAdminTable({
             })}
           </TableBody>
         </Table>
+        <AdminPagination 
+          currentPage={currentPage}
+          totalItems={filtered.length}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={(size) => { setPageSize(size); setCurrentPage(1); }}
+        />
       </div>
     </div>
   );

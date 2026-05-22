@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useSchool, Dokumen } from '@/contexts/SchoolContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -11,10 +11,13 @@ import LastModifiedInfo, { formatDate } from '@/components/LastModifiedInfo';
 import BilingualInput from '@/components/BilingualInput';
 import { tr, toBilingual } from '@/lib/i18n';
 import { uploadFileToSupabase } from '@/lib/supabase';
+import AdminPagination from '@/components/AdminPagination';
 
 export default function AdminDokumen() {
   const { data, updateDokumen } = useSchool();
   const [search, setSearch] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editItem, setEditItem] = useState<Dokumen | null>(null);
   const [form, setForm] = useState<{ nama: { id: string; en: string }; tanggal: string; url: string }>({ nama: { id: '', en: '' }, tanggal: '', url: '#' });
@@ -46,7 +49,12 @@ export default function AdminDokumen() {
     }
   };
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
+
   const filtered = data.dokumen.filter(d => tr(d.nama, 'id').toLowerCase().includes(search.toLowerCase()));
+  const paginatedData = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const openAdd = () => { setEditItem(null); setForm({ nama: { id: '', en: '' }, tanggal: '', url: '#' }); setFileName(''); setDialogOpen(true); };
   const openEdit = (d: Dokumen) => { 
@@ -145,7 +153,7 @@ export default function AdminDokumen() {
         <Table>
           <TableHeader><TableRow><TableHead className="w-[80px]">Preview</TableHead><TableHead>Nama Dokumen</TableHead><TableHead>Tanggal</TableHead><TableHead>Terakhir Diubah</TableHead><TableHead className="text-right">Aksi</TableHead></TableRow></TableHeader>
           <TableBody>
-            {filtered.map(d => (
+            {paginatedData.map(d => (
               <TableRow key={d.id}>
                 <TableCell>
                   <a href={d.url} target="_blank" rel="noreferrer" className="block hover:opacity-80 transition-opacity">
@@ -181,6 +189,13 @@ export default function AdminDokumen() {
             ))}
           </TableBody>
         </Table>
+        <AdminPagination 
+          currentPage={currentPage}
+          totalItems={filtered.length}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={(size) => { setPageSize(size); setCurrentPage(1); }}
+        />
       </div>
     </div>
   );

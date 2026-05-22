@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSchool, Ekstrakurikuler, Pelatih } from '@/contexts/SchoolContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,7 @@ import ImageUpload from '@/components/ImageUpload';
 import GaleriUpload from '@/components/GaleriUpload';
 import LastModifiedInfo, { formatDate } from '@/components/LastModifiedInfo';
 import BilingualInput from '@/components/BilingualInput';
+import AdminPagination from '@/components/AdminPagination';
 import { tr, toBilingual } from '@/lib/i18n';
 import { toast } from '@/hooks/use-toast';
 
@@ -26,12 +27,19 @@ const empty = (): FormState => ({ nama: { id: '', en: '' }, fotoUtama: '', deskr
 export default function AdminEkskul() {
   const { data, updateEkstrakurikuler } = useSchool();
   const [search, setSearch] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editItem, setEditItem] = useState<Ekstrakurikuler | null>(null);
   const [form, setForm] = useState<FormState>(empty());
   const [isSaving, setIsSaving] = useState(false);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
+
   const filtered = data.ekstrakurikuler.filter(e => tr(e.nama, 'id').toLowerCase().includes(search.toLowerCase()));
+  const paginatedData = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const openAdd = () => { setEditItem(null); setForm(empty()); setDialogOpen(true); };
   const openEdit = (e: Ekstrakurikuler) => {
@@ -167,7 +175,7 @@ export default function AdminEkskul() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filtered.map(e => (
+            {paginatedData.map(e => (
               <TableRow key={e.id}>
                 <TableCell><img src={e.fotoUtama || e.foto} alt={tr(e.nama, 'id')} className="w-10 h-10 rounded object-cover" /></TableCell>
                 <TableCell className="font-medium">{tr(e.nama, 'id')}</TableCell>
@@ -185,6 +193,13 @@ export default function AdminEkskul() {
             ))}
           </TableBody>
         </Table>
+        <AdminPagination 
+          currentPage={currentPage}
+          totalItems={filtered.length}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={(size) => { setPageSize(size); setCurrentPage(1); }}
+        />
       </div>
     </div>
   );
