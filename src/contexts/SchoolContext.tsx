@@ -230,15 +230,14 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   const updateFooter = async (form: any) => {
     const { error } = await supabase.from('footer').upsert({
       id: 1, nama: form.namaSekolah, deskripsi_id: form.deskripsi?.id || '', deskripsi_en: form.deskripsi?.en || '',
-      instagram: form.instagram, youtube: form.youtube, tiktok: form.tiktok, copyright: form.copyright,
-      updated_at: new Date().toISOString()
+      instagram: form.instagram, youtube: form.youtube, tiktok: form.tiktok, copyright: form.copyright
     });
     if (error) throw error;
     updateLocal('footer', form, 'footer');
   };
 
   const updateLogo = async (url: string) => {
-    const { error } = await supabase.from('logo').upsert({ id: 1, url, updated_at: new Date().toISOString() });
+    const { error } = await supabase.from('logo').upsert({ id: 1, url });
     if (error) throw error;
     updateLocal('logo', url, 'logo');
   };
@@ -254,8 +253,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     staff: form.statsVisibility?.staff ?? true,
     students: form.statsVisibility?.students ?? true,
     ekskul: form.statsVisibility?.ekskul ?? true,
-    founded: form.statsVisibility?.founded ?? true,
-    updated_at: new Date().toISOString()
+    founded: form.statsVisibility?.founded ?? true
   });
   if (heroErr) throw heroErr;
 
@@ -283,7 +281,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
 };
 
   const updateSambutan = async (form: any) => {
-    const { error } = await supabase.from('sambutan').upsert({ id: 1, nama: form.nama, foto: form.foto, teks_id: form.teks?.id || '', teks_en: form.teks?.en || '', updated_at: new Date().toISOString() });
+    const { error } = await supabase.from('sambutan').upsert({ id: 1, nama: form.nama, foto: form.foto, teks_id: form.teks?.id || '', teks_en: form.teks?.en || '' });
     if (error) throw error;
     updateLocal('sambutan', form, 'sambutan');
   };
@@ -298,7 +296,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
       if (error) throw error;
     }
     if (form.length > 0) {
-      const { error } = await supabase.from('siswa').upsert(form.map(f => ({ id: f.id, kelas: f.kelas, jumlah: f.jumlah, updated_at: new Date().toISOString() })));
+      const { error } = await supabase.from('siswa').upsert(form.map(f => ({ id: f.id, kelas: f.kelas, jumlah: f.jumlah })));
       if (error) throw error;
     }
     updateLocal('siswa', form, 'siswa');
@@ -315,7 +313,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     }
     if (form.length > 0) {
       const { error } = await supabase.from('keunggulan').upsert(form.map(f => ({
-        id: f.id, icon: f.icon, title_id: f.judul?.id || '', title_en: f.judul?.en || '', desc_id: f.deskripsi?.id || '', desc_en: f.deskripsi?.en || '', updated_at: new Date().toISOString()
+        id: f.id, icon: f.icon, title_id: f.judul?.id || '', title_en: f.judul?.en || '', desc_id: f.deskripsi?.id || '', desc_en: f.deskripsi?.en || ''
       })));
       if (error) throw error;
     }
@@ -334,7 +332,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     
     if (form.length > 0) {
       const { error } = await supabase.from('pegawai').upsert(form.map(f => ({
-        id: f.id, nama: f.nama, jabatan: f.jabatan, foto: f.foto, updated_at: new Date().toISOString()
+        id: f.id, nama: f.nama, jabatan: f.jabatan, foto: f.foto
       })));
       if (error) throw error;
     }
@@ -365,7 +363,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
       const { error: upsertErr } = await supabase.from('berita').upsert(form.map(f => ({
         id: f.id, judul_id: f.judul?.id || '', judul_en: f.judul?.en || '', tanggal: f.tanggal, tipe: f.tipe,
         foto: f.fotoUtama || '', thumbnail: f.thumbnail || null, video: f.videoUrl || null,
-        deskripsi_id: f.deskripsi?.id || '', deskripsi_en: f.deskripsi?.en || '', updated_at: new Date().toISOString()
+        deskripsi_id: f.deskripsi?.id || '', deskripsi_en: f.deskripsi?.en || ''
       })));
       if (upsertErr) throw upsertErr;
       
@@ -394,7 +392,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
       const { error: upsertErr } = await supabase.from('prestasi').upsert(form.map(f => ({
         id: f.id, judul_id: f.judul?.id || '', judul_en: f.judul?.en || '', tanggal: f.tanggal, tipe: f.tipe,
         foto: f.fotoUtama || '', thumbnail: f.thumbnail || null, video: f.videoUrl || null,
-        deskripsi_id: f.deskripsi?.id || '', deskripsi_en: f.deskripsi?.en || '', updated_at: new Date().toISOString()
+        deskripsi_id: f.deskripsi?.id || '', deskripsi_en: f.deskripsi?.en || ''
       })));
       if (upsertErr) throw upsertErr;
       
@@ -422,7 +420,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     if (form.length > 0) {
       const { error: upsertErr } = await supabase.from('ekstrakurikuler').upsert(form.map(f => ({
         id: f.id, nama_id: f.nama?.id || '', nama_en: f.nama?.en || '', foto: f.foto || '', foto_utama: f.fotoUtama || '',
-        deskripsi_id: f.deskripsi?.id || '', deskripsi_en: f.deskripsi?.en || '', updated_at: new Date().toISOString()
+        deskripsi_id: f.deskripsi?.id || '', deskripsi_en: f.deskripsi?.en || ''
       })));
       if (upsertErr) throw upsertErr;
       
@@ -449,7 +447,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     
     if (form.length > 0) {
       const { error: upsertErr } = await supabase.from('dokumen').upsert(form.map(f => ({
-        id: f.id, nama_id: f.nama?.id || '', nama_en: f.nama?.en || '', tanggal: f.tanggal, url: f.url, updated_at: new Date().toISOString()
+        id: f.id, nama_id: f.nama?.id || '', nama_en: f.nama?.en || '', tanggal: f.tanggal, url: f.url
       })));
       if (upsertErr) throw upsertErr;
     }
@@ -461,7 +459,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
       id: 1, sejarah_id: form.sejarah?.id || '', sejarah_en: form.sejarah?.en || '',
       visi_id: form.visi?.id || '', visi_en: form.visi?.en || '',
       tujuan_id: form.tujuan?.id || '', tujuan_en: form.tujuan?.en || '',
-      foto: form.fotoSekolah || '', updated_at: new Date().toISOString()
+      foto: form.fotoSekolah || ''
     });
     if (profErr) throw profErr;
 
@@ -479,8 +477,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     const { error } = await supabase.from('kontak').upsert({
       id: 1, alamat_id: form.alamat?.id || '', alamat_en: form.alamat?.en || '',
       telepon: form.telepon || '', email: form.email || '', instagram: form.instagram || '',
-      youtube: form.youtube || '', tiktok: form.tiktok || '', maps: form.mapsEmbed || '',
-      updated_at: new Date().toISOString()
+      youtube: form.youtube || '', tiktok: form.tiktok || '', maps: form.mapsEmbed || ''
     });
     if (error) throw error;
     updateLocal('kontak', form, 'kontak');
