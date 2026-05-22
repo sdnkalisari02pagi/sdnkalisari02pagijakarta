@@ -35,7 +35,7 @@ export default function AdminKeunggulan() {
   const [isSaving, setIsSaving] = useState(false);
 
   const addItem = () => {
-    setItems([...items, { id: Date.now().toString(), icon: 'Star', title: { id: '', en: '' }, desc: { id: '', en: '' }, lastModified: new Date().toISOString() }]);
+    setItems([...items, { id: Date.now().toString(), icon: 'Star', judul: { id: '', en: '' }, deskripsi: { id: '', en: '' }, lastModified: new Date().toISOString() }]);
   };
 
   const removeItem = (id: string) => setItems(items.filter(i => i.id !== id));
@@ -45,7 +45,7 @@ export default function AdminKeunggulan() {
   };
 
   const handleSave = async () => {
-    const valid = items.every(i => tr(i.title, 'id').trim() && tr(i.desc, 'id').trim());
+    const valid = items.every(i => tr(i.judul, 'id').trim() && tr(i.deskripsi, 'id').trim());
     if (!valid) { toast.error('Semua judul dan deskripsi (ID) harus diisi'); return; }
     setIsSaving(true);
     try {
@@ -98,15 +98,15 @@ export default function AdminKeunggulan() {
                   </SelectContent>
                 </Select>
               </div>
-              <BilingualInput label="Judul" value={item.title} onChange={v => updateField(item.id, 'title', v)} />
-              <BilingualInput label="Deskripsi" value={item.desc} onChange={v => updateField(item.id, 'desc', v)} multiline rows={2} />
+              <BilingualInput label="Judul" value={item.judul} onChange={v => updateField(item.id, 'judul', v)} />
+              <BilingualInput label="Deskripsi" value={item.deskripsi} onChange={v => updateField(item.id, 'deskripsi', v)} multiline rows={2} />
               <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
                 <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center">
                   <IconComp className="w-6 h-6 text-primary-foreground" />
                 </div>
                 <div>
-                  <p className="font-semibold text-foreground">{tr(item.title, 'id') || 'Judul'}</p>
-                  <p className="text-sm text-muted-foreground">{tr(item.desc, 'id') || 'Deskripsi'}</p>
+                  <p className="font-semibold text-foreground">{tr(item.judul, 'id') || 'Judul'}</p>
+                  <p className="text-sm text-muted-foreground">{tr(item.deskripsi, 'id') || 'Deskripsi'}</p>
                 </div>
               </div>
             </CardContent>
