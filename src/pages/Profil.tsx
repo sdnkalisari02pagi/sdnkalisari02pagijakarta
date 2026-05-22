@@ -19,10 +19,15 @@ const VALID_TABS = ["sejarah", "visimisi", "pegawai", "siswa"];
 export default function Profil() {
   const { data } = useSchool();
   const { t, lang } = useLanguage();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get("tab");
   const initialTab = tabParam && VALID_TABS.includes(tabParam) ? tabParam : "sejarah";
   const [activeTab, setActiveTab] = useState(initialTab);
+
+  const handleTabChange = (val: string) => {
+    setActiveTab(val);
+    setSearchParams({ tab: val });
+  };
   const [selectedPegawai, setSelectedPegawai] = useState<any>(null);
 
   // Pegawai filter
@@ -70,7 +75,7 @@ export default function Profil() {
       <div className="container mx-auto px-4">
         <h1 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8 text-foreground">{t("page_profil")}</h1>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="max-w-6xl mx-auto">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="max-w-6xl mx-auto">
           <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto">
             <TabsTrigger value="sejarah" className="text-xs sm:text-sm py-2">{t("tab_sejarah")}</TabsTrigger>
             <TabsTrigger value="visimisi" className="text-xs sm:text-sm py-2">{t("tab_visimisi")}</TabsTrigger>
