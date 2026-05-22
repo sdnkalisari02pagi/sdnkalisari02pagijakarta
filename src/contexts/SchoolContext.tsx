@@ -38,7 +38,7 @@ export interface SchoolData {
   siswa: any[];
 }
 
-export type KelasSiswa = { id: string; kelas: string; jumlah: number; updated_at?: string; lastModified?: string };
+export type KelasSiswa = { id: string; kelas: Bilingual; jumlah: number; updated_at?: string; lastModified?: string };
 export type Pegawai = { id: string; nama: string; jabatan: string; foto: string; updated_at?: string; lastModified?: string };
 export type ContentTipe = 'foto' | 'video';
 export type Berita = { id: string; judul: Bilingual; tanggal: string; tipe: ContentTipe; fotoUtama: string; thumbnail?: string; videoUrl?: string; galeri?: string[]; deskripsi: Bilingual; updated_at?: string; lastModified?: string };
@@ -195,7 +195,9 @@ async function fetchAll(): Promise<SchoolData> {
         namaSekolah: footer.data.nama || '', deskripsi: B(footer.data.deskripsi_id, footer.data.deskripsi_en),
         instagram: footer.data.instagram || '', youtube: footer.data.youtube || '', tiktok: footer.data.tiktok || '', copyright: footer.data.copyright || ''
       } : defaultData.footer,
-      siswa: siswa.data || [],
+      siswa: (siswa.data || []).map(s => ({
+        id: s.id, kelas: B(s.kelas_id || s.kelas, s.kelas_en), jumlah: s.jumlah, updated_at: s.updated_at
+      })),
       lastModified: {
         logo: logo.data?.updated_at || null, footer: footer.data?.updated_at || null, hero: hero.data?.updated_at || null,
         keunggulan: getMaxTimestamp(keunggulan.data), pegawai: getMaxTimestamp(pegawai.data),
@@ -298,7 +300,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
       if (error) throw error;
     }
     if (form.length > 0) {
-      const { error } = await supabase.from('siswa').upsert(form.map(f => ({ id: f.id, kelas: f.kelas, jumlah: f.jumlah, updated_at: f.lastModified || f.updated_at || new Date().toISOString() })));
+      const { error } = await supabase.from('siswa').upsert(form.map(f => ({ id: f.id, kelas_id: f.kelas?.id || '', kelas_en: f.kelas?.en || '', jumlah: f.jumlah, updated_at: f.lastModified || f.updated_at || new Date().toISOString() })));
       if (error) throw error;
     }
     updateLocal('siswa', form, 'siswa');

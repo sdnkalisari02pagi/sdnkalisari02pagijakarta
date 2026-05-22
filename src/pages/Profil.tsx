@@ -59,8 +59,8 @@ export default function Profil() {
   const pegawaiPaged = paginate(pegawaiFiltered, pPage, pPerPage);
 
   const siswaFiltered = useMemo(
-    () => data.siswa.filter((s) => s.kelas.toLowerCase().includes(sSearch.toLowerCase())),
-    [data.siswa, sSearch],
+    () => data.siswa.filter((s) => tr(s.kelas, lang).toLowerCase().includes(sSearch.toLowerCase())),
+    [data.siswa, sSearch, lang],
   );
   const siswaPaged = paginate(siswaFiltered, sPage, sPerPage);
   const totalSiswa = data.siswa.reduce((sum, s) => sum + (Number(s.jumlah) || 0), 0);
@@ -250,7 +250,7 @@ export default function Profil() {
                     <tbody>
                       {siswaPaged.map((s) => (
                         <tr key={s.id} className="border-t">
-                          <td className="px-4 py-3 text-center">{s.kelas}</td>
+                          <td className="px-4 py-3 text-center">{tr(s.kelas, lang)}</td>
                           <td className="px-4 py-3 text-center">{s.jumlah}</td>
                         </tr>
                       ))}

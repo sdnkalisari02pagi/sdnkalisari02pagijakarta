@@ -8,6 +8,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Plus, Pencil, Trash2, GraduationCap, GripVertical } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import LastModifiedInfo, { formatDate } from '@/components/LastModifiedInfo';
+import BilingualInput from '@/components/BilingualInput';
+import { toBilingual } from '@/lib/i18n';
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -20,7 +22,7 @@ function SortableRow({ k, onEdit, onDelete }: { k: KelasSiswa; onEdit: () => voi
       <td className="px-3 py-3 w-10 text-muted-foreground cursor-grab active:cursor-grabbing" {...attributes} {...listeners}>
         <GripVertical className="w-4 h-4" />
       </td>
-      <td className="px-3 py-3 font-medium">{k.kelas}</td>
+      <td className="px-3 py-3 font-medium">{k.kelas?.id || ''}</td>
       <td className="px-3 py-3">{k.jumlah}</td>
       <td className="px-3 py-3 text-xs text-muted-foreground">
         {k.lastModified ? formatDate(k.lastModified) : k.updated_at ? formatDate(k.updated_at) : '-'}
@@ -37,17 +39,17 @@ export default function AdminSiswa() {
   const { data, updateSiswa } = useSchool();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editItem, setEditItem] = useState<KelasSiswa | null>(null);
-  const [form, setForm] = useState({ kelas: '', jumlah: 0 });
+  const [form, setForm] = useState({ kelas: { id: '', en: '' }, jumlah: 0 });
   const [isSaving, setIsSaving] = useState(false);
 
   const total = data.siswa.reduce((s, k) => s + (Number(k.jumlah) || 0), 0);
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
-  const openAdd = () => { setEditItem(null); setForm({ kelas: '', jumlah: 0 }); setDialogOpen(true); };
-  const openEdit = (k: KelasSiswa) => { setEditItem(k); setForm({ kelas: k.kelas, jumlah: k.jumlah }); setDialogOpen(true); };
+  const openAdd = () => { setEditItem(null); setForm({ kelas: { id: '', en: '' }, jumlah: 0 }); setDialogOpen(true); };
+  const openEdit = (k: KelasSiswa) => { setEditItem(k); setForm({ kelas: toBilingual(k.kelas), jumlah: k.jumlah }); setDialogOpen(true); };
 
   const handleSave = async () => {
-    if (!form.kelas.trim() || form.jumlah < 0) {
+    if (!form.kelas.id.trim() || form.jumlah < 0) {
       toast({ title: 'Gagal', description: 'Nama kelas wajib & jumlah ≥ 0', variant: 'destructive' });
       return;
     }
@@ -93,7 +95,7 @@ export default function AdminSiswa() {
           <DialogContent>
             <DialogHeader><DialogTitle>{editItem ? 'Edit' : 'Tambah'} Kelas</DialogTitle></DialogHeader>
             <div className="space-y-4">
-              <div><Label>Nama Kelas</Label><Input value={form.kelas} onChange={e => setForm(f => ({ ...f, kelas: e.target.value }))} placeholder="Kelas 1A" /></div>
+              <div><Label>Nama Kelas</Label><BilingualInput value={form.kelas} onChange={val => setForm(f => ({ ...f, kelas: val }))} /></div>
               <div><Label>Jumlah Siswa</Label><Input type="number" min={0} value={form.jumlah} onChange={e => setForm(f => ({ ...f, jumlah: Number(e.target.value) || 0 }))} /></div>
               <Button onClick={handleSave} className="w-full" disabled={isSaving}>{isSaving ? 'Menyimpan...' : 'Simpan'}</Button>
             </div>
