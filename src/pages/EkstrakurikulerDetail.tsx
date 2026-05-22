@@ -44,9 +44,9 @@ export default function EkstrakurikulerDetail() {
                 <div key={i} className="flex flex-col items-center gap-2 text-center">
                   <button onClick={() => setPelatihIdx(i)} className="rounded-full overflow-hidden border-2 border-primary/20 hover:border-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary">
                     {p.foto ? (
-                      <img src={p.foto} alt={tr(p.nama, lang)} className="w-20 h-20 object-cover" />
+                      <img src={p.foto} alt={tr(p.nama, lang)} className="w-28 h-28 object-cover" />
                     ) : (
-                      <div className="w-20 h-20 bg-muted flex items-center justify-center text-muted-foreground text-xs">No Photo</div>
+                      <div className="w-28 h-28 bg-muted flex items-center justify-center text-muted-foreground text-xs">No Photo</div>
                     )}
                   </button>
                   <span className="text-sm font-medium text-foreground max-w-[100px]">{tr(p.nama, lang)}</span>
