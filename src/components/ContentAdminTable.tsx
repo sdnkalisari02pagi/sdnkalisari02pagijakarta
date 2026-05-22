@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Berita, ContentTipe } from '@/contexts/SchoolContext';
 import { Input } from '@/components/ui/input';
+import { toast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -135,14 +136,22 @@ export default function ContentAdminTable({
       }
 
       setDialogOpen(false);
+      toast({ title: 'Berhasil', description: 'Data disimpan' });
+    } catch (err: any) {
+      toast({ title: 'Gagal', description: err.message, variant: 'destructive' });
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm('Hapus item ini?')) {
-      onChange(items.filter(k => k.id !== id));
+      try {
+        await onChange(items.filter(k => k.id !== id));
+        toast({ title: 'Berhasil', description: 'Data dihapus' });
+      } catch (err: any) {
+        toast({ title: 'Gagal', description: err.message, variant: 'destructive' });
+      }
     }
   };
 

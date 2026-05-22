@@ -29,6 +29,8 @@ export default function AdminFooter() {
     try {
       await updateFooter(form);
       toast({ title: 'Berhasil', description: 'Footer berhasil disimpan' });
+    } catch (err: any) {
+      toast({ title: 'Gagal', description: err.message, variant: 'destructive' });
     } finally {
       setIsSaving(false);
     }

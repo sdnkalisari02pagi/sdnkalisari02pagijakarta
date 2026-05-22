@@ -228,20 +228,22 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   };
 
   const updateFooter = async (form: any) => {
-    await supabase.from('footer').upsert({
+    const { error } = await supabase.from('footer').upsert({
       id: 1, nama: form.namaSekolah, deskripsi_id: form.deskripsi?.id || '', deskripsi_en: form.deskripsi?.en || '',
       instagram: form.instagram, youtube: form.youtube, tiktok: form.tiktok, copyright: form.copyright
     });
+    if (error) throw error;
     updateLocal('footer', form, 'footer');
   };
 
   const updateLogo = async (url: string) => {
-    await supabase.from('logo').upsert({ id: 1, url });
+    const { error } = await supabase.from('logo').upsert({ id: 1, url });
+    if (error) throw error;
     updateLocal('logo', url, 'logo');
   };
 
  const updateHero = async (form: any) => {
-  await supabase.from('hero').upsert({
+  const { error: heroErr } = await supabase.from('hero').upsert({
     id: 1,
     judul_id: form.judul?.id || '',
     judul_en: form.judul?.en || '',
@@ -253,8 +255,10 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     ekskul: form.statsVisibility?.ekskul ?? true,
     founded: form.statsVisibility?.founded ?? true
   });
+  if (heroErr) throw heroErr;
 
-  await supabase.from('hero_images').delete().eq('hero_id', 1);
+  const { error: delErr } = await supabase.from('hero_images').delete().eq('hero_id', 1);
+  if (delErr) throw delErr;
 
   if (form.images?.length) {
     const uniqueImages = form.images.filter(
@@ -264,37 +268,55 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
         self.indexOf(url) === index
     );
 
-    await supabase.from('hero_images').insert(
+    const { error: insErr } = await supabase.from('hero_images').insert(
       uniqueImages.map((url: string) => ({
         hero_id: 1,
         url
       }))
     );
+    if (insErr) throw insErr;
   }
 
   updateLocal('hero', form, 'hero');
 };
 
   const updateSambutan = async (form: any) => {
-    await supabase.from('sambutan').upsert({ id: 1, nama: form.nama, foto: form.foto, teks_id: form.teks?.id || '', teks_en: form.teks?.en || '' });
+    const { error } = await supabase.from('sambutan').upsert({ id: 1, nama: form.nama, foto: form.foto, teks_id: form.teks?.id || '', teks_en: form.teks?.en || '' });
+    if (error) throw error;
     updateLocal('sambutan', form, 'sambutan');
   };
 
   const updateSiswa = async (form: any[]) => {
     const ids = form.map(f => f.id);
-    if (ids.length > 0) await supabase.from('siswa').delete().not('id', 'in', `(${ids.map(id => `"${id}"`).join(',')})`);
-    else await supabase.from('siswa').delete().neq('id', 'null'); // clear all
-    if (form.length > 0) await supabase.from('siswa').upsert(form.map(f => ({ id: f.id, kelas: f.kelas, jumlah: f.jumlah })));
+    if (ids.length > 0) {
+      const { error } = await supabase.from('siswa').delete().not('id', 'in', `(${ids.map(id => `"${id}"`).join(',')})`);
+      if (error) throw error;
+    } else {
+      const { error } = await supabase.from('siswa').delete().neq('id', 'null');
+      if (error) throw error;
+    }
+    if (form.length > 0) {
+      const { error } = await supabase.from('siswa').upsert(form.map(f => ({ id: f.id, kelas: f.kelas, jumlah: f.jumlah })));
+      if (error) throw error;
+    }
     updateLocal('siswa', form, 'siswa');
   };
 
   const updateKeunggulan = async (form: any[]) => {
     const ids = form.map(f => f.id);
-    if (ids.length > 0) await supabase.from('keunggulan').delete().not('id', 'in', `(${ids.map(id => `"${id}"`).join(',')})`);
-    else await supabase.from('keunggulan').delete().neq('id', 'null');
-    if (form.length > 0) await supabase.from('keunggulan').upsert(form.map(f => ({
-      id: f.id, icon: f.icon, title_id: f.judul?.id || '', title_en: f.judul?.en || '', desc_id: f.deskripsi?.id || '', desc_en: f.deskripsi?.en || ''
-    })));
+    if (ids.length > 0) {
+      const { error } = await supabase.from('keunggulan').delete().not('id', 'in', `(${ids.map(id => `"${id}"`).join(',')})`);
+      if (error) throw error;
+    } else {
+      const { error } = await supabase.from('keunggulan').delete().neq('id', 'null');
+      if (error) throw error;
+    }
+    if (form.length > 0) {
+      const { error } = await supabase.from('keunggulan').upsert(form.map(f => ({
+        id: f.id, icon: f.icon, title_id: f.judul?.id || '', title_en: f.judul?.en || '', desc_id: f.deskripsi?.id || '', desc_en: f.deskripsi?.en || ''
+      })));
+      if (error) throw error;
+    }
     updateLocal('keunggulan', form, 'keunggulan');
   };
 
@@ -318,100 +340,146 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   };
 
   const updateJabatanList = async (form: Bilingual[]) => {
-    await supabase.from('jabatan_list').delete().neq('id', -1);
-    if (form.length > 0) await supabase.from('jabatan_list').insert(form.map(f => ({ nama_id: f.id, nama_en: f.en })));
+    const { error: delErr } = await supabase.from('jabatan_list').delete().neq('id', -1);
+    if (delErr) throw delErr;
+    if (form.length > 0) {
+      const { error: insErr } = await supabase.from('jabatan_list').insert(form.map(f => ({ nama_id: f.id, nama_en: f.en })));
+      if (insErr) throw insErr;
+    }
     updateLocal('jabatanList', form);
   };
 
   const updateBerita = async (form: any[]) => {
     const ids = form.map(f => f.id);
-    if (ids.length > 0) await supabase.from('berita').delete().not('id', 'in', `(${ids.map(id => `"${id}"`).join(',')})`);
-    else await supabase.from('berita').delete().neq('id', 'null');
+    if (ids.length > 0) {
+      const { error } = await supabase.from('berita').delete().not('id', 'in', `(${ids.map(id => `"${id}"`).join(',')})`);
+      if (error) throw error;
+    } else {
+      const { error } = await supabase.from('berita').delete().neq('id', 'null');
+      if (error) throw error;
+    }
     
     if (form.length > 0) {
-      await supabase.from('berita').upsert(form.map(f => ({
+      const { error: upsertErr } = await supabase.from('berita').upsert(form.map(f => ({
         id: f.id, judul_id: f.judul?.id || '', judul_en: f.judul?.en || '', tanggal: f.tanggal, tipe: f.tipe,
         foto: f.fotoUtama || '', thumbnail: f.thumbnail || null, video: f.videoUrl || null,
         deskripsi_id: f.deskripsi?.id || '', deskripsi_en: f.deskripsi?.en || ''
       })));
+      if (upsertErr) throw upsertErr;
       
-      await supabase.from('berita_galeri').delete().neq('id', -1); // simplifiy: drop all galeri and reinsert
+      const { error: delGalErr } = await supabase.from('berita_galeri').delete().neq('id', -1);
+      if (delGalErr) throw delGalErr;
       const galeriPayload = form.flatMap(f => (f.galeri || []).map((url: string) => ({ berita_id: f.id, url })));
-      if (galeriPayload.length > 0) await supabase.from('berita_galeri').insert(galeriPayload);
+      if (galeriPayload.length > 0) {
+        const { error: insGalErr } = await supabase.from('berita_galeri').insert(galeriPayload);
+        if (insGalErr) throw insGalErr;
+      }
     }
     updateLocal('berita', form, 'berita');
   };
 
   const updatePrestasi = async (form: any[]) => {
     const ids = form.map(f => f.id);
-    if (ids.length > 0) await supabase.from('prestasi').delete().not('id', 'in', `(${ids.map(id => `"${id}"`).join(',')})`);
-    else await supabase.from('prestasi').delete().neq('id', 'null');
+    if (ids.length > 0) {
+      const { error } = await supabase.from('prestasi').delete().not('id', 'in', `(${ids.map(id => `"${id}"`).join(',')})`);
+      if (error) throw error;
+    } else {
+      const { error } = await supabase.from('prestasi').delete().neq('id', 'null');
+      if (error) throw error;
+    }
     
     if (form.length > 0) {
-      await supabase.from('prestasi').upsert(form.map(f => ({
+      const { error: upsertErr } = await supabase.from('prestasi').upsert(form.map(f => ({
         id: f.id, judul_id: f.judul?.id || '', judul_en: f.judul?.en || '', tanggal: f.tanggal, tipe: f.tipe,
         foto: f.fotoUtama || '', thumbnail: f.thumbnail || null, video: f.videoUrl || null,
         deskripsi_id: f.deskripsi?.id || '', deskripsi_en: f.deskripsi?.en || ''
       })));
+      if (upsertErr) throw upsertErr;
       
-      await supabase.from('prestasi_galeri').delete().neq('id', -1);
+      const { error: delGalErr } = await supabase.from('prestasi_galeri').delete().neq('id', -1);
+      if (delGalErr) throw delGalErr;
       const galeriPayload = form.flatMap(f => (f.galeri || []).map((url: string) => ({ prestasi_id: f.id, url })));
-      if (galeriPayload.length > 0) await supabase.from('prestasi_galeri').insert(galeriPayload);
+      if (galeriPayload.length > 0) {
+        const { error: insGalErr } = await supabase.from('prestasi_galeri').insert(galeriPayload);
+        if (insGalErr) throw insGalErr;
+      }
     }
     updateLocal('prestasi', form, 'prestasi');
   };
 
   const updateEkstrakurikuler = async (form: any[]) => {
     const ids = form.map(f => f.id);
-    if (ids.length > 0) await supabase.from('ekstrakurikuler').delete().not('id', 'in', `(${ids.map(id => `"${id}"`).join(',')})`);
-    else await supabase.from('ekstrakurikuler').delete().neq('id', 'null');
+    if (ids.length > 0) {
+      const { error } = await supabase.from('ekstrakurikuler').delete().not('id', 'in', `(${ids.map(id => `"${id}"`).join(',')})`);
+      if (error) throw error;
+    } else {
+      const { error } = await supabase.from('ekstrakurikuler').delete().neq('id', 'null');
+      if (error) throw error;
+    }
     
     if (form.length > 0) {
-      await supabase.from('ekstrakurikuler').upsert(form.map(f => ({
+      const { error: upsertErr } = await supabase.from('ekstrakurikuler').upsert(form.map(f => ({
         id: f.id, nama_id: f.nama?.id || '', nama_en: f.nama?.en || '', foto: f.foto || '', foto_utama: f.fotoUtama || '',
         deskripsi_id: f.deskripsi?.id || '', deskripsi_en: f.deskripsi?.en || ''
       })));
+      if (upsertErr) throw upsertErr;
       
-      await supabase.from('ekstrakurikuler_galeri').delete().neq('id', -1);
+      const { error: delGalErr } = await supabase.from('ekstrakurikuler_galeri').delete().neq('id', -1);
+      if (delGalErr) throw delGalErr;
       const galeriPayload = form.flatMap(f => (f.galeri || []).map((url: string) => ({ ekskul_id: f.id, url })));
-      if (galeriPayload.length > 0) await supabase.from('ekstrakurikuler_galeri').insert(galeriPayload);
+      if (galeriPayload.length > 0) {
+        const { error: insGalErr } = await supabase.from('ekstrakurikuler_galeri').insert(galeriPayload);
+        if (insGalErr) throw insGalErr;
+      }
     }
     updateLocal('ekstrakurikuler', form, 'ekstrakurikuler');
   };
 
   const updateDokumen = async (form: any[]) => {
     const ids = form.map(f => f.id);
-    if (ids.length > 0) await supabase.from('dokumen').delete().not('id', 'in', `(${ids.map(id => `"${id}"`).join(',')})`);
-    else await supabase.from('dokumen').delete().neq('id', 'null');
+    if (ids.length > 0) {
+      const { error } = await supabase.from('dokumen').delete().not('id', 'in', `(${ids.map(id => `"${id}"`).join(',')})`);
+      if (error) throw error;
+    } else {
+      const { error } = await supabase.from('dokumen').delete().neq('id', 'null');
+      if (error) throw error;
+    }
     
     if (form.length > 0) {
-      await supabase.from('dokumen').upsert(form.map(f => ({
+      const { error: upsertErr } = await supabase.from('dokumen').upsert(form.map(f => ({
         id: f.id, nama_id: f.nama?.id || '', nama_en: f.nama?.en || '', tanggal: f.tanggal, url: f.url
       })));
+      if (upsertErr) throw upsertErr;
     }
     updateLocal('dokumen', form, 'dokumen');
   };
 
   const updateProfil = async (form: any) => {
-    await supabase.from('profil').upsert({
+    const { error: profErr } = await supabase.from('profil').upsert({
       id: 1, sejarah_id: form.sejarah?.id || '', sejarah_en: form.sejarah?.en || '',
       visi_id: form.visi?.id || '', visi_en: form.visi?.en || '',
       tujuan_id: form.tujuan?.id || '', tujuan_en: form.tujuan?.en || '',
       foto: form.fotoSekolah || ''
     });
-    await supabase.from('profil_misi').delete().eq('profil_id', 1);
+    if (profErr) throw profErr;
+
+    const { error: delErr } = await supabase.from('profil_misi').delete().eq('profil_id', 1);
+    if (delErr) throw delErr;
+
     if (form.misi?.length) {
-      await supabase.from('profil_misi').insert(form.misi.map((m: any) => ({ profil_id: 1, misi_id: m.id || '', misi_en: m.en || '' })));
+      const { error: insErr } = await supabase.from('profil_misi').insert(form.misi.map((m: any) => ({ profil_id: 1, misi_id: m.id || '', misi_en: m.en || '' })));
+      if (insErr) throw insErr;
     }
     updateLocal('profil', form, 'profil');
   };
 
   const updateKontak = async (form: any) => {
-    await supabase.from('kontak').upsert({
+    const { error } = await supabase.from('kontak').upsert({
       id: 1, alamat_id: form.alamat?.id || '', alamat_en: form.alamat?.en || '',
       telepon: form.telepon || '', email: form.email || '', instagram: form.instagram || '',
       youtube: form.youtube || '', tiktok: form.tiktok || '', maps: form.mapsEmbed || ''
     });
+    if (error) throw error;
     updateLocal('kontak', form, 'kontak');
   };
 

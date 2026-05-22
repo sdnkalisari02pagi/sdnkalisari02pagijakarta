@@ -32,6 +32,8 @@ export default function AdminProfil() {
     try {
       await updateProfil(form);
       toast({ title: 'Berhasil', description: 'Profil sekolah berhasil diperbarui.' });
+    } catch (err: any) {
+      toast({ title: 'Gagal', description: err.message, variant: 'destructive' });
     } finally {
       setIsSaving(false);
     }

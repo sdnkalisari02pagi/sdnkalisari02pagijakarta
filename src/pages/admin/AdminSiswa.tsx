@@ -57,12 +57,23 @@ export default function AdminSiswa() {
       else await updateSiswa([...data.siswa, { id: Date.now().toString(), ...form }]);
       setDialogOpen(false);
       toast({ title: 'Berhasil', description: 'Data siswa diperbarui.' });
+    } catch (err: any) {
+      toast({ title: 'Gagal', description: err.message, variant: 'destructive' });
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handleDelete = (id: string) => { if (confirm('Hapus kelas ini?')) updateSiswa(data.siswa.filter(k => k.id !== id)); };
+  const handleDelete = async (id: string) => { 
+    if (confirm('Hapus kelas ini?')) {
+      try {
+        await updateSiswa(data.siswa.filter(k => k.id !== id));
+        toast({ title: 'Berhasil', description: 'Kelas dihapus' });
+      } catch (err: any) {
+        toast({ title: 'Gagal', description: err.message, variant: 'destructive' });
+      }
+    }
+  };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;

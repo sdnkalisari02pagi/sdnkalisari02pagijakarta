@@ -62,12 +62,24 @@ export default function AdminDokumen() {
         await updateDokumen([...data.dokumen, { id: Date.now().toString(), ...form, lastModified: now }]);
       }
       setDialogOpen(false);
+      toast({ title: 'Berhasil', description: 'Data disimpan' });
+    } catch (err: any) {
+      toast({ title: 'Gagal', description: err.message, variant: 'destructive' });
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handleDelete = (id: string) => { if (confirm('Hapus?')) updateDokumen(data.dokumen.filter(d => d.id !== id)); };
+  const handleDelete = async (id: string) => { 
+    if (confirm('Hapus?')) {
+      try {
+        await updateDokumen(data.dokumen.filter(d => d.id !== id));
+        toast({ title: 'Berhasil', description: 'Data dihapus' });
+      } catch (err: any) {
+        toast({ title: 'Gagal', description: err.message, variant: 'destructive' });
+      }
+    }
+  };
 
   return (
     <div>

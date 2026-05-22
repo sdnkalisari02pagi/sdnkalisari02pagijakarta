@@ -51,6 +51,8 @@ export default function AdminKeunggulan() {
     try {
       await updateKeunggulan(items);
       toast.success('Keunggulan berhasil disimpan');
+    } catch (err: any) {
+      toast.error(err.message || 'Gagal menyimpan keunggulan');
     } finally {
       setIsSaving(false);
     }

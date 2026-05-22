@@ -19,6 +19,8 @@ export default function AdminSambutan() {
     try {
       await updateSambutan(form);
       toast({ title: 'Berhasil', description: 'Sambutan berhasil diperbarui.' });
+    } catch (err: any) {
+      toast({ title: 'Gagal', description: err.message, variant: 'destructive' });
     } finally {
       setIsSaving(false);
     }

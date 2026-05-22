@@ -18,6 +18,8 @@ export default function AdminKontak() {
     try {
       await updateKontak(form);
       toast({ title: 'Berhasil', description: 'Kontak berhasil diperbarui.' });
+    } catch (err: any) {
+      toast({ title: 'Error', description: err.message, variant: 'destructive' });
     } finally {
       setIsSaving(false);
     }

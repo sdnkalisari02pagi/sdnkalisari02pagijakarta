@@ -87,12 +87,24 @@ export default function AdminEkskul() {
         await updateEkstrakurikuler([...data.ekstrakurikuler, payload]);
       }
       setDialogOpen(false);
+      toast({ title: 'Berhasil', description: 'Data disimpan' });
+    } catch (err: any) {
+      toast({ title: 'Gagal', description: err.message, variant: 'destructive' });
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handleDelete = (id: string) => { if (confirm('Hapus?')) updateEkstrakurikuler(data.ekstrakurikuler.filter(e => e.id !== id)); };
+  const handleDelete = async (id: string) => { 
+    if (confirm('Hapus?')) {
+      try {
+        await updateEkstrakurikuler(data.ekstrakurikuler.filter(e => e.id !== id));
+        toast({ title: 'Berhasil', description: 'Data dihapus' });
+      } catch (err: any) {
+        toast({ title: 'Gagal', description: err.message, variant: 'destructive' });
+      }
+    }
+  };
 
   return (
     <div>
