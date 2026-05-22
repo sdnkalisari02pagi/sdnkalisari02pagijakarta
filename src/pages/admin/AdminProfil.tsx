@@ -53,7 +53,7 @@ export default function AdminProfil() {
         </CardContent></Card>
         <Card><CardHeader><CardTitle className="text-lg">Foto Sekolah</CardTitle></CardHeader><CardContent>
           <Label>Foto Sekolah (Sejarah)</Label>
-          <ImageUpload value={form.fotoSekolah} onChange={url => setForm(f => ({ ...f, fotoSekolah: url }))} placeholder required recommendedSize="1200×900 px (4:3)" />
+          <ImageUpload value={form.fotoSekolah} onChange={url => setForm(f => ({ ...f, fotoSekolah: url }))} placeholder required recommendedSize="1600×900 px (16:9)" />
         </CardContent></Card>
         <Button onClick={handleSave} disabled={isSaving}>{isSaving ? 'Menyimpan...' : 'Simpan Perubahan'}</Button>
       </div>
