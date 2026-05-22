@@ -35,13 +35,13 @@ export default function AdminKeunggulan() {
   const [isSaving, setIsSaving] = useState(false);
 
   const addItem = () => {
-    setItems([...items, { id: Date.now().toString(), icon: 'Star', title: { id: '', en: '' }, desc: { id: '', en: '' } }]);
+    setItems([...items, { id: Date.now().toString(), icon: 'Star', title: { id: '', en: '' }, desc: { id: '', en: '' }, lastModified: new Date().toISOString() }]);
   };
 
   const removeItem = (id: string) => setItems(items.filter(i => i.id !== id));
 
   const updateField = (id: string, field: keyof Keunggulan, value: any) => {
-    setItems(items.map(i => i.id === id ? { ...i, [field]: value } : i));
+    setItems(items.map(i => i.id === id ? { ...i, [field]: value, lastModified: new Date().toISOString() } : i));
   };
 
   const handleSave = async () => {

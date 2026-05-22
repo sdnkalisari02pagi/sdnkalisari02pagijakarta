@@ -298,7 +298,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
       if (error) throw error;
     }
     if (form.length > 0) {
-      const { error } = await supabase.from('siswa').upsert(form.map(f => ({ id: f.id, kelas: f.kelas, jumlah: f.jumlah, updated_at: new Date().toISOString() })));
+      const { error } = await supabase.from('siswa').upsert(form.map(f => ({ id: f.id, kelas: f.kelas, jumlah: f.jumlah, updated_at: f.lastModified || f.updated_at || new Date().toISOString() })));
       if (error) throw error;
     }
     updateLocal('siswa', form, 'siswa');
@@ -315,7 +315,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     }
     if (form.length > 0) {
       const { error } = await supabase.from('keunggulan').upsert(form.map(f => ({
-        id: f.id, icon: f.icon, title_id: f.judul?.id || '', title_en: f.judul?.en || '', desc_id: f.deskripsi?.id || '', desc_en: f.deskripsi?.en || '', updated_at: new Date().toISOString()
+        id: f.id, icon: f.icon, title_id: f.judul?.id || '', title_en: f.judul?.en || '', desc_id: f.deskripsi?.id || '', desc_en: f.deskripsi?.en || '', updated_at: f.lastModified || f.updated_at || new Date().toISOString()
       })));
       if (error) throw error;
     }
@@ -334,7 +334,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     
     if (form.length > 0) {
       const { error } = await supabase.from('pegawai').upsert(form.map(f => ({
-        id: f.id, nama: f.nama, jabatan: f.jabatan, foto: f.foto, updated_at: new Date().toISOString()
+        id: f.id, nama: f.nama, jabatan: f.jabatan, foto: f.foto, updated_at: f.lastModified || f.updated_at || new Date().toISOString()
       })));
       if (error) throw error;
     }
@@ -365,7 +365,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
       const { error: upsertErr } = await supabase.from('berita').upsert(form.map(f => ({
         id: f.id, judul_id: f.judul?.id || '', judul_en: f.judul?.en || '', tanggal: f.tanggal, tipe: f.tipe,
         foto: f.fotoUtama || '', thumbnail: f.thumbnail || null, video: f.videoUrl || null,
-        deskripsi_id: f.deskripsi?.id || '', deskripsi_en: f.deskripsi?.en || '', updated_at: new Date().toISOString()
+        deskripsi_id: f.deskripsi?.id || '', deskripsi_en: f.deskripsi?.en || '', updated_at: f.lastModified || f.updated_at || new Date().toISOString()
       })));
       if (upsertErr) throw upsertErr;
       
@@ -394,7 +394,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
       const { error: upsertErr } = await supabase.from('prestasi').upsert(form.map(f => ({
         id: f.id, judul_id: f.judul?.id || '', judul_en: f.judul?.en || '', tanggal: f.tanggal, tipe: f.tipe,
         foto: f.fotoUtama || '', thumbnail: f.thumbnail || null, video: f.videoUrl || null,
-        deskripsi_id: f.deskripsi?.id || '', deskripsi_en: f.deskripsi?.en || '', updated_at: new Date().toISOString()
+        deskripsi_id: f.deskripsi?.id || '', deskripsi_en: f.deskripsi?.en || '', updated_at: f.lastModified || f.updated_at || new Date().toISOString()
       })));
       if (upsertErr) throw upsertErr;
       
@@ -422,7 +422,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     if (form.length > 0) {
       const { error: upsertErr } = await supabase.from('ekstrakurikuler').upsert(form.map(f => ({
         id: f.id, nama_id: f.nama?.id || '', nama_en: f.nama?.en || '', foto: f.foto || '', foto_utama: f.fotoUtama || '',
-        deskripsi_id: f.deskripsi?.id || '', deskripsi_en: f.deskripsi?.en || '', updated_at: new Date().toISOString()
+        deskripsi_id: f.deskripsi?.id || '', deskripsi_en: f.deskripsi?.en || '', updated_at: f.lastModified || f.updated_at || new Date().toISOString()
       })));
       if (upsertErr) throw upsertErr;
       
@@ -449,7 +449,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     
     if (form.length > 0) {
       const { error: upsertErr } = await supabase.from('dokumen').upsert(form.map(f => ({
-        id: f.id, nama_id: f.nama?.id || '', nama_en: f.nama?.en || '', tanggal: f.tanggal, url: f.url, updated_at: new Date().toISOString()
+        id: f.id, nama_id: f.nama?.id || '', nama_en: f.nama?.en || '', tanggal: f.tanggal, url: f.url, updated_at: f.lastModified || f.updated_at || new Date().toISOString()
       })));
       if (upsertErr) throw upsertErr;
     }
