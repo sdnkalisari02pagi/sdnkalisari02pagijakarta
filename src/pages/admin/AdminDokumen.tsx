@@ -26,8 +26,8 @@ export default function AdminDokumen() {
   const ACCEPTED_TYPES = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'image/jpeg', 'image/png', 'image/webp'];
 
   const processFile = async (file: File) => {
-    if (file.size > 10 * 1024 * 1024) {
-      toast({ title: 'Gagal', description: 'Ukuran file maksimal 10MB.', variant: 'destructive' });
+    if (file.size > 30 * 1024 * 1024) {
+      toast({ title: 'Gagal', description: 'Ukuran file maksimal 30MB.', variant: 'destructive' });
       return;
     }
     if (!ACCEPTED_TYPES.includes(file.type)) {
@@ -107,7 +107,7 @@ export default function AdminDokumen() {
                   <div onClick={() => fileInputRef.current?.click()} onDragOver={e => { e.preventDefault(); setDragOver(true); }} onDragLeave={() => setDragOver(false)} onDrop={e => { e.preventDefault(); setDragOver(false); const file = e.dataTransfer.files?.[0]; if (file) processFile(file); }} className={`w-full min-h-[6rem] rounded-lg border-2 border-dashed flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors ${dragOver ? 'border-primary bg-primary/5' : 'border-muted-foreground/40 hover:border-primary/60'}`}>
                     <Upload className="w-6 h-6 text-muted-foreground" />
                     <p className="text-sm text-muted-foreground text-center">Seret file ke sini atau klik untuk unggah</p>
-                    <p className="text-xs text-muted-foreground">PDF, DOC, XLS, JPG, PNG (maks 10MB)</p>
+                    <p className="text-xs text-muted-foreground">PDF, DOC, XLS, JPG, PNG (maks 30MB)</p>
                   </div>
                 )}
               </div>
