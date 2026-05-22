@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export type PerPage = number | 'all';
@@ -24,30 +24,68 @@ export default function PaginationBar({ total, page, perPage, onPageChange, onPe
   const end = isAll ? total : Math.min(safePage * pageSize, total);
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-6 text-sm">
-      <div className="flex items-center gap-2">
-        <span className="text-muted-foreground">{t('per_halaman')}:</span>
+    <div className="flex flex-col sm:flex-row items-center justify-between px-2 py-4 border-t gap-4 mt-6">
+      <div className="flex items-center space-x-2">
+        <span className="text-sm text-muted-foreground font-medium">{t('per_halaman')}:</span>
         <Select value={String(perPage)} onValueChange={v => onPerPageChange(v === 'all' ? 'all' : Number(v))}>
-          <SelectTrigger className="w-24 h-8"><SelectValue /></SelectTrigger>
-          <SelectContent>
+          <SelectTrigger className="h-8 w-[70px]">
+            <SelectValue placeholder={perPage === 'all' ? t('semua') : perPage} />
+          </SelectTrigger>
+          <SelectContent side="top">
             {options.map(opt => (
               <SelectItem key={String(opt)} value={String(opt)}>{opt === 'all' ? t('semua') : opt}</SelectItem>
             ))}
           </SelectContent>
         </Select>
-        <span className="text-muted-foreground hidden sm:inline">{start}–{end} / {total}</span>
       </div>
-      {!isAll && totalPages > 1 && (
-        <div className="flex items-center gap-1">
-          <Button size="sm" variant="outline" onClick={() => onPageChange(Math.max(1, safePage - 1))} disabled={safePage === 1}>
-            <ChevronLeft className="w-4 h-4" />
-          </Button>
-          <span className="px-3 text-foreground font-medium">{safePage} / {totalPages}</span>
-          <Button size="sm" variant="outline" onClick={() => onPageChange(Math.min(totalPages, safePage + 1))} disabled={safePage === totalPages}>
-            <ChevronRight className="w-4 h-4" />
-          </Button>
+
+      <div className="flex items-center space-x-4 sm:space-x-6 lg:space-x-8">
+        <div className="flex items-center justify-center text-sm font-medium text-muted-foreground">
+          {start} – {end} / {total}
         </div>
-      )}
+        
+        {(!isAll && totalPages > 1) && (
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              className="h-8 w-8 p-0"
+              onClick={() => onPageChange(1)}
+              disabled={safePage === 1}
+            >
+              <ChevronsLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              className="h-8 w-8 p-0"
+              onClick={() => onPageChange(Math.max(1, safePage - 1))}
+              disabled={safePage === 1}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            
+            <div className="flex items-center justify-center text-sm font-medium px-2">
+              {safePage} / {totalPages}
+            </div>
+            
+            <Button
+              variant="outline"
+              className="h-8 w-8 p-0"
+              onClick={() => onPageChange(Math.min(totalPages, safePage + 1))}
+              disabled={safePage === totalPages}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              className="h-8 w-8 p-0"
+              onClick={() => onPageChange(totalPages)}
+              disabled={safePage === totalPages}
+            >
+              <ChevronsRight className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
