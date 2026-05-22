@@ -78,9 +78,9 @@ export default function Profil() {
             <TabsTrigger value="siswa" className="text-xs sm:text-sm py-2">{t("tab_siswa")}</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="sejarah" className="mt-6">
-            <img src={data.profil.fotoSekolah} alt="Sekolah" className="w-full h-[300px] sm:h-[400px] object-cover rounded-xl mb-8 shadow-md" />
-            <div className="text-muted-foreground leading-relaxed">
+          <TabsContent value="sejarah" className="mt-6 max-w-4xl mx-auto">
+            <img src={data.profil.fotoSekolah} alt="Sekolah" className="w-full max-h-[480px] object-cover rounded-xl mb-6 shadow-md" />
+            <div className="text-muted-foreground mb-8 leading-relaxed">
               <LinkedText text={tr(data.profil.sejarah, lang)} />
             </div>
           </TabsContent>
