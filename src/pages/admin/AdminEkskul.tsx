@@ -167,6 +167,7 @@ export default function AdminEkskul() {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-12">No.</TableHead>
               <TableHead>Foto</TableHead>
               <TableHead>Nama</TableHead>
               <TableHead>Pelatih</TableHead>
@@ -175,8 +176,9 @@ export default function AdminEkskul() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {paginatedData.map(e => (
+            {paginatedData.map((e, index) => (
               <TableRow key={e.id}>
+                <TableCell>{(currentPage - 1) * pageSize + index + 1}</TableCell>
                 <TableCell><img src={e.fotoUtama || e.foto} alt={tr(e.nama, 'id')} className="w-10 h-10 rounded object-cover" /></TableCell>
                 <TableCell className="font-medium">{tr(e.nama, 'id')}</TableCell>
                 <TableCell className="text-sm text-muted-foreground">

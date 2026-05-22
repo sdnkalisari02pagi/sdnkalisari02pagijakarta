@@ -151,10 +151,11 @@ export default function AdminDokumen() {
       <div className="relative max-w-md mb-6"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" /><Input placeholder="Cari..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10" /></div>
       <div className="rounded-lg border bg-background">
         <Table>
-          <TableHeader><TableRow><TableHead className="w-[80px]">Preview</TableHead><TableHead>Nama Dokumen</TableHead><TableHead>Tanggal</TableHead><TableHead>Terakhir Diubah</TableHead><TableHead className="text-right">Aksi</TableHead></TableRow></TableHeader>
+          <TableHeader><TableRow><TableHead className="w-12">No.</TableHead><TableHead className="w-[80px]">Preview</TableHead><TableHead>Nama Dokumen</TableHead><TableHead>Tanggal</TableHead><TableHead>Terakhir Diubah</TableHead><TableHead className="text-right">Aksi</TableHead></TableRow></TableHeader>
           <TableBody>
-            {paginatedData.map(d => (
+            {paginatedData.map((d, index) => (
               <TableRow key={d.id}>
+                <TableCell>{(currentPage - 1) * pageSize + index + 1}</TableCell>
                 <TableCell>
                   <a href={d.url} target="_blank" rel="noreferrer" className="block hover:opacity-80 transition-opacity">
                     {d.url.match(/\.(jpg|jpeg|png|webp|gif)$/i) ? (

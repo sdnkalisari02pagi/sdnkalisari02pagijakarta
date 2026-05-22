@@ -298,6 +298,7 @@ export default function ContentAdminTable({
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-12">No.</TableHead>
               <TableHead>Foto</TableHead>
               <TableHead>Judul</TableHead>
               <TableHead>Tipe</TableHead>
@@ -308,7 +309,7 @@ export default function ContentAdminTable({
           </TableHeader>
 
           <TableBody>
-            {paginatedData.map(k => {
+            {paginatedData.map((k, index) => {
               const cardImg =
                 k.tipe === 'video'
                   ? k.thumbnail || getVideoThumbnail(k.videoUrl)
@@ -316,6 +317,7 @@ export default function ContentAdminTable({
 
               return (
                 <TableRow key={k.id}>
+                  <TableCell>{(currentPage - 1) * pageSize + index + 1}</TableCell>
                   <TableCell>
                     {cardImg ? (
                       <img src={cardImg} className="w-10 h-10 object-cover rounded" />
