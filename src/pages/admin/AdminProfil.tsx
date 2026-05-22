@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSchool } from '@/contexts/SchoolContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -15,6 +15,12 @@ export default function AdminProfil() {
   const { data, updateProfil } = useSchool();
   const [form, setForm] = useState({ ...data.profil });
   const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    if (data?.profil) {
+      setForm({ ...data.profil });
+    }
+  }, [data?.profil]);
 
   const handleSave = async () => {
     setIsSaving(true);
