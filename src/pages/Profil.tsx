@@ -40,6 +40,11 @@ export default function Profil() {
     if (tabParam && VALID_TABS.includes(tabParam)) setActiveTab(tabParam);
   }, [tabParam]);
 
+  const translateJabatan = (jabatanIdStr: string) => {
+    const match = data.jabatanList.find(j => tr(j, 'id') === jabatanIdStr);
+    return match ? tr(match, lang) : jabatanIdStr;
+  };
+
   const jabatanOptions = useMemo(() => [...new Set(data.pegawai.map((p) => p.jabatan))], [data.pegawai]);
 
   const pegawaiFiltered = useMemo(
@@ -145,7 +150,7 @@ export default function Profil() {
                       <SelectItem value="all">{t("filter_semua_jabatan")}</SelectItem>
                       {jabatanOptions.map((j) => (
                         <SelectItem key={j} value={j}>
-                          {j}
+                          {translateJabatan(j)}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -166,7 +171,7 @@ export default function Profil() {
                       </div>
                       <CardContent className="p-4">
                         <h4 className="font-semibold text-foreground">{p.nama}</h4>
-                        <p className="text-sm text-muted-foreground">{p.jabatan}</p>
+                        <p className="text-sm text-muted-foreground">{translateJabatan(p.jabatan)}</p>
                       </CardContent>
                     </Card>
                   ))}
@@ -201,7 +206,7 @@ export default function Profil() {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <p className="text-muted-foreground">{selectedPegawai?.jabatan}</p>
+                  <p className="text-muted-foreground">{selectedPegawai ? translateJabatan(selectedPegawai.jabatan) : ''}</p>
                 </div>
               </DialogContent>
             </Dialog>
