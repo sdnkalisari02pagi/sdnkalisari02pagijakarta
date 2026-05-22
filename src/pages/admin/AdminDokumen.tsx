@@ -49,7 +49,14 @@ export default function AdminDokumen() {
   const filtered = data.dokumen.filter(d => tr(d.nama, 'id').toLowerCase().includes(search.toLowerCase()));
 
   const openAdd = () => { setEditItem(null); setForm({ nama: { id: '', en: '' }, tanggal: '', url: '#' }); setFileName(''); setDialogOpen(true); };
-  const openEdit = (d: Dokumen) => { setEditItem(d); setForm({ nama: toBilingual(d.nama), tanggal: d.tanggal, url: d.url }); setFileName(''); setDialogOpen(true); };
+  const openEdit = (d: Dokumen) => { 
+    setEditItem(d); 
+    setForm({ nama: toBilingual(d.nama), tanggal: d.tanggal, url: d.url }); 
+    let fname = d.url.split('/').pop() || 'File';
+    try { fname = decodeURIComponent(fname); } catch(e) {}
+    setFileName(fname); 
+    setDialogOpen(true); 
+  };
 
   const handleSave = async () => {
     if (!form.nama.id || !form.tanggal) return;
@@ -96,12 +103,26 @@ export default function AdminDokumen() {
                 <Label>File</Label>
                 <input ref={fileInputRef} type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.webp" className="hidden" onChange={e => { const file = e.target.files?.[0]; if (file) processFile(file); e.target.value = ''; }} />
                 {form.url !== '#' && form.url !== '' ? (
-                  <div className="flex items-center gap-2 p-3 rounded-lg border bg-muted/50">
-                    <FileText className="w-5 h-5 text-primary shrink-0" />
-                    <span className="text-sm truncate flex-1">{fileName || 'File terunggah'}</span>
-                    <button onClick={() => { setForm(f => ({ ...f, url: '#' })); setFileName(''); }} className="text-muted-foreground hover:text-destructive">
-                      <X className="w-4 h-4" />
-                    </button>
+                  <div className="flex flex-col gap-3">
+                    {form.url.match(/\.(jpg|jpeg|png|webp|gif)$/i) ? (
+                      <div className="relative rounded-lg border overflow-hidden bg-muted/10 flex justify-center h-[200px]">
+                        <img src={form.url} alt="Preview" className="object-contain h-full" />
+                      </div>
+                    ) : form.url.match(/\.(pdf)$/i) ? (
+                      <iframe src={form.url} className="w-full h-[300px] rounded-lg border" title="Preview" />
+                    ) : (
+                      <div className="h-[100px] w-full rounded-lg border flex flex-col items-center justify-center bg-muted/10">
+                        <FileText className="w-8 h-8 text-muted-foreground mb-2" />
+                        <span className="text-sm text-muted-foreground">Preview tidak tersedia untuk format ini</span>
+                      </div>
+                    )}
+                    <div className="flex items-center gap-2 p-3 rounded-lg border bg-muted/50">
+                      <FileText className="w-5 h-5 text-primary shrink-0" />
+                      <span className="text-sm truncate flex-1" title={fileName}>{fileName}</span>
+                      <button onClick={() => { setForm(f => ({ ...f, url: '#' })); setFileName(''); }} className="text-muted-foreground hover:text-destructive">
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 ) : (
                   <div onClick={() => fileInputRef.current?.click()} onDragOver={e => { e.preventDefault(); setDragOver(true); }} onDragLeave={() => setDragOver(false)} onDrop={e => { e.preventDefault(); setDragOver(false); const file = e.dataTransfer.files?.[0]; if (file) processFile(file); }} className={`w-full min-h-[6rem] rounded-lg border-2 border-dashed flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors ${dragOver ? 'border-primary bg-primary/5' : 'border-muted-foreground/40 hover:border-primary/60'}`}>
@@ -120,10 +141,21 @@ export default function AdminDokumen() {
       <div className="relative max-w-md mb-6"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" /><Input placeholder="Cari..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10" /></div>
       <div className="rounded-lg border bg-background">
         <Table>
-          <TableHeader><TableRow><TableHead>Nama Dokumen</TableHead><TableHead>Tanggal</TableHead><TableHead>Terakhir Diubah</TableHead><TableHead className="text-right">Aksi</TableHead></TableRow></TableHeader>
+          <TableHeader><TableRow><TableHead className="w-[80px]">Preview</TableHead><TableHead>Nama Dokumen</TableHead><TableHead>Tanggal</TableHead><TableHead>Terakhir Diubah</TableHead><TableHead className="text-right">Aksi</TableHead></TableRow></TableHeader>
           <TableBody>
             {filtered.map(d => (
               <TableRow key={d.id}>
+                <TableCell>
+                  <a href={d.url} target="_blank" rel="noreferrer" className="block hover:opacity-80 transition-opacity">
+                    {d.url.match(/\.(jpg|jpeg|png|webp|gif)$/i) ? (
+                      <img src={d.url} alt="Preview" className="w-12 h-12 object-cover rounded border bg-muted/20" />
+                    ) : (
+                      <div className="w-12 h-12 bg-muted rounded flex items-center justify-center border">
+                        <FileText className="w-6 h-6 text-muted-foreground" />
+                      </div>
+                    )}
+                  </a>
+                </TableCell>
                 <TableCell>
                   {tr(d.nama, 'id')}
                 </TableCell>
