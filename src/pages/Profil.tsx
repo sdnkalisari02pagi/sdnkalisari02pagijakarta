@@ -231,15 +231,16 @@ export default function Profil() {
                     />
                   </div>
                 </div>
-                <div className="rounded-lg bg-primary/5 p-3 border border-primary/20">
-                  <p className="text-xs text-muted-foreground">{t("total_siswa")}</p>
-                  <p className="text-2xl font-bold text-primary flex items-center gap-2">
-                    <GraduationCap className="w-5 h-5" /> {totalSiswa}
-                  </p>
-                </div>
               </FilterSidebar>
 
-              <div className="flex-1 min-w-0">
+              <div className="flex-1 min-w-0 flex flex-col gap-4">
+                <div className="rounded-lg bg-primary/5 p-4 border border-primary/20 inline-block w-fit min-w-[160px]">
+                  <p className="text-xs text-muted-foreground mb-1">{t("total_siswa")}</p>
+                  <p className="text-3xl font-bold text-primary flex items-center gap-2">
+                    <GraduationCap className="w-6 h-6" /> {totalSiswa}
+                  </p>
+                </div>
+
                 <div className="rounded-lg border bg-background overflow-hidden">
                   <table className="w-full">
                     <thead className="bg-muted/50">
