@@ -79,7 +79,7 @@ export default function Profil() {
           </TabsList>
 
           <TabsContent value="sejarah" className="mt-6">
-            <img src={data.profil.fotoSekolah} alt="Sekolah" className="w-full h-48 sm:h-64 object-cover rounded-lg mb-6" />
+            <img src={data.profil.fotoSekolah} alt="Sekolah" className="w-full aspect-[3/2] object-cover rounded-lg mb-6 shadow-md" />
             <div className="text-muted-foreground leading-relaxed">
               <LinkedText text={tr(data.profil.sejarah, lang)} />
             </div>
