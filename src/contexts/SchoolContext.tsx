@@ -478,12 +478,12 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   };
 
   const updateKontak = async (form: any) => {
-    const { error } = await supabase.from('kontak').upsert({
-      id: 1, alamat_id: form.alamat?.id || '', alamat_en: form.alamat?.en || '',
+    const { error } = await supabase.from('kontak').update({
+      alamat_id: form.alamat?.id || '', alamat_en: form.alamat?.en || '',
       telepon: form.telepon || '', email: form.email || '', instagram: form.instagram || '',
       youtube: form.youtube || '', tiktok: form.tiktok || '', maps: form.mapsEmbed || '',
       updated_at: new Date().toISOString()
-    });
+    }).eq('id', 1);
     if (error) throw error;
     updateLocal('kontak', form, 'kontak');
   };
