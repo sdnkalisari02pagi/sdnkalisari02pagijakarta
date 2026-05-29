@@ -178,7 +178,6 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error('API Error:', error.message);
-    // Sembunyikan detail error dari user
-    return res.status(500).json({ error: 'Terjadi kesalahan pada server saat memproses data.' });
+    return res.status(500).json({ error: 'Error detail: ' + error.message + ' | Stack: ' + String(error.stack).substring(0, 100) });
   }
 }
