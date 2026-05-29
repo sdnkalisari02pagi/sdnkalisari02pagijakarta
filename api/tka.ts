@@ -64,8 +64,8 @@ export default async function handler(req, res) {
         } else if (char === ',' && !inQuotes) {
           currentRow.push(currentCell.trim());
           currentCell = '';
-        } else if ((char === '\\n' || char === '\\r') && !inQuotes) {
-          if (char === '\\r' && nextChar === '\\n') i++; // skip \\r\\n
+        } else if ((char === '\n' || char === '\r') && !inQuotes) {
+          if (char === '\r' && nextChar === '\n') i++; // skip \r\n
           currentRow.push(currentCell.trim());
           rows.push(currentRow);
           currentRow = [];

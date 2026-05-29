@@ -151,11 +151,11 @@ export default function HasilTKA() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">B. Indonesia</p>
-                      <p className="font-bold text-primary text-2xl">{result.bahasaIndonesia}</p>
+                      <p className="font-bold text-primary text-2xl whitespace-pre-line leading-tight">{result.bahasaIndonesia}</p>
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Matematika</p>
-                      <p className="font-bold text-primary text-2xl">{result.matematika}</p>
+                      <p className="font-bold text-primary text-2xl whitespace-pre-line leading-tight">{result.matematika}</p>
                     </div>
                   </div>
                 </div>
