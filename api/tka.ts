@@ -43,36 +43,55 @@ export default async function handler(req, res) {
     
     const csvText = await response.text();
     
-    // Custom CSV Parser sederhana
-    const lines = csvText.split(/\r?\n/);
+    // Custom CSV Parser yang mendukung multiline dalam kutipan
+    const parseCSV = (text) => {
+      const rows = [];
+      let currentRow = [];
+      let currentCell = '';
+      let inQuotes = false;
+      
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const nextChar = text[i+1];
+        
+        if (char === '"') {
+          if (inQuotes && nextChar === '"') {
+            currentCell += '"';
+            i++; // skip escaped quote
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (char === ',' && !inQuotes) {
+          currentRow.push(currentCell.trim());
+          currentCell = '';
+        } else if ((char === '\\n' || char === '\\r') && !inQuotes) {
+          if (char === '\\r' && nextChar === '\\n') i++; // skip \\r\\n
+          currentRow.push(currentCell.trim());
+          rows.push(currentRow);
+          currentRow = [];
+          currentCell = '';
+        } else {
+          currentCell += char;
+        }
+      }
+      if (currentCell || currentRow.length > 0) {
+        currentRow.push(currentCell.trim());
+        rows.push(currentRow);
+      }
+      return rows;
+    };
+
+    const lines = parseCSV(csvText);
     if (lines.length < 2) {
       throw new Error('Database kosong');
     }
 
-    // Ambil header
-    const parseCSVLine = (line) => {
-      let row = [];
-      let current = '';
-      let inQuotes = false;
-      for (let char of line) {
-        if (char === '"') inQuotes = !inQuotes;
-        else if (char === ',' && !inQuotes) {
-          row.push(current.trim());
-          current = '';
-        } else {
-          current += char;
-        }
-      }
-      row.push(current.trim());
-      return row.map(c => c.replace(/^"(.*)"$/, '$1').trim());
-    };
-
-    const headers = parseCSVLine(lines[0]);
+    const headers = lines[0];
     const headerLower = headers.map(h => h.toLowerCase());
     
     const nisnIdx = headerLower.findIndex(h => h === 'nisn');
     const tglIdx = headerLower.findIndex(h => h.includes('tanggal lahir') || h.includes('tgl lahir'));
-    const namaIdx = headerLower.findIndex(h => h === 'nama' || h === 'nama siswa');
+    const namaIdx = headerLower.findIndex(h => h.includes('nama') || h === 'nama siswa');
     const klsIdx = headerLower.findIndex(h => h === 'kelas');
     const bindIdx = headerLower.findIndex(h => h.includes('bahasa indonesia'));
     const mtkIdx = headerLower.findIndex(h => h.includes('matematika'));
@@ -132,9 +151,9 @@ export default async function handler(req, res) {
     let result = null;
 
     for (let i = 1; i < lines.length; i++) {
-      if (!lines[i].trim()) continue;
+      const row = lines[i];
+      if (!row || row.length === 0 || !row[0]) continue;
       
-      const row = parseCSVLine(lines[i]);
       const rowNisn = row[nisnIdx];
       const rowTgl = normalizeDate(row[tglIdx]);
 
