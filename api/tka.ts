@@ -83,6 +83,50 @@ export default async function handler(req, res) {
        return res.status(500).json({ error: 'Struktur database tidak sesuai. Harap hubungi admin.' });
     }
 
+    const monthMap = {
+      'januari': '01',
+      'februari': '02',
+      'maret': '03',
+      'april': '04',
+      'mei': '05',
+      'juni': '06',
+      'juli': '07',
+      'agustus': '08',
+      'september': '09',
+      'oktober': '10',
+      'november': '11',
+      'desember': '12'
+    };
+
+    const normalizeDate = (str) => {
+      if (!str) return '';
+      const lowerStr = str.toLowerCase();
+      
+      // Match format: "11 Juni 2013" anywhere in the string
+      const regex = /(\d{1,2})\s+([a-z]+)\s+(\d{4})/;
+      const match = lowerStr.match(regex);
+      if (match) {
+        let day = match[1];
+        if (day.length === 1) day = '0' + day;
+        const month = monthMap[match[2]];
+        const year = match[3];
+        if (month) return `${day}/${month}/${year}`;
+      }
+      
+      // Match format: "11/06/2013" or "11-06-2013"
+      const regexNum = /(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/;
+      const matchNum = str.match(regexNum);
+      if (matchNum) {
+        let day = matchNum[1];
+        let month = matchNum[2];
+        if (day.length === 1) day = '0' + day;
+        if (month.length === 1) month = '0' + month;
+        return `${day}/${month}/${matchNum[3]}`;
+      }
+      
+      return str.trim();
+    };
+
     // Pencarian
     let found = false;
     let result = null;
@@ -92,7 +136,7 @@ export default async function handler(req, res) {
       
       const row = parseCSVLine(lines[i]);
       const rowNisn = row[nisnIdx];
-      const rowTgl = row[tglIdx];
+      const rowTgl = normalizeDate(row[tglIdx]);
 
       if (rowNisn === nisn && rowTgl === tanggalLahir) {
         result = {
