@@ -20,6 +20,7 @@ import Layanan from "./pages/Layanan";
 import Kontak from "./pages/Kontak";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
+import HasilTKA from "./pages/HasilTKA";
 
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminPegawai from "./pages/admin/AdminPegawai";
@@ -61,6 +62,7 @@ const App = () => (
                 <Route path="/ekstrakurikuler/:id" element={<EkstrakurikulerDetail />} />
                 <Route path="/dokumen" element={<Layanan />} />
                 <Route path="/layanan" element={<Navigate to="/dokumen" replace />} />
+                <Route path="/hasil-tka" element={<HasilTKA />} />
                 <Route path="/kontak" element={<Kontak />} />
                 <Route path="/login" element={<Login />} />
               </Route>
