@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Plus, Pencil, Trash2, FileSpreadsheet, Download, Power } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
@@ -27,6 +28,7 @@ export default function AdminTKA() {
   const [isLoading, setIsLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editItem, setEditItem] = useState<TKAData | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   
   const [form, setForm] = useState({
     nisn: '',
@@ -124,11 +126,43 @@ export default function AdminTKA() {
         const { error } = await supabase.from('hasil_tka').delete().eq('id', id);
         if (error) throw error;
         toast({ title: 'Berhasil', description: 'Data TKA dihapus' });
+        setSelectedIds(prev => prev.filter(selectedId => selectedId !== id));
         fetchTKA();
       } catch (err: any) {
         toast({ title: 'Gagal', description: err.message, variant: 'destructive' });
       }
     }
+  };
+
+  const handleDeleteSelected = async () => {
+    if (selectedIds.length === 0) return;
+    if (confirm(`Yakin ingin menghapus ${selectedIds.length} data TKA terpilih?`)) {
+      setIsLoading(true);
+      try {
+        const { error } = await supabase.from('hasil_tka').delete().in('id', selectedIds);
+        if (error) throw error;
+        toast({ title: 'Berhasil', description: `${selectedIds.length} Data TKA dihapus` });
+        setSelectedIds([]);
+        fetchTKA();
+      } catch (err: any) {
+        toast({ title: 'Gagal', description: err.message, variant: 'destructive' });
+        setIsLoading(false);
+      }
+    }
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.length === dataTKA.length && dataTKA.length > 0) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(dataTKA.map(tka => tka.id));
+    }
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
+    );
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -209,6 +243,11 @@ export default function AdminTKA() {
             accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" 
             className="hidden" 
           />
+          {selectedIds.length > 0 && (
+            <Button variant="destructive" onClick={handleDeleteSelected} className="gap-2">
+              <Trash2 className="w-4 h-4" /> Hapus Terpilih ({selectedIds.length})
+            </Button>
+          )}
           <Button variant="outline" onClick={downloadTemplate} className="gap-2">
             <Download className="w-4 h-4" /> Template Excel
           </Button>
@@ -259,6 +298,13 @@ export default function AdminTKA() {
             <table className="w-full text-sm">
               <thead className="bg-muted/50 border-b">
                 <tr>
+                  <th className="px-4 py-3 text-left w-10">
+                    <Checkbox 
+                      checked={dataTKA.length > 0 && selectedIds.length === dataTKA.length} 
+                      onCheckedChange={toggleSelectAll} 
+                      aria-label="Select all"
+                    />
+                  </th>
                   <th className="px-4 py-3 text-left font-medium">NISN</th>
                   <th className="px-4 py-3 text-left font-medium">Nama Siswa</th>
                   <th className="px-4 py-3 text-left font-medium">Tgl Lahir</th>
@@ -269,12 +315,19 @@ export default function AdminTKA() {
               </thead>
               <tbody>
                 {isLoading ? (
-                  <tr><td colSpan={6} className="text-center py-10 text-muted-foreground">Memuat data...</td></tr>
+                  <tr><td colSpan={7} className="text-center py-10 text-muted-foreground">Memuat data...</td></tr>
                 ) : dataTKA.length === 0 ? (
-                  <tr><td colSpan={6} className="text-center py-10 text-muted-foreground">Belum ada data Hasil TKA</td></tr>
+                  <tr><td colSpan={7} className="text-center py-10 text-muted-foreground">Belum ada data Hasil TKA</td></tr>
                 ) : (
                   dataTKA.map((tka) => (
                     <tr key={tka.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
+                      <td className="px-4 py-3">
+                        <Checkbox 
+                          checked={selectedIds.includes(tka.id)} 
+                          onCheckedChange={() => toggleSelect(tka.id)} 
+                          aria-label={`Select ${tka.nama_peserta}`}
+                        />
+                      </td>
                       <td className="px-4 py-3 font-medium">{tka.nisn}</td>
                       <td className="px-4 py-3">{tka.nama_peserta}</td>
                       <td className="px-4 py-3 text-muted-foreground">{tka.tanggal_lahir}</td>
