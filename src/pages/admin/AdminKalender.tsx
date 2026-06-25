@@ -28,13 +28,21 @@ const generateUUID = () => {
 
 type KalenderItem = any; // fallback from data structure
 
-function SortableRow({ item, onEdit, onDelete }: { item: KalenderItem; onEdit: () => void; onDelete: () => void }) {
+function SortableRow({ item, selected, onSelectChange, onEdit, onDelete }: { item: KalenderItem; selected: boolean; onSelectChange: (checked: boolean) => void; onEdit: () => void; onDelete: () => void }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
   return (
-    <tr ref={setNodeRef} style={style} className="border-t bg-background">
+    <tr ref={setNodeRef} style={style} className={`border-t bg-background ${selected ? 'bg-muted/30' : ''}`}>
       <td className="px-3 py-3 w-10 text-muted-foreground cursor-grab active:cursor-grabbing" {...attributes} {...listeners}>
         <GripVertical className="w-4 h-4" />
+      </td>
+      <td className="px-3 py-3 w-10">
+        <input 
+          type="checkbox" 
+          className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+          checked={selected} 
+          onChange={(e) => onSelectChange(e.target.checked)} 
+        />
       </td>
       <td className="px-3 py-3 font-medium">{item.kegiatan?.id || ''}</td>
       <td className="px-3 py-3">{item.tanggal?.id || ''}</td>
@@ -56,6 +64,7 @@ export default function AdminKalender() {
   const [form, setForm] = useState({ kegiatan: { id: '', en: '' }, tanggal: { id: '', en: '' } });
   const [isSaving, setIsSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
@@ -101,6 +110,29 @@ export default function AdminKalender() {
     const oldIdx = data.kalender.findIndex((s: any) => s.id === active.id);
     const newIdx = data.kalender.findIndex((s: any) => s.id === over.id);
     if (oldIdx >= 0 && newIdx >= 0) updateKalender(arrayMove(data.kalender, oldIdx, newIdx));
+  };
+
+  const handleSelectChange = (id: string, checked: boolean) => {
+    setSelectedIds(prev => checked ? [...prev, id] : prev.filter(x => x !== id));
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    setSelectedIds(checked ? (data.kalender || []).map((k: any) => k.id) : []);
+  };
+
+  const handleDeleteSelected = async () => {
+    if (confirm(`Hapus ${selectedIds.length} kegiatan terpilih?`)) {
+      setIsSaving(true);
+      try {
+        await updateKalender((data.kalender || []).filter((k: any) => !selectedIds.includes(k.id)));
+        setSelectedIds([]);
+        toast({ title: 'Berhasil', description: 'Kegiatan terpilih berhasil dihapus.' });
+      } catch (err: any) {
+        toast({ title: 'Gagal', description: err.message, variant: 'destructive' });
+      } finally {
+        setIsSaving(false);
+      }
+    }
   };
 
   const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
@@ -179,6 +211,11 @@ export default function AdminKalender() {
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold text-foreground">Kelola Kalender Akademik</h1>
         <div className="flex gap-2">
+          {selectedIds.length > 0 && (
+            <Button variant="destructive" onClick={handleDeleteSelected} className="gap-2" disabled={isSaving}>
+              <Trash2 className="w-4 h-4" /> Hapus Terpilih ({selectedIds.length})
+            </Button>
+          )}
           <input type="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" className="hidden" ref={fileInputRef} onChange={handleFileUpload} />
           <Button variant="outline" onClick={() => fileInputRef.current?.click()} className="gap-2" disabled={isSaving}>
             <Upload className="w-4 h-4" /> Upload File (CSV/Excel)
@@ -215,6 +252,14 @@ export default function AdminKalender() {
               <thead className="bg-muted/50">
                 <tr>
                   <th className="px-3 py-2 text-left w-10"></th>
+                  <th className="px-3 py-2 text-left w-10">
+                    <input 
+                      type="checkbox" 
+                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                      checked={(data.kalender || []).length > 0 && selectedIds.length === (data.kalender || []).length}
+                      onChange={(e) => handleSelectAll(e.target.checked)}
+                    />
+                  </th>
                   <th className="px-3 py-2 text-left">Kegiatan</th>
                   <th className="px-3 py-2 text-left">Tanggal</th>
                   <th className="px-3 py-2 text-left">Terakhir Diubah</th>
@@ -225,9 +270,16 @@ export default function AdminKalender() {
                 <SortableContext items={(data.kalender || []).map((s: any) => s.id)} strategy={verticalListSortingStrategy}>
                   <tbody>
                     {(data.kalender || []).map((k: any) => (
-                      <SortableRow key={k.id} item={k} onEdit={() => openEdit(k)} onDelete={() => handleDelete(k.id)} />
+                      <SortableRow 
+                        key={k.id} 
+                        item={k} 
+                        selected={selectedIds.includes(k.id)}
+                        onSelectChange={(checked) => handleSelectChange(k.id, checked)}
+                        onEdit={() => openEdit(k)} 
+                        onDelete={() => handleDelete(k.id)} 
+                      />
                     ))}
-                    {(!data.kalender || data.kalender.length === 0) && <tr><td colSpan={5} className="text-center text-muted-foreground py-6">Belum ada kegiatan kalender</td></tr>}
+                    {(!data.kalender || data.kalender.length === 0) && <tr><td colSpan={6} className="text-center text-muted-foreground py-6">Belum ada kegiatan kalender</td></tr>}
                   </tbody>
                 </SortableContext>
               </DndContext>
