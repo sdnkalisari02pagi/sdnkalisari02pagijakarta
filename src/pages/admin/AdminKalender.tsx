@@ -25,7 +25,7 @@ function SortableRow({ item, onEdit, onDelete }: { item: KalenderItem; onEdit: (
         <GripVertical className="w-4 h-4" />
       </td>
       <td className="px-3 py-3 font-medium">{item.kegiatan?.id || ''}</td>
-      <td className="px-3 py-3">{item.tanggal}</td>
+      <td className="px-3 py-3">{item.tanggal?.id || ''}</td>
       <td className="px-3 py-3 text-xs text-muted-foreground">
         {item.lastModified ? formatDate(item.lastModified) : item.updated_at ? formatDate(item.updated_at) : '-'}
       </td>
@@ -41,18 +41,18 @@ export default function AdminKalender() {
   const { data, updateKalender } = useSchool();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editItem, setEditItem] = useState<KalenderItem | null>(null);
-  const [form, setForm] = useState({ kegiatan: { id: '', en: '' }, tanggal: '' });
+  const [form, setForm] = useState({ kegiatan: { id: '', en: '' }, tanggal: { id: '', en: '' } });
   const [isSaving, setIsSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
-  const openAdd = () => { setEditItem(null); setForm({ kegiatan: { id: '', en: '' }, tanggal: '' }); setDialogOpen(true); };
-  const openEdit = (k: KalenderItem) => { setEditItem(k); setForm({ kegiatan: toBilingual(k.kegiatan), tanggal: k.tanggal }); setDialogOpen(true); };
+  const openAdd = () => { setEditItem(null); setForm({ kegiatan: { id: '', en: '' }, tanggal: { id: '', en: '' } }); setDialogOpen(true); };
+  const openEdit = (k: KalenderItem) => { setEditItem(k); setForm({ kegiatan: toBilingual(k.kegiatan), tanggal: toBilingual(k.tanggal) }); setDialogOpen(true); };
 
   const handleSave = async () => {
-    if (!form.kegiatan.id.trim() || !form.tanggal.trim()) {
-      toast({ title: 'Gagal', description: 'Kegiatan dan tanggal wajib diisi.', variant: 'destructive' });
+    if (!form.kegiatan.id.trim() || !form.tanggal.id.trim()) {
+      toast({ title: 'Gagal', description: 'Kegiatan dan tanggal (ID) wajib diisi.', variant: 'destructive' });
       return;
     }
     setIsSaving(true);
@@ -132,18 +132,18 @@ export default function AdminKalender() {
       const now = new Date().toISOString();
       for (let i = startIndex; i < lines.length; i++) {
         const cols = parseCSVLine(lines[i]);
-        if (cols.length >= 3) {
+        if (cols.length >= 4) {
           newItems.push({
             id: Date.now().toString() + i,
             kegiatan: { id: cols[0], en: cols[1] },
-            tanggal: cols[2],
+            tanggal: { id: cols[2], en: cols[3] },
             lastModified: now
           });
-        } else if (cols.length === 2) {
+        } else if (cols.length >= 2) {
            newItems.push({
             id: Date.now().toString() + i,
-            kegiatan: { id: cols[0], en: '' },
-            tanggal: cols[1],
+            kegiatan: { id: cols[0], en: cols[1] || '' },
+            tanggal: { id: cols[2] || cols[1] || '', en: '' },
             lastModified: now
           });
         }
@@ -162,7 +162,7 @@ export default function AdminKalender() {
           if (fileInputRef.current) fileInputRef.current.value = '';
         }
       } else {
-        toast({ title: 'Gagal', description: 'Format CSV tidak valid. Pastikan formatnya: kegiatan_id,kegiatan_en,tanggal', variant: 'destructive' });
+        toast({ title: 'Gagal', description: 'Format CSV tidak valid. Pastikan formatnya: kegiatan_id,kegiatan_en,tanggal_id,tanggal_en', variant: 'destructive' });
       }
     };
     reader.readAsText(file);
@@ -188,10 +188,10 @@ export default function AdminKalender() {
               </div>
               <div>
                 <Label>Tanggal / Waktu</Label>
-                <Input 
+                <BilingualInput 
                   value={form.tanggal} 
-                  placeholder="Contoh: 2 Maret - 14 Maret 2026"
-                  onChange={e => setForm(f => ({ ...f, tanggal: e.target.value }))} 
+                  onChange={val => setForm(f => ({ ...f, tanggal: val }))} 
+                  placeholder="Contoh: 14 - 18 Oktober 2026"
                 />
               </div>
               <Button onClick={handleSave} className="w-full" disabled={isSaving}>{isSaving ? 'Menyimpan...' : 'Simpan'}</Button>

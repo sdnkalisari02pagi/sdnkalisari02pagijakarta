@@ -231,7 +231,7 @@ return (
               {data.kalender.map((k: any, i: number) => (
                 <tr key={k.id} className="border-b last:border-b-0 hover:bg-muted/50 transition-colors bg-white">
                   <td className="px-4 py-3 border-r text-foreground">{tr(k.kegiatan, lang)}</td>
-                  <td className="px-4 py-3 text-foreground whitespace-pre-wrap">{k.tanggal}</td>
+                  <td className="px-4 py-3 text-foreground whitespace-pre-wrap">{tr(k.tanggal, lang)}</td>
                 </tr>
               ))}
             </tbody>
