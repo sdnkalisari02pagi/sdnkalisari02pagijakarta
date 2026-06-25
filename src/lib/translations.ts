@@ -26,6 +26,7 @@ export const translations = {
     section_keunggulan: 'Kenapa Memilih Kami?',
     section_ekstrakurikuler: 'Ekstrakurikuler',
     section_kegiatan_terbaru: 'Berita Terbaru',
+    section_kalender_akademik: 'Kalender Akademik',
     btn_lihat_semua: 'Lihat Semua',
     btn_selengkapnya: 'Selengkapnya',
 
@@ -72,6 +73,8 @@ export const translations = {
     table_nama: 'Nama Dokumen',
     table_tanggal: 'Tanggal',
     table_aksi: 'Aksi',
+    th_kegiatan: 'Kegiatan',
+    th_tanggal: 'Tanggal',
     btn_unduh: 'Unduh',
     btn_preview: 'Preview',
     no_dokumen: 'Tidak ada dokumen.',
@@ -116,6 +119,7 @@ export const translations = {
     section_keunggulan: 'Why Choose Us?',
     section_ekstrakurikuler: 'Extracurricular',
     section_kegiatan_terbaru: 'Latest News',
+    section_kalender_akademik: 'Academic Calendar',
     btn_lihat_semua: 'View All',
     btn_selengkapnya: 'Read More',
 
@@ -162,6 +166,8 @@ export const translations = {
     table_nama: 'Document Name',
     table_tanggal: 'Date',
     table_aksi: 'Action',
+    th_kegiatan: 'Activity',
+    th_tanggal: 'Date',
     btn_unduh: 'Download',
     btn_preview: 'Preview',
     no_dokumen: 'No documents found.',

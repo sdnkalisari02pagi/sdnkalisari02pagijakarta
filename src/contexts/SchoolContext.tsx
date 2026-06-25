@@ -33,9 +33,11 @@ export interface SchoolData {
     sambutan: string | null;
     kontak: string | null;
     siswa: string | null;
+    kalender: string | null;
   };
   footer: any;
   siswa: any[];
+  kalender: any[];
 }
 
 export type KelasSiswa = { id: string; kelas: Bilingual; jumlah: number; updated_at?: string; lastModified?: string };
@@ -88,9 +90,10 @@ const defaultData: SchoolData = {
     copyright: ''
   },
   lastModified: {
-    logo: null, footer: null, hero: null, keunggulan: null, pegawai: null, berita: null, prestasi: null, ekstrakurikuler: null, dokumen: null, profil: null, sambutan: null, kontak: null, siswa: null
+    logo: null, footer: null, hero: null, keunggulan: null, pegawai: null, berita: null, prestasi: null, ekstrakurikuler: null, dokumen: null, profil: null, sambutan: null, kontak: null, siswa: null, kalender: null
   },
-  siswa: []
+  siswa: [],
+  kalender: []
 };
 
 /* ================= CONTEXT ================= */
@@ -112,7 +115,7 @@ async function fetchAll(): Promise<SchoolData> {
       logo, hero, heroImages, keunggulan, pegawai, jabatanList,
       berita, beritaGaleri, prestasi, prestasiGaleri,
       ekstrakurikuler, ekskulGaleri, dokumen, profil,
-      sambutan, kontak, footer, siswa, pelatih
+      sambutan, kontak, footer, siswa, pelatih, kalender
     ] = await Promise.all([
       supabase.from('logo').select('*').limit(1).maybeSingle(),
       supabase.from('hero').select('*').limit(1).maybeSingle(),
@@ -132,7 +135,8 @@ async function fetchAll(): Promise<SchoolData> {
       supabase.from('kontak').select('*').limit(1).maybeSingle(),
       supabase.from('footer').select('*').limit(1).maybeSingle(),
       supabase.from('siswa').select('*'),
-      supabase.from('pelatih').select('*')
+      supabase.from('pelatih').select('*'),
+      supabase.from('kalender_akademik').select('*').order('tanggal')
     ]);
 
     return {
@@ -201,12 +205,15 @@ async function fetchAll(): Promise<SchoolData> {
       siswa: (siswa.data || []).map(s => ({
         id: s.id, kelas: B(s.kelas_id || s.kelas, s.kelas_en), jumlah: s.jumlah, updated_at: s.updated_at
       })),
+      kalender: (kalender.data || []).map(k => ({
+        id: k.id, kegiatan: B(k.kegiatan_id, k.kegiatan_en), tanggal: k.tanggal, updated_at: k.updated_at
+      })),
       lastModified: {
         logo: logo.data?.updated_at || null, footer: footer.data?.updated_at || null, hero: hero.data?.updated_at || null,
         keunggulan: getMaxTimestamp(keunggulan.data), pegawai: getMaxTimestamp(pegawai.data),
         berita: getMaxTimestamp(berita.data), prestasi: getMaxTimestamp(prestasi.data),
         ekstrakurikuler: getMaxTimestamp(ekstrakurikuler.data), dokumen: getMaxTimestamp(dokumen.data),
-        profil: profil.data?.updated_at || null, sambutan: sambutan.data?.updated_at || null, kontak: kontak.data?.updated_at || null, siswa: getMaxTimestamp(siswa.data)
+        profil: profil.data?.updated_at || null, sambutan: sambutan.data?.updated_at || null, kontak: kontak.data?.updated_at || null, siswa: getMaxTimestamp(siswa.data), kalender: getMaxTimestamp(kalender.data)
       }
     };
   } catch (err) {
@@ -307,6 +314,22 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
       if (error) throw error;
     }
     updateLocal('siswa', form, 'siswa');
+  };
+
+  const updateKalender = async (form: any[]) => {
+    const ids = form.map(f => f.id);
+    if (ids.length > 0) {
+      const { error } = await supabase.from('kalender_akademik').delete().not('id', 'in', `(${ids.map(id => `"${id}"`).join(',')})`);
+      if (error) throw error;
+    } else {
+      const { error } = await supabase.from('kalender_akademik').delete().neq('id', 'null');
+      if (error) throw error;
+    }
+    if (form.length > 0) {
+      const { error } = await supabase.from('kalender_akademik').upsert(form.map(f => ({ id: f.id, kegiatan_id: f.kegiatan?.id || '', kegiatan_en: f.kegiatan?.en || '', tanggal: f.tanggal, updated_at: f.lastModified || f.updated_at || new Date().toISOString() })));
+      if (error) throw error;
+    }
+    updateLocal('kalender', form, 'kalender');
   };
 
   const updateKeunggulan = async (form: any[]) => {
@@ -498,7 +521,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   return (
     <SchoolContext.Provider value={{
       data, updateFooter, updateLogo, updateSambutan, updateHero,
-      updateSiswa, updateKeunggulan, updatePegawai, updateJabatanList,
+      updateSiswa, updateKalender, updateKeunggulan, updatePegawai, updateJabatanList,
       updateBerita, updatePrestasi, updateEkstrakurikuler, updateDokumen,
       updateProfil, updateKontak
     }}>

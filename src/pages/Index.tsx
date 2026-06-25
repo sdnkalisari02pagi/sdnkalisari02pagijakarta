@@ -21,6 +21,7 @@ const sambutanRef = useScrollAnimation();
 const keunggulanRef = useScrollAnimation();
 const ekstrakurikulerRef = useScrollAnimation();
 const beritaRef = useScrollAnimation();
+const kalenderRef = useScrollAnimation();
 const [ekskulPage, setEkskulPage] = useState(0);
 
 const totalEkskulPages = Math.ceil(data.ekstrakurikuler.length / 3);const visibleEkskul = data.ekstrakurikuler.slice(ekskulPage * 3, (ekskulPage + 1) * 3);
@@ -213,6 +214,32 @@ return (
       </div>
     </div>
   </section>
+
+  {data.kalender && data.kalender.length > 0 && (
+    <section className="py-12 md:py-16 bg-background" ref={kalenderRef}>
+      <div className="container mx-auto px-4 max-w-5xl">
+        <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 md:mb-10 text-foreground scroll-animate">{t('section_kalender_akademik')}</h2>
+        <div className="rounded-t-lg overflow-hidden border border-border scroll-animate delay-200">
+          <table className="w-full text-sm sm:text-base">
+            <thead className="bg-[#b91c1c] text-white">
+              <tr>
+                <th className="px-4 py-3 text-left font-semibold border-r border-[#991b1b] w-1/2 sm:w-2/3">{t('th_kegiatan')}</th>
+                <th className="px-4 py-3 text-left font-semibold">{t('th_tanggal')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.kalender.map((k: any, i: number) => (
+                <tr key={k.id} className="border-b last:border-b-0 hover:bg-muted/50 transition-colors bg-white">
+                  <td className="px-4 py-3 border-r text-foreground">{tr(k.kegiatan, lang)}</td>
+                  <td className="px-4 py-3 text-foreground whitespace-pre-wrap">{k.tanggal}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  )}
 
 </div>
 );

@@ -13,7 +13,9 @@ const menuItems = [
   { title: 'Keunggulan', url: '/admin/keunggulan', icon: Award },
   { title: 'Pegawai', url: '/admin/pegawai', icon: Users },
   { title: 'Siswa', url: '/admin/siswa', icon: UserCog },
-  { title: 'Berita', url: '/admin/berita', icon: Calendar },
+  { title: 'Kalender Akademik', url: '/admin/kalender', icon: Calendar },
+  { title: 'Berita', url: '/admin/berita', icon: FileText },
+
   { title: 'Prestasi', url: '/admin/prestasi', icon: Trophy },
   { title: 'Ekstrakurikuler', url: '/admin/ekstrakurikuler', icon: Star },
   { title: 'Dokumen', url: '/admin/dokumen', icon: FileText },

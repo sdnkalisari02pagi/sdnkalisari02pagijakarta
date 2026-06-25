@@ -27,6 +27,7 @@ import AdminPegawai from "./pages/admin/AdminPegawai";
 import AdminBerita from "./pages/admin/AdminBerita";
 import AdminPrestasi from "./pages/admin/AdminPrestasi";
 import AdminEkskul from "./pages/admin/AdminEkskul";
+import AdminKalender from "./pages/admin/AdminKalender";
 import AdminDokumen from "./pages/admin/AdminDokumen";
 import AdminProfil from "./pages/admin/AdminProfil";
 import AdminSambutan from "./pages/admin/AdminSambutan";
@@ -81,6 +82,7 @@ const App = () => (
                 <Route path="pegawai" element={<AdminPegawai />} />
                 <Route path="siswa" element={<AdminSiswa />} />
                 <Route path="berita" element={<AdminBerita />} />
+                <Route path="kalender" element={<AdminKalender />} />
                 <Route path="prestasi" element={<AdminPrestasi />} />
                 <Route path="kegiatan" element={<Navigate to="/admin/berita" replace />} />
                 <Route path="ekstrakurikuler" element={<AdminEkskul />} />
