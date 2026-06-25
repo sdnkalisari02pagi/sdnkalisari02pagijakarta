@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
+import { useSchool } from '@/contexts/SchoolContext';
 import { supabase } from '@/lib/supabase';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Pencil, Trash2, FileSpreadsheet, Download, Upload } from 'lucide-react';
+import { Plus, Pencil, Trash2, FileSpreadsheet, Download, Power } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import * as XLSX from 'xlsx';
 
@@ -20,6 +22,7 @@ interface TKAData {
 }
 
 export default function AdminTKA() {
+  const { data, updateProfil } = useSchool();
   const [dataTKA, setDataTKA] = useState<TKAData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -49,6 +52,16 @@ export default function AdminTKA() {
       toast({ title: 'Gagal Memuat Data', description: err.message, variant: 'destructive' });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const toggleTka = async () => {
+    try {
+      const newState = !data.profil.tkaActive;
+      await updateProfil({ ...data.profil, tkaActive: newState });
+      toast({ title: 'Berhasil', description: `Pengumuman TKA sekarang ${newState ? 'AKTIF' : 'NONAKTIF'}` });
+    } catch (err: any) {
+      toast({ variant: 'destructive', description: 'Gagal mengubah status: ' + err.message });
     }
   };
 
@@ -137,8 +150,8 @@ export default function AdminTKA() {
           nisn: String(row['NISN'] || row['nisn'] || ''),
           nama_peserta: String(row['Nama Peserta'] || row['nama_peserta'] || row['nama'] || ''),
           tanggal_lahir: String(row['Tanggal Lahir'] || row['tanggal_lahir'] || ''),
-          matematika: String(row['Matematika'] || row['matematika'] || '').split('\n')[0].trim(),
-          bahasa_indonesia: String(row['Bahasa Indonesia'] || row['bahasa_indonesia'] || '').split('\n')[0].trim()
+          matematika: String(row['Matematika'] || row['matematika'] || '').replace(/\n/g, ' ').trim(),
+          bahasa_indonesia: String(row['Bahasa Indonesia'] || row['bahasa_indonesia'] || '').replace(/\n/g, ' ').trim()
         })).filter(row => row.nisn && row.nama_peserta); // Only import valid rows
 
         if (formattedData.length === 0) {
@@ -178,7 +191,14 @@ export default function AdminTKA() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Kelola Hasil TKA</h1>
-          <p className="text-muted-foreground text-sm mt-1">Data ini ditampilkan pada halaman pencarian pengumuman Hasil TKA.</p>
+          <p className="text-muted-foreground text-sm mt-1 mb-3">Data ini ditampilkan pada halaman pencarian pengumuman Hasil TKA.</p>
+          <div className="flex items-center space-x-2 bg-muted/50 p-2 rounded-md inline-flex border">
+            <Switch id="tka-active" checked={data.profil.tkaActive} onCheckedChange={toggleTka} />
+            <Label htmlFor="tka-active" className="cursor-pointer font-medium flex items-center gap-2">
+              <Power className={`w-4 h-4 ${data.profil.tkaActive ? 'text-green-500' : 'text-muted-foreground'}`} />
+              {data.profil.tkaActive ? 'Pengumuman Aktif (ON)' : 'Pengumuman Ditutup (OFF)'}
+            </Label>
+          </div>
         </div>
         
         <div className="flex flex-wrap items-center gap-2">
