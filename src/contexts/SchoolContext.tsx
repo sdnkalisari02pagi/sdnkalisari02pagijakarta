@@ -123,13 +123,13 @@ async function fetchAll(): Promise<SchoolData> {
       supabase.from('keunggulan').select('*'),
       supabase.from('pegawai').select('*'),
       supabase.from('jabatan_list').select('*'),
-      supabase.from('berita').select('*'),
+      supabase.from('berita').select('*').order('tanggal', { ascending: false }),
       supabase.from('berita_galeri').select('*'),
-      supabase.from('prestasi').select('*'),
+      supabase.from('prestasi').select('*').order('tanggal', { ascending: false }),
       supabase.from('prestasi_galeri').select('*'),
       supabase.from('ekstrakurikuler').select('*'),
       supabase.from('ekstrakurikuler_galeri').select('*'),
-      supabase.from('dokumen').select('*'),
+      supabase.from('dokumen').select('*').order('tanggal', { ascending: false }),
       supabase.from('profil').select('*').limit(1).maybeSingle(),
       supabase.from('sambutan').select('*').limit(1).maybeSingle(),
       supabase.from('kontak').select('*').limit(1).maybeSingle(),
@@ -232,9 +232,17 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const updateLocal = (key: keyof SchoolData, value: any, timestampKey?: string) => {
+    let finalValue = value;
+    if (Array.isArray(value) && (key === 'berita' || key === 'prestasi' || key === 'dokumen')) {
+      finalValue = [...value].sort((a, b) => {
+        const dateA = a.tanggal || '';
+        const dateB = b.tanggal || '';
+        return dateB.localeCompare(dateA);
+      });
+    }
     setData(d => ({
       ...d,
-      [key]: value,
+      [key]: finalValue,
       lastModified: timestampKey ? { ...d.lastModified, [timestampKey]: new Date().toISOString() } : d.lastModified
     }));
   };
