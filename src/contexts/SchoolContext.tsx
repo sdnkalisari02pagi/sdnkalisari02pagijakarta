@@ -136,7 +136,7 @@ async function fetchAll(): Promise<SchoolData> {
       supabase.from('footer').select('*').limit(1).maybeSingle(),
       supabase.from('siswa').select('*'),
       supabase.from('pelatih').select('*'),
-      supabase.from('kalender_akademik').select('*').order('tanggal_id')
+      supabase.from('kalender_akademik').select('*').order('urutan', { ascending: true })
     ]);
 
     return {
@@ -326,7 +326,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
       if (error) throw error;
     }
     if (form.length > 0) {
-      const { error } = await supabase.from('kalender_akademik').upsert(form.map(f => ({ id: f.id, kegiatan_id: f.kegiatan?.id || '', kegiatan_en: f.kegiatan?.en || '', tanggal_id: f.tanggal?.id || '', tanggal_en: f.tanggal?.en || '', updated_at: f.lastModified || f.updated_at || new Date().toISOString() })));
+      const { error } = await supabase.from('kalender_akademik').upsert(form.map((f, index) => ({ id: f.id, kegiatan_id: f.kegiatan?.id || '', kegiatan_en: f.kegiatan?.en || '', tanggal_id: f.tanggal?.id || '', tanggal_en: f.tanggal?.en || '', urutan: index, updated_at: f.lastModified || f.updated_at || new Date().toISOString() })));
       if (error) throw error;
     }
     updateLocal('kalender', form, 'kalender');
