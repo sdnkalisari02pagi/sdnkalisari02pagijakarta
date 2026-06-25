@@ -216,10 +216,10 @@ return (
   </section>
 
   {data.kalender && data.kalender.length > 0 && (
-    <section className="py-12 md:py-16 bg-background" ref={kalenderRef}>
+    <section className="py-12 md:py-16 bg-background">
       <div className="container mx-auto px-4 max-w-5xl">
-        <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 md:mb-10 text-foreground scroll-animate">{t('section_kalender_akademik')}</h2>
-        <div className="rounded-t-lg overflow-hidden border border-border scroll-animate delay-200">
+        <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 md:mb-10 text-foreground">{t('section_kalender_akademik')}</h2>
+        <div className="rounded-t-lg overflow-hidden border border-border">
           <table className="w-full text-sm sm:text-base">
             <thead className="bg-[#b91c1c] text-white">
               <tr>
