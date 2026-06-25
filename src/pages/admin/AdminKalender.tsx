@@ -147,7 +147,7 @@ export default function AdminKalender() {
             newItems.push({
               id: generateUUID(),
               kegiatan: { id: c0, en: c1 },
-              tanggal: { id: c2 || c1, en: c3 },
+              tanggal: { id: c2 || '', en: c3 || '' },
               lastModified: now
             });
           }

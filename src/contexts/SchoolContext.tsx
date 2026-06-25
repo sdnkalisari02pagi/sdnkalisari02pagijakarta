@@ -136,7 +136,7 @@ async function fetchAll(): Promise<SchoolData> {
       supabase.from('footer').select('*').limit(1).maybeSingle(),
       supabase.from('siswa').select('*'),
       supabase.from('pelatih').select('*'),
-      supabase.from('kalender_akademik').select('*').order('tanggal')
+      supabase.from('kalender_akademik').select('*').order('tanggal_id')
     ]);
 
     return {
@@ -206,7 +206,7 @@ async function fetchAll(): Promise<SchoolData> {
         id: s.id, kelas: B(s.kelas_id || s.kelas, s.kelas_en), jumlah: s.jumlah, updated_at: s.updated_at
       })),
       kalender: (kalender.data || []).map(k => ({
-        id: k.id, kegiatan: B(k.kegiatan_id, k.kegiatan_en), tanggal: k.tanggal, updated_at: k.updated_at
+        id: k.id, kegiatan: B(k.kegiatan_id, k.kegiatan_en), tanggal: B(k.tanggal_id, k.tanggal_en), updated_at: k.updated_at
       })),
       lastModified: {
         logo: logo.data?.updated_at || null, footer: footer.data?.updated_at || null, hero: hero.data?.updated_at || null,
@@ -326,7 +326,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
       if (error) throw error;
     }
     if (form.length > 0) {
-      const { error } = await supabase.from('kalender_akademik').upsert(form.map(f => ({ id: f.id, kegiatan_id: f.kegiatan?.id || '', kegiatan_en: f.kegiatan?.en || '', tanggal: f.tanggal, updated_at: f.lastModified || f.updated_at || new Date().toISOString() })));
+      const { error } = await supabase.from('kalender_akademik').upsert(form.map(f => ({ id: f.id, kegiatan_id: f.kegiatan?.id || '', kegiatan_en: f.kegiatan?.en || '', tanggal_id: f.tanggal?.id || '', tanggal_en: f.tanggal?.en || '', updated_at: f.lastModified || f.updated_at || new Date().toISOString() })));
       if (error) throw error;
     }
     updateLocal('kalender', form, 'kalender');
