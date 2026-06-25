@@ -156,7 +156,7 @@ export default function AdminKalender() {
         if (newItems.length > 0) {
           setIsSaving(true);
           try {
-            await updateKalender([...(data.kalender || []), ...newItems]);
+            await updateKalender(newItems);
             toast({ title: 'Berhasil', description: `${newItems.length} kegiatan berhasil diimpor.` });
           } catch (err: any) {
             toast({ title: 'Gagal', description: 'Gagal menyimpan data: ' + err.message, variant: 'destructive' });
