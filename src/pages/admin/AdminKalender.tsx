@@ -15,6 +15,17 @@ import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } 
 import { CSS } from '@dnd-kit/utilities';
 import * as XLSX from 'xlsx';
 
+const generateUUID = () => {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+};
+
 type KalenderItem = any; // fallback from data structure
 
 function SortableRow({ item, onEdit, onDelete }: { item: KalenderItem; onEdit: () => void; onDelete: () => void }) {
@@ -62,7 +73,7 @@ export default function AdminKalender() {
       if (editItem) {
         await updateKalender(data.kalender.map((k: any) => k.id === editItem.id ? { ...k, ...form, lastModified: now } : k));
       } else {
-        await updateKalender([...data.kalender, { id: Date.now().toString(), ...form, lastModified: now }]);
+        await updateKalender([...(data.kalender || []), { id: generateUUID(), ...form, lastModified: now }]);
       }
       setDialogOpen(false);
       toast({ title: 'Berhasil', description: 'Data kalender akademik diperbarui.' });
@@ -134,7 +145,7 @@ export default function AdminKalender() {
 
           if (c0) { // Require at least kegiatan_id
             newItems.push({
-              id: Date.now().toString() + i,
+              id: generateUUID(),
               kegiatan: { id: c0, en: c1 },
               tanggal: { id: c2 || c1, en: c3 },
               lastModified: now
