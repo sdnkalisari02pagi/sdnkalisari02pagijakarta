@@ -13,6 +13,7 @@ import { toBilingual } from '@/lib/i18n';
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import * as XLSX from 'xlsx';
 
 type KalenderItem = any; // fallback from data structure
 
@@ -97,75 +98,69 @@ export default function AdminKalender() {
 
     const reader = new FileReader();
     reader.onload = async (event) => {
-      const text = event.target?.result as string;
-      if (!text) return;
+      const data = event.target?.result;
+      if (!data) return;
 
-      const lines = text.split('\n').filter(line => line.trim().length > 0);
-      if (lines.length === 0) return;
+      try {
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+        
+        // Convert sheet to array of arrays
+        const rows: any[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+        
+        if (rows.length === 0) return;
 
-      const parseCSVLine = (line: string) => {
-        const result = [];
-        let current = '';
-        let inQuotes = false;
-        for (let i = 0; i < line.length; i++) {
-          const c = line[i];
-          if (c === '"') {
-            inQuotes = !inQuotes;
-          } else if (c === ',' && !inQuotes) {
-            result.push(current.trim().replace(/^"|"$/g, ''));
-            current = '';
-          } else {
-            current += c;
+        // Skip header if first row contains 'kegiatan'
+        let startIndex = 0;
+        if (rows[0] && rows[0].some((cell: any) => typeof cell === 'string' && (cell.toLowerCase().includes('kegiatan') || cell.toLowerCase().includes('tanggal')))) {
+          startIndex = 1;
+        }
+
+        const newItems = [];
+        const now = new Date().toISOString();
+        
+        for (let i = startIndex; i < rows.length; i++) {
+          const cols = rows[i];
+          // Skip completely empty rows
+          if (!cols || cols.length === 0 || cols.every(c => c === undefined || c === null || String(c).trim() === '')) {
+            continue;
+          }
+
+          const c0 = cols[0] ? String(cols[0]).trim() : '';
+          const c1 = cols[1] ? String(cols[1]).trim() : '';
+          const c2 = cols[2] ? String(cols[2]).trim() : '';
+          const c3 = cols[3] ? String(cols[3]).trim() : '';
+
+          if (c0) { // Require at least kegiatan_id
+            newItems.push({
+              id: Date.now().toString() + i,
+              kegiatan: { id: c0, en: c1 },
+              tanggal: { id: c2 || c1, en: c3 },
+              lastModified: now
+            });
           }
         }
-        result.push(current.trim().replace(/^"|"$/g, ''));
-        return result;
-      };
 
-      // Skip header if first line contains 'kegiatan'
-      let startIndex = 0;
-      if (lines[0].toLowerCase().includes('kegiatan_id') || lines[0].toLowerCase().includes('kegiatan')) {
-        startIndex = 1;
-      }
-
-      const newItems = [];
-      const now = new Date().toISOString();
-      for (let i = startIndex; i < lines.length; i++) {
-        const cols = parseCSVLine(lines[i]);
-        if (cols.length >= 4) {
-          newItems.push({
-            id: Date.now().toString() + i,
-            kegiatan: { id: cols[0], en: cols[1] },
-            tanggal: { id: cols[2], en: cols[3] },
-            lastModified: now
-          });
-        } else if (cols.length >= 2) {
-           newItems.push({
-            id: Date.now().toString() + i,
-            kegiatan: { id: cols[0], en: cols[1] || '' },
-            tanggal: { id: cols[2] || cols[1] || '', en: '' },
-            lastModified: now
-          });
+        if (newItems.length > 0) {
+          setIsSaving(true);
+          try {
+            await updateKalender([...data.kalender, ...newItems]);
+            toast({ title: 'Berhasil', description: `${newItems.length} kegiatan berhasil diimpor.` });
+          } catch (err: any) {
+            toast({ title: 'Gagal', description: 'Gagal menyimpan data: ' + err.message, variant: 'destructive' });
+          } finally {
+            setIsSaving(false);
+            if (fileInputRef.current) fileInputRef.current.value = '';
+          }
+        } else {
+          toast({ title: 'Gagal', description: 'Tidak ada data valid yang ditemukan di file tersebut.', variant: 'destructive' });
         }
-      }
-
-      if (newItems.length > 0) {
-        setIsSaving(true);
-        try {
-          // Append new items to existing kalender
-          await updateKalender([...data.kalender, ...newItems]);
-          toast({ title: 'Berhasil', description: `${newItems.length} kegiatan berhasil diimpor dari CSV.` });
-        } catch (err: any) {
-          toast({ title: 'Gagal', description: 'Gagal menyimpan data CSV: ' + err.message, variant: 'destructive' });
-        } finally {
-          setIsSaving(false);
-          if (fileInputRef.current) fileInputRef.current.value = '';
-        }
-      } else {
-        toast({ title: 'Gagal', description: 'Format CSV tidak valid. Pastikan formatnya: kegiatan_id,kegiatan_en,tanggal_id,tanggal_en', variant: 'destructive' });
+      } catch (err: any) {
+        toast({ title: 'Gagal', description: 'Gagal membaca file Excel/CSV: ' + err.message, variant: 'destructive' });
       }
     };
-    reader.readAsText(file);
+    reader.readAsArrayBuffer(file);
   };
 
   return (
@@ -173,9 +168,9 @@ export default function AdminKalender() {
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold text-foreground">Kelola Kalender Akademik</h1>
         <div className="flex gap-2">
-          <input type="file" accept=".csv" className="hidden" ref={fileInputRef} onChange={handleFileUpload} />
+          <input type="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" className="hidden" ref={fileInputRef} onChange={handleFileUpload} />
           <Button variant="outline" onClick={() => fileInputRef.current?.click()} className="gap-2" disabled={isSaving}>
-            <Upload className="w-4 h-4" /> Upload CSV
+            <Upload className="w-4 h-4" /> Upload File (CSV/Excel)
           </Button>
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild><Button onClick={openAdd} className="gap-2"><Plus className="w-4 h-4" /> Tambah Kegiatan</Button></DialogTrigger>
