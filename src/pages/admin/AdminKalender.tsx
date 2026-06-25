@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useRef, ChangeEvent } from 'react';
 import { useSchool } from '@/contexts/SchoolContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Pencil, Trash2, CalendarDays, GripVertical } from 'lucide-react';
+import { Plus, Pencil, Trash2, CalendarDays, GripVertical, Upload } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import LastModifiedInfo, { formatDate } from '@/components/LastModifiedInfo';
 import BilingualInput from '@/components/BilingualInput';
@@ -43,6 +43,7 @@ export default function AdminKalender() {
   const [editItem, setEditItem] = useState<KalenderItem | null>(null);
   const [form, setForm] = useState({ kegiatan: { id: '', en: '' }, tanggal: '' });
   const [isSaving, setIsSaving] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
@@ -90,12 +91,94 @@ export default function AdminKalender() {
     if (oldIdx >= 0 && newIdx >= 0) updateKalender(arrayMove(data.kalender, oldIdx, newIdx));
   };
 
+  const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      const text = event.target?.result as string;
+      if (!text) return;
+
+      const lines = text.split('\n').filter(line => line.trim().length > 0);
+      if (lines.length === 0) return;
+
+      const parseCSVLine = (line: string) => {
+        const result = [];
+        let current = '';
+        let inQuotes = false;
+        for (let i = 0; i < line.length; i++) {
+          const c = line[i];
+          if (c === '"') {
+            inQuotes = !inQuotes;
+          } else if (c === ',' && !inQuotes) {
+            result.push(current.trim().replace(/^"|"$/g, ''));
+            current = '';
+          } else {
+            current += c;
+          }
+        }
+        result.push(current.trim().replace(/^"|"$/g, ''));
+        return result;
+      };
+
+      // Skip header if first line contains 'kegiatan'
+      let startIndex = 0;
+      if (lines[0].toLowerCase().includes('kegiatan_id') || lines[0].toLowerCase().includes('kegiatan')) {
+        startIndex = 1;
+      }
+
+      const newItems = [];
+      const now = new Date().toISOString();
+      for (let i = startIndex; i < lines.length; i++) {
+        const cols = parseCSVLine(lines[i]);
+        if (cols.length >= 3) {
+          newItems.push({
+            id: Date.now().toString() + i,
+            kegiatan: { id: cols[0], en: cols[1] },
+            tanggal: cols[2],
+            lastModified: now
+          });
+        } else if (cols.length === 2) {
+           newItems.push({
+            id: Date.now().toString() + i,
+            kegiatan: { id: cols[0], en: '' },
+            tanggal: cols[1],
+            lastModified: now
+          });
+        }
+      }
+
+      if (newItems.length > 0) {
+        setIsSaving(true);
+        try {
+          // Append new items to existing kalender
+          await updateKalender([...data.kalender, ...newItems]);
+          toast({ title: 'Berhasil', description: `${newItems.length} kegiatan berhasil diimpor dari CSV.` });
+        } catch (err: any) {
+          toast({ title: 'Gagal', description: 'Gagal menyimpan data CSV: ' + err.message, variant: 'destructive' });
+        } finally {
+          setIsSaving(false);
+          if (fileInputRef.current) fileInputRef.current.value = '';
+        }
+      } else {
+        toast({ title: 'Gagal', description: 'Format CSV tidak valid. Pastikan formatnya: kegiatan_id,kegiatan_en,tanggal', variant: 'destructive' });
+      }
+    };
+    reader.readAsText(file);
+  };
+
   return (
     <div className="max-w-4xl">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold text-foreground">Kelola Kalender Akademik</h1>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild><Button onClick={openAdd} className="gap-2"><Plus className="w-4 h-4" /> Tambah Kegiatan</Button></DialogTrigger>
+        <div className="flex gap-2">
+          <input type="file" accept=".csv" className="hidden" ref={fileInputRef} onChange={handleFileUpload} />
+          <Button variant="outline" onClick={() => fileInputRef.current?.click()} className="gap-2" disabled={isSaving}>
+            <Upload className="w-4 h-4" /> Upload CSV
+          </Button>
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild><Button onClick={openAdd} className="gap-2"><Plus className="w-4 h-4" /> Tambah Kegiatan</Button></DialogTrigger>
           <DialogContent>
             <DialogHeader><DialogTitle>{editItem ? 'Edit' : 'Tambah'} Kegiatan</DialogTitle></DialogHeader>
             <div className="space-y-4">
@@ -115,6 +198,7 @@ export default function AdminKalender() {
             </div>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
 
       <Card>
