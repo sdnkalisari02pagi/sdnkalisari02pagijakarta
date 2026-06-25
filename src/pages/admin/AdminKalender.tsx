@@ -98,11 +98,11 @@ export default function AdminKalender() {
 
     const reader = new FileReader();
     reader.onload = async (event) => {
-      const data = event.target?.result;
-      if (!data) return;
+      const fileData = event.target?.result;
+      if (!fileData) return;
 
       try {
-        const workbook = XLSX.read(data, { type: 'array' });
+        const workbook = XLSX.read(fileData, { type: 'array' });
         const firstSheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[firstSheetName];
         
@@ -145,7 +145,7 @@ export default function AdminKalender() {
         if (newItems.length > 0) {
           setIsSaving(true);
           try {
-            await updateKalender([...data.kalender, ...newItems]);
+            await updateKalender([...(data.kalender || []), ...newItems]);
             toast({ title: 'Berhasil', description: `${newItems.length} kegiatan berhasil diimpor.` });
           } catch (err: any) {
             toast({ title: 'Gagal', description: 'Gagal menyimpan data: ' + err.message, variant: 'destructive' });
