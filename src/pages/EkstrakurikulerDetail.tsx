@@ -19,7 +19,6 @@ export default function EkstrakurikulerDetail() {
 
   const nama = tr(ekskul.nama, lang);
   const heroImg = ekskul.fotoUtama || ekskul.foto;
-  const heroImg = ekskul.fotoUtama || ekskul.foto;
 
   return (
     <div className="py-10">
