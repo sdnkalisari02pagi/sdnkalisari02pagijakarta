@@ -241,6 +241,8 @@ export default function AdminPegawai() {
               <TableHead>Foto</TableHead>
               <TableHead>Nama</TableHead>
               <TableHead>Jabatan</TableHead>
+              <TableHead>NIP/NIKKI</TableHead>
+              <TableHead>Pangkat/Gol</TableHead>
               <TableHead>Terakhir Diubah</TableHead>
               <TableHead className="text-right">Aksi</TableHead>
             </TableRow>
@@ -263,6 +265,8 @@ export default function AdminPegawai() {
                   <TableCell><img src={p.foto} alt={p.nama} className="w-10 h-10 rounded-full object-cover" /></TableCell>
                   <TableCell className="font-medium">{p.nama}</TableCell>
                   <TableCell>{p.jabatan}</TableCell>
+                  <TableCell>{p.nip || '-'}</TableCell>
+                  <TableCell>{p.pangkat_gol || '-'}</TableCell>
                   <TableCell className="text-xs text-muted-foreground">
                     {p.lastModified ? formatDate(p.lastModified) : p.updated_at ? formatDate(p.updated_at) : '-'}
                   </TableCell>
