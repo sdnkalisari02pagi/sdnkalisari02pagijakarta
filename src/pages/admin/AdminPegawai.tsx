@@ -39,7 +39,8 @@ export default function AdminPegawai() {
   }, [search, filterJabatan]);
 
   const filtered = data.pegawai.filter(p => {
-    const ms = p.nama.toLowerCase().includes(search.toLowerCase());
+    const searchLower = search.toLowerCase();
+    const ms = p.nama.toLowerCase().includes(searchLower) || (p.nip && p.nip.toLowerCase().includes(searchLower));
     const mf = filterJabatan === 'all' || p.jabatan === filterJabatan;
     return ms && mf;
   });
@@ -220,7 +221,7 @@ export default function AdminPegawai() {
       </div>
       <LastModifiedInfo timestamp={data.lastModified?.pegawai} />
       <div className="flex flex-col sm:flex-row gap-4 mb-6">
-        <div className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" /><Input placeholder="Cari nama..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10" /></div>
+        <div className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" /><Input placeholder="Nama/NIP/NIKKI" value={search} onChange={e => setSearch(e.target.value)} className="pl-10" /></div>
         <Select value={filterJabatan} onValueChange={setFilterJabatan}>
           <SelectTrigger className="w-full sm:w-48"><SelectValue /></SelectTrigger>
           <SelectContent>
