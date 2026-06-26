@@ -158,16 +158,12 @@ return (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 px-10 sm:px-8">
           {visibleEkskul.map((e) => {
             const cardImg = e.fotoUtama || e.foto;
-            const pelatihNames = (e.pelatih || []).slice(0, 3).map(p => tr(p.nama, lang)).filter(Boolean);
             return (
               <Link key={e.id} to={`/ekstrakurikuler/${e.id}`}>
                 <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full">
                   <img src={cardImg} alt={tr(e.nama, lang)} className="w-full h-48 object-cover" />
                   <CardContent className="pt-4">
                     <h3 className="font-semibold text-foreground mb-1">{tr(e.nama, lang)}</h3>
-                    {pelatihNames.length > 0 && (
-                      <p className="text-xs text-primary font-medium mb-2">{t('pelatih')}: {pelatihNames.join(', ')}</p>
-                    )}
                     <p className="text-sm text-muted-foreground line-clamp-2">{tr(e.deskripsi, lang)}</p>
                   </CardContent>
                 </Card>

@@ -115,7 +115,7 @@ async function fetchAll(): Promise<SchoolData> {
       logo, hero, heroImages, keunggulan, pegawai, jabatanList,
       berita, beritaGaleri, prestasi, prestasiGaleri,
       ekstrakurikuler, ekskulGaleri, dokumen, profil,
-      sambutan, kontak, footer, siswa, pelatih, kalender
+      sambutan, kontak, footer, siswa, kalender
     ] = await Promise.all([
       supabase.from('logo').select('*').limit(1).maybeSingle(),
       supabase.from('hero').select('*').limit(1).maybeSingle(),
@@ -135,7 +135,6 @@ async function fetchAll(): Promise<SchoolData> {
       supabase.from('kontak').select('*').limit(1).maybeSingle(),
       supabase.from('footer').select('*').limit(1).maybeSingle(),
       supabase.from('siswa').select('*'),
-      supabase.from('pelatih').select('*'),
       supabase.from('kalender_akademik').select('*').order('urutan', { ascending: true })
     ]);
 
@@ -176,9 +175,6 @@ async function fetchAll(): Promise<SchoolData> {
         id: e.id, nama: B(e.nama_id, e.nama_en), foto: e.foto, fotoUtama: e.foto_utama,
         deskripsi: B(e.deskripsi_id, e.deskripsi_en),
         galeri: (ekskulGaleri.data || []).filter(g => g.ekskul_id === e.id).map(g => g.url),
-        pelatih: (pelatih.data || []).filter(p => p.ekskul_id === e.id).map(p => ({
-          id: p.id, nama: B(p.nama_id, p.nama_en), foto: p.foto
-        })),
         updated_at: e.updated_at
       })),
       dokumen: (dokumen.data || []).map(d => ({
@@ -468,16 +464,6 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
       if (galeriPayload.length > 0) {
         const { error: insGalErr } = await supabase.from('ekstrakurikuler_galeri').insert(galeriPayload);
         if (insGalErr) throw insGalErr;
-      }
-      
-      const { error: delPelatihErr } = await supabase.from('pelatih').delete().neq('id', -1);
-      if (delPelatihErr) throw delPelatihErr;
-      const pelatihPayload = form.flatMap(f => (f.pelatih || []).map((p: any) => ({ 
-        ekskul_id: f.id, nama_id: p.nama?.id || '', nama_en: p.nama?.en || '', foto: p.foto || '' 
-      })));
-      if (pelatihPayload.length > 0) {
-        const { error: insPelatihErr } = await supabase.from('pelatih').insert(pelatihPayload);
-        if (insPelatihErr) throw insPelatihErr;
       }
     }
     updateLocal('ekstrakurikuler', form, 'ekstrakurikuler');

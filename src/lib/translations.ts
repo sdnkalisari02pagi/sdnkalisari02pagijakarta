@@ -43,7 +43,6 @@ export const translations = {
     page_ekstrakurikuler: 'Ekstrakurikuler',
     btn_kembali: 'Kembali',
     galeri: 'Galeri',
-    pelatih: 'Pelatih',
 
     page_profil: 'Profil Sekolah',
     page_siswa: 'Data Siswa',
@@ -136,7 +135,6 @@ export const translations = {
     page_ekstrakurikuler: 'Extracurricular',
     btn_kembali: 'Back',
     galeri: 'Gallery',
-    pelatih: 'Coach',
 
     page_profil: 'School Profile',
     page_siswa: 'Student Data',
