@@ -55,7 +55,8 @@ export default function Profil() {
   const pegawaiFiltered = useMemo(
     () =>
       data.pegawai.filter((p) => {
-        const ms = p.nama.toLowerCase().includes(pSearch.toLowerCase());
+        const searchLower = pSearch.toLowerCase();
+        const ms = p.nama.toLowerCase().includes(searchLower) || (p.nip && p.nip.toLowerCase().includes(searchLower));
         const mf = pFilterJabatan === "all" || p.jabatan === pFilterJabatan;
         return ms && mf;
       }),
@@ -173,6 +174,8 @@ export default function Profil() {
                       <CardContent className="p-4">
                         <h4 className="font-semibold text-foreground">{p.nama}</h4>
                         <p className="text-sm text-muted-foreground">{translateJabatan(p.jabatan)}</p>
+                        {p.nip && <p className="text-sm text-muted-foreground mt-1">NIP/NIKKI: {p.nip}</p>}
+                        {p.pangkat_gol && <p className="text-sm text-muted-foreground">Pangkat/Gol: {p.pangkat_gol}</p>}
                       </CardContent>
                     </Card>
                   ))}
@@ -207,7 +210,11 @@ export default function Profil() {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <p className="text-muted-foreground">{selectedPegawai ? translateJabatan(selectedPegawai.jabatan) : ''}</p>
+                  <div className="text-muted-foreground text-center">
+                    <p>{selectedPegawai ? translateJabatan(selectedPegawai.jabatan) : ''}</p>
+                    {selectedPegawai?.nip && <p className="mt-1">NIP/NIKKI: {selectedPegawai.nip}</p>}
+                    {selectedPegawai?.pangkat_gol && <p>Pangkat/Gol: {selectedPegawai.pangkat_gol}</p>}
+                  </div>
                 </div>
               </DialogContent>
             </Dialog>
