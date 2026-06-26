@@ -23,7 +23,7 @@ export default function AdminPegawai() {
   const [editItem, setEditItem] = useState<Pegawai | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [jabatanDialogOpen, setJabatanDialogOpen] = useState(false);
-  const [form, setForm] = useState({ nama: '', jabatan: '', foto: '' });
+  const [form, setForm] = useState({ nama: '', nip: '', pangkat_gol: '', jabatan: '', foto: '' });
   const [newJabatan, setNewJabatan] = useState({ id: '', en: '' });
   const [editJabIdx, setEditJabIdx] = useState<number | null>(null);
   const [editJabValue, setEditJabValue] = useState({ id: '', en: '' });
@@ -60,8 +60,8 @@ export default function AdminPegawai() {
   };
   const handleDragEnd = () => { setDraggedIndex(null); setDragOverIndex(null); };
 
-  const openAdd = () => { setEditItem(null); setForm({ nama: '', jabatan: '', foto: '' }); setDialogOpen(true); };
-  const openEdit = (p: Pegawai) => { setEditItem(p); setForm({ nama: p.nama, jabatan: p.jabatan, foto: p.foto }); setDialogOpen(true); };
+  const openAdd = () => { setEditItem(null); setForm({ nama: '', nip: '', pangkat_gol: '', jabatan: '', foto: '' }); setDialogOpen(true); };
+  const openEdit = (p: Pegawai) => { setEditItem(p); setForm({ nama: p.nama, nip: p.nip || '', pangkat_gol: p.pangkat_gol || '', jabatan: p.jabatan, foto: p.foto }); setDialogOpen(true); };
 
   const handleSave = async () => {
     if (!form.nama || !form.jabatan || !form.foto) {
@@ -209,6 +209,8 @@ export default function AdminPegawai() {
                     </SelectContent>
                   </Select>
                 </div>
+                <div><Label>NIP</Label><Input value={form.nip} onChange={e => setForm(f => ({ ...f, nip: e.target.value }))} /></div>
+                <div><Label>Pangkat/Gol</Label><Input value={form.pangkat_gol} onChange={e => setForm(f => ({ ...f, pangkat_gol: e.target.value }))} /></div>
                 <div><Label>Foto</Label><ImageUpload value={form.foto} onChange={url => setForm(f => ({ ...f, foto: url }))} placeholder required recommendedSize="300×400 px (3:4)" /></div>
                 <Button onClick={handleSave} className="w-full" disabled={isSaving}>{isSaving ? 'Menyimpan...' : 'Simpan'}</Button>
               </div>

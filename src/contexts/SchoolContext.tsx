@@ -41,7 +41,7 @@ export interface SchoolData {
 }
 
 export type KelasSiswa = { id: string; kelas: Bilingual; jumlah: number; updated_at?: string; lastModified?: string };
-export type Pegawai = { id: string; nama: string; jabatan: string; foto: string; updated_at?: string; lastModified?: string };
+export type Pegawai = { id: string; nama: string; nip?: string; pangkat_gol?: string; jabatan: string; foto: string; updated_at?: string; lastModified?: string };
 export type ContentTipe = 'foto' | 'video';
 export type Berita = { id: string; judul: Bilingual; tanggal: string; tipe: ContentTipe; fotoUtama: string; thumbnail?: string; videoUrl?: string; galeri?: string[]; deskripsi: Bilingual; updated_at?: string; lastModified?: string };
 export type Prestasi = Berita;
@@ -367,7 +367,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     
     if (form.length > 0) {
       const { error } = await supabase.from('pegawai').upsert(form.map(f => ({
-        id: f.id, nama: f.nama, jabatan: f.jabatan, foto: f.foto, updated_at: f.lastModified || f.updated_at || new Date().toISOString()
+        id: f.id, nama: f.nama, nip: f.nip || '', pangkat_gol: f.pangkat_gol || '', jabatan: f.jabatan, foto: f.foto, updated_at: f.lastModified || f.updated_at || new Date().toISOString()
       })));
       if (error) throw error;
     }
