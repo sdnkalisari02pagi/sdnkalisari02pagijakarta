@@ -7,6 +7,7 @@ import { Users, BookOpen, Star, Shield, ArrowRight, ChevronLeft, ChevronRight, A
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+import LastModifiedInfo from '@/components/LastModifiedInfo';
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {BookOpen, Users, Star, Shield, Award, Heart, Lightbulb, Target, Smile, Globe, Sparkles, Zap,};
 
@@ -214,7 +215,10 @@ return (
   {data.kalender && data.kalender.length > 0 && (
     <section className="py-12 md:py-16 bg-background">
       <div className="container mx-auto px-4 max-w-5xl">
-        <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 md:mb-10 text-foreground">{t('section_kalender_akademik')}</h2>
+        <div className="text-center mb-8 md:mb-10">
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">{t('section_kalender_akademik')}</h2>
+          <LastModifiedInfo timestamp={data.lastModified?.kalender} className="justify-center" />
+        </div>
         <div className="rounded-t-lg overflow-hidden border border-border">
           <table className="w-full text-sm sm:text-base">
             <thead className="bg-[#b91c1c] text-white">
