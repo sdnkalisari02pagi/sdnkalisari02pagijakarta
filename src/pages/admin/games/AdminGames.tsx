@@ -4,16 +4,15 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  Trophy, BookOpen, Settings, Users, Sparkles, Download, Upload, LineChart, Award, Plus, Trash2, Edit3, Check, Search, Filter 
+  BookOpen, Settings, Sparkles, Download, Upload, LineChart, Award, Plus, Trash2, Edit3, Search, Filter 
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart as ReLineChart, Line } from 'recharts';
 import { toast } from '@/hooks/use-toast';
 
 export default function AdminGames() {
-  const { games, badges, shopItems, activeLanguage } = useGames();
+  const { games, badges, activeLanguage } = useGames();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -24,13 +23,13 @@ export default function AdminGames() {
 
   // Statistics Chart Mock data
   const activityData = [
-    { name: 'Sen', XP: 450, Koin: 45, Pemain: 12 },
-    { name: 'Sel', XP: 800, Koin: 90, Pemain: 18 },
-    { name: 'Rab', XP: 600, Koin: 60, Pemain: 15 },
-    { name: 'Kam', XP: 950, Koin: 110, Pemain: 22 },
-    { name: 'Jum', XP: 1200, Koin: 150, Pemain: 30 },
-    { name: 'Sab', XP: 300, Koin: 30, Pemain: 8 },
-    { name: 'Min', XP: 500, Koin: 50, Pemain: 10 }
+    { name: 'Sen', XP: 450, Soal: 45, Pemain: 12 },
+    { name: 'Sel', XP: 800, Soal: 90, Pemain: 18 },
+    { name: 'Rab', XP: 600, Soal: 60, Pemain: 15 },
+    { name: 'Kam', XP: 950, Soal: 110, Pemain: 22 },
+    { name: 'Jum', XP: 1200, Soal: 150, Pemain: 30 },
+    { name: 'Sab', XP: 300, Soal: 30, Pemain: 8 },
+    { name: 'Min', XP: 500, Soal: 50, Pemain: 10 }
   ];
 
   // AI Question Generator logic stub (simulate OpenAI)
@@ -114,8 +113,8 @@ export default function AdminGames() {
             </Card>
             <Card>
               <CardContent className="pt-6">
-                <div className="text-2xl font-black text-amber-500">14.8k 🪙</div>
-                <p className="text-xs text-slate-500 font-bold mt-1">Koin Didapatkan Hari Ini</p>
+                <div className="text-2xl font-black text-amber-500">1.2k</div>
+                <p className="text-xs text-slate-500 font-bold mt-1">Soal Terjawab Hari Ini</p>
               </CardContent>
             </Card>
             <Card>
@@ -153,8 +152,8 @@ export default function AdminGames() {
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm font-bold">Perkembangan Akumulasi Koin</CardTitle>
-                <CardDescription>Total Koin yang didistribusikan dari game harian</CardDescription>
+                <CardTitle className="text-sm font-bold">Perkembangan Total Soal Terjawab</CardTitle>
+                <CardDescription>Jumlah soal yang dijawab siswa dari game harian</CardDescription>
               </CardHeader>
               <CardContent className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
@@ -163,7 +162,7 @@ export default function AdminGames() {
                     <XAxis dataKey="name" />
                     <YAxis />
                     <Tooltip />
-                    <Line type="monotone" dataKey="Koin" stroke="#f59e0b" strokeWidth={3} />
+                    <Line type="monotone" dataKey="Soal" stroke="#f59e0b" strokeWidth={3} />
                   </ReLineChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -177,7 +176,7 @@ export default function AdminGames() {
             <CardHeader className="flex justify-between items-center sm:flex-row gap-4">
               <div>
                 <CardTitle className="text-base font-bold">Daftar Modul Game</CardTitle>
-                <CardDescription>Aktifkan, nonaktifkan, atau atur bobot hadiah XP/Koin untuk 10 game.</CardDescription>
+                <CardDescription>Aktifkan, nonaktifkan, atau atur game cilik.</CardDescription>
               </div>
             </CardHeader>
             <CardContent>
@@ -192,7 +191,7 @@ export default function AdminGames() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-mono bg-slate-100 px-2 py-0.5 rounded border">+{g.xpReward} XP</span>
+                      <span className="text-xs font-mono bg-slate-100 px-2 py-0.5 rounded border">{g.totalLevels} Levels</span>
                       <Button size="sm" variant="outline">Edit</Button>
                     </div>
                   </div>
@@ -371,22 +370,18 @@ export default function AdminGames() {
         <TabsContent value="settings" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base font-bold">Pengaturan Hadiah XP & Koin</CardTitle>
-              <CardDescription>Konfigurasi kelipatan nilai XP & Koin permainan cilik secara terpusat.</CardDescription>
+              <CardTitle className="text-base font-bold">Pengaturan Batas Waktu Menjawab</CardTitle>
+              <CardDescription>Konfigurasi kelipatan nilai durasi batas waktu menjawab soal cilik secara terpusat.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid sm:grid-cols-3 gap-4">
+              <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>XP Jawaban Benar</Label>
-                  <Input type="number" defaultValue={10} />
+                  <Label>Batas Waktu Menjawab Soal (Detik)</Label>
+                  <Input type="number" defaultValue={30} />
                 </div>
                 <div className="space-y-2">
-                  <Label>XP Naik Level</Label>
-                  <Input type="number" defaultValue={100} />
-                </div>
-                <div className="space-y-2">
-                  <Label>Koin Naik Level</Label>
-                  <Input type="number" defaultValue={10} />
+                  <Label>Jumlah Soal Minimum Per Sesi Level</Label>
+                  <Input type="number" defaultValue={5} />
                 </div>
               </div>
               <Button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl px-6">Simpan Pengaturan</Button>
