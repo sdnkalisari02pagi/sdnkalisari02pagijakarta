@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useGames } from '@/contexts/GameContext';
 import { Button } from '@/components/ui/button';
 import { Timer, HelpCircle, CheckCircle2, AlertTriangle, ArrowLeft, RotateCcw } from 'lucide-react';
+import { memoryCardEmojis } from '@/lib/gamesSeedData';
 import TextToSpeech from '@/components/games/TextToSpeech';
 import { toast } from '@/hooks/use-toast';
 import { motion } from 'framer-motion';
@@ -117,9 +118,8 @@ export default function GamePlay() {
   // Memory Card Setup
   const initMemoryCards = (lvl: number) => {
     // Determine grid size based on level
-    const icons = ["🦁", "🐱", "👩‍🚀", "🤖", "🐉", "🐼", "🦄", "🐨", "🦊", "🐯"];
-    const pairsCount = lvl === 1 ? 4 : lvl === 2 ? 6 : lvl === 3 ? 8 : lvl === 4 ? 10 : 12;
-    const selectedIcons = icons.slice(0, pairsCount);
+    const pairsCount = lvl === 1 ? 2 : lvl === 2 ? 3 : lvl === 3 ? 6 : lvl === 4 ? 8 : 18;
+    const selectedIcons = [...memoryCardEmojis].sort(() => Math.random() - 0.5).slice(0, pairsCount);
     const cardPool = [...selectedIcons, ...selectedIcons].map((icon, index) => ({
       id: index,
       icon,
