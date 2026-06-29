@@ -94,7 +94,17 @@ export default function HasilTKA() {
         </CardHeader>
 
         <CardContent>
-          {!result ? (
+          {!data.profil.tkaActive ? (
+            <div className="py-8 text-center space-y-4 animate-in fade-in zoom-in duration-500">
+              <div className="mx-auto w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
+                <GraduationCap className="w-8 h-8 text-muted-foreground" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground">Pengumuman Ditutup</h3>
+              <p className="text-muted-foreground text-sm max-w-sm mx-auto leading-relaxed">
+                Mohon maaf, halaman pencarian pengumuman Hasil TKA saat ini sedang tidak aktif atau sudah ditutup oleh panitia.
+              </p>
+            </div>
+          ) : !result ? (
             <form onSubmit={handleSubmit} className="space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-300">
               {error && (
                 <div className="bg-destructive/10 text-destructive text-sm px-4 py-3 rounded-md text-center border border-destructive/20 font-medium">

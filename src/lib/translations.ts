@@ -43,7 +43,6 @@ export const translations = {
     page_ekstrakurikuler: 'Ekstrakurikuler',
     btn_kembali: 'Kembali',
     galeri: 'Galeri',
-    pelatih: 'Pelatih',
 
     page_profil: 'Profil Sekolah',
     page_siswa: 'Data Siswa',
@@ -54,7 +53,7 @@ export const translations = {
     profil_visi: 'Visi',
     profil_misi: 'Misi',
     profil_tujuan: 'Tujuan',
-    search_nama: 'Cari nama...',
+    search_nama: 'Nama/NIP/NIKKI',
     search_kelas: 'Cari kelas...',
     filter_semua_jabatan: 'Semua Jabatan',
     filter_jabatan: 'Filter jabatan',
@@ -136,7 +135,6 @@ export const translations = {
     page_ekstrakurikuler: 'Extracurricular',
     btn_kembali: 'Back',
     galeri: 'Gallery',
-    pelatih: 'Coach',
 
     page_profil: 'School Profile',
     page_siswa: 'Student Data',
@@ -147,7 +145,7 @@ export const translations = {
     profil_visi: 'Vision',
     profil_misi: 'Mission',
     profil_tujuan: 'Goals',
-    search_nama: 'Search name...',
+    search_nama: 'Name/NIP/NIKKI',
     search_kelas: 'Search class...',
     filter_semua_jabatan: 'All Positions',
     filter_jabatan: 'Filter position',
