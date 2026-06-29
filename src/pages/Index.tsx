@@ -36,6 +36,7 @@ const sambutanRef = useScrollAnimation();
 const keunggulanRef = useScrollAnimation();
 const ekstrakurikulerRef = useScrollAnimation();
 const beritaRef = useScrollAnimation();
+const prestasiRef = useScrollAnimation();
 const kalenderRef = useScrollAnimation();
 const [ekskulPage, setEkskulPage] = useState(0);
 
@@ -312,8 +313,43 @@ return (
     </div>
   </section>
 
+  {data.prestasi && data.prestasi.length > 0 && (
+    <section className="py-12 md:py-16 bg-background" ref={prestasiRef}>
+      <div className="container mx-auto px-4">
+        <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 md:mb-10 text-foreground scroll-animate">{t('page_prestasi')}</h2>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {data.prestasi.slice(0, 6).map((p, i) => {
+            const cardImg = p.tipe === 'video' ? p.thumbnail : p.fotoUtama;
+            return (
+              <Link key={p.id} to={`/prestasi/${p.id}`}>
+                <Card className="overflow-hidden hover:shadow-lg transition-shadow scroll-animate" style={{ animationDelay: `${(i + 1) * 100}ms` }}>
+                  <div className="relative">
+                    {cardImg && <img src={cardImg} alt={tr(p.judul, lang)} className="w-full h-48 object-cover" />}
+                    {p.tipe === 'video' && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                        <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center"><Play className="w-5 h-5 text-primary fill-primary ml-0.5" /></div>
+                      </div>
+                    )}
+                  </div>
+                  <CardContent className="pt-4">
+                    <p className="text-xs text-muted-foreground mb-1">{new Date(p.tanggal).toLocaleDateString(lang === 'en' ? 'en-US' : 'id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                    <h3 className="font-semibold text-foreground mb-2">{tr(p.judul, lang)}</h3>
+                    <p className="text-sm text-muted-foreground line-clamp-2">{tr(p.deskripsi, lang)}</p>
+                  </CardContent>
+                </Card>
+              </Link>
+            );
+          })}
+        </div>
+        <div className="text-center mt-8 scroll-animate delay-400">
+          <Link to="/prestasi"><Button variant="outline" className="gap-2">{t('btn_lihat_semua')} <ArrowRight className="w-4 h-4" /></Button></Link>
+        </div>
+      </div>
+    </section>
+  )}
+
   {data.kalender && data.kalender.length > 0 && (
-    <section id="kalender" className="py-12 md:py-16 bg-background">
+    <section id="kalender" className="py-12 md:py-16 bg-muted">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="text-center mb-8 md:mb-12">
           <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">{t('section_kalender_akademik')}</h2>
