@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Bilingual } from '@/lib/i18n';
 import { supabase } from '@/lib/supabase';
+import { updateFavicon } from '@/utils/updateFavicon';
 
 /* ================= TYPES ================= */
 
@@ -230,6 +231,12 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     fetchAll().then(setData);
   }, []);
+
+  useEffect(() => {
+    if (data.logo) {
+      updateFavicon(data.logo);
+    }
+  }, [data.logo]);
 
   const updateLocal = (key: keyof SchoolData, value: any, timestampKey?: string) => {
     let finalValue = value;
