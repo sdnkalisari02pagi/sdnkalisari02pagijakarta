@@ -301,6 +301,64 @@ const trafficPool = [
   }
 ];
 
+// Folktale Quizzes
+const ceritaPool = [
+  {
+    storyTitle: "Malin Kundang",
+    qId: "Siapakah nama anak durhaka yang dikutuk ibunya menjadi batu?",
+    qEn: "Who is the disobedient child cursed into stone by his mother?",
+    options: {
+      A: { id: "Malin Kundang", en: "Malin Kundang" },
+      B: { id: "Sangkuriang", en: "Sangkuriang" },
+      C: { id: "Kancil", en: "Deer" },
+      D: { id: "Timun Mas", en: "Timun Mas" }
+    },
+    correct: "A",
+    url: "https://images.unsplash.com/photo-1605647540924-852290f6b0d5?auto=format&fit=crop&q=80&w=400",
+    expId: "Malin Kundang dikutuk menjadi batu karena menolak mengakui ibu kandungnya.",
+    expEn: "Malin Kundang was cursed into stone for refusing to acknowledge his birth mother.",
+    hintId: "Namanya berawalan huruf M.",
+    hintEn: "His name starts with letter M."
+  },
+  {
+    storyTitle: "Sangkuriang",
+    qId: "Gunung apakah yang terbentuk dari perahu Tangkuban Parahu yang ditendang Sangkuriang?",
+    qEn: "Which mountain was formed from the Tangkuban Parahu boat kicked by Sangkuriang?",
+    options: {
+      A: { id: "Gunung Merapi", en: "Mount Merapi" },
+      B: { id: "Tangkuban Parahu", en: "Tangkuban Parahu" },
+      C: { id: "Gunung Gede", en: "Mount Gede" },
+      D: { id: "Gunung Bromo", en: "Mount Bromo" }
+    },
+    correct: "B",
+    url: "https://images.unsplash.com/photo-1542224566-6e85f2e6772f?auto=format&fit=crop&q=80&w=400",
+    expId: "Tangkuban Parahu terbentuk dari perahu terbalik yang ditendang karena marah.",
+    expEn: "Tangkuban Parahu was formed from an overturned boat kicked in anger.",
+    hintId: "Namanya mirip dengan perahu terbalik.",
+    hintEn: "Its name is similar to an overturned boat."
+  }
+];
+
+// Puzzle Nusantara Regions
+const puzzleNusantaraPool = [
+  {
+    qId: "Manakah pulau terbesar di Indonesia yang memiliki fauna endemik Orangutan?",
+    qEn: "Which largest island in Indonesia has endemic Orangutan fauna?",
+    options: {
+      A: { id: "Kalimantan", en: "Kalimantan" },
+      B: { id: "Jawa", en: "Java" },
+      C: { id: "Bali", en: "Bali" },
+      D: { id: "Madura", en: "Madura" }
+    },
+    correct: "A",
+    url: "https://images.unsplash.com/photo-1569336415962-a4bd9f69cd83?auto=format&fit=crop&q=80&w=400",
+    expId: "Pulau Kalimantan terkenal dengan hutan rimba dan habitat aseli Orangutan.",
+    expEn: "Kalimantan Island is famous for its rainforests and original habitat of Orangutan.",
+    hintId: "Disebut juga pulau Borneo.",
+    hintEn: "Also known as Borneo island."
+  }
+];
+
 // Helper to generate dynamic Math Questions
 export function generateMathQuestion(level: number): Question {
   const operations = ["+", "-", "*", "/"];
@@ -385,14 +443,13 @@ export function generateDynamicAIQuestions(gameId: string, level: number): Quest
   if (gameId === 'quiz-mapel') {
     return Array.from({ length: 5 }, (_, i) => {
       const base = mapelQuizPool[i % mapelQuizPool.length];
-      const variance = level * 2 + i;
       return {
         id: `${gameId}-${level}-${i}`,
         gameId,
         level,
         question: {
-          id: `${base.qId} (Tingkat ${level})`,
-          en: `${base.qEn} (Level ${level})`
+          id: `${base.qId}`,
+          en: `${base.qEn}`
         },
         options: base.options,
         correctAnswer: base.correct,
@@ -411,13 +468,13 @@ export function generateDynamicAIQuestions(gameId: string, level: number): Quest
         gameId,
         level,
         question: {
-          id: `Kategori: Kata. Susun huruf berikut!`,
-          en: `Category: Word. Rearrange the letters!`
+          id: `Susun huruf berikut agar membentuk kata yang sesuai petunjuk!`,
+          en: `Rearrange the letters to form the word based on the hint!`
         },
         correctAnswer: base.id,
         explanation: {
-          id: `Kata yang benar adalah ${base.id}.`,
-          en: `The correct word is ${base.en}.`
+          id: `Kata yang benar adalah GAJAH (Indonesia) atau ELEPHANT (English).`,
+          en: `The correct word is GAJAH (Indonesia) or ELEPHANT (English).`
         },
         hint: { id: base.hintId, en: base.hintEn },
         metadata: { Words: [{ id: base.id, en: base.en }], Answers: [base.id, base.en] }
@@ -427,7 +484,7 @@ export function generateDynamicAIQuestions(gameId: string, level: number): Quest
 
   // 4. Tebak Gambar
   if (gameId === 'tebak-gambar') {
-    return Array.from({ length: 3 }, (_, i) => {
+    return Array.from({ length: 2 }, (_, i) => {
       const base = imageGuessPool[i % imageGuessPool.length];
       return {
         id: `${gameId}-${level}-${i}`,
@@ -465,6 +522,24 @@ export function generateDynamicAIQuestions(gameId: string, level: number): Quest
     }];
   }
 
+  // 9. Cerita Rakyat
+  if (gameId === 'cerita-rakyat') {
+    return Array.from({ length: 2 }, (_, i) => {
+      const base = ceritaPool[i % ceritaPool.length];
+      return {
+        id: `${gameId}-${level}-${i}`,
+        gameId,
+        level,
+        question: { id: base.qId, en: base.qEn },
+        options: base.options,
+        correctAnswer: base.correct,
+        imageUrl: base.url,
+        explanation: { id: base.expId, en: base.expEn },
+        hint: { id: base.hintId, en: base.hintEn }
+      };
+    });
+  }
+
   // 10. Rambu Lalu Lintas
   if (gameId === 'rambu-lalu-lintas') {
     return Array.from({ length: 2 }, (_, i) => {
@@ -483,8 +558,26 @@ export function generateDynamicAIQuestions(gameId: string, level: number): Quest
     });
   }
 
-  // General Fallback for Memory, Word Search, and Puzzle Nusantara
-  return Array.from({ length: 5 }, (_, i) => ({
+  // 7. Puzzle Nusantara
+  if (gameId === 'puzzle-indo') {
+    return Array.from({ length: 1 }, (_, i) => {
+      const base = puzzleNusantaraPool[i % puzzleNusantaraPool.length];
+      return {
+        id: `${gameId}-${level}-${i}`,
+        gameId,
+        level,
+        question: { id: base.qId, en: base.qEn },
+        options: base.options,
+        correctAnswer: base.correct,
+        imageUrl: base.url,
+        explanation: { id: base.expId, en: base.expEn },
+        hint: { id: base.hintId, en: base.hintEn }
+      };
+    });
+  }
+
+  // General Fallback for Memory, Word Search
+  return Array.from({ length: 3 }, (_, i) => ({
     id: `${gameId}-${level}-${i}`,
     gameId,
     level,
@@ -493,13 +586,13 @@ export function generateDynamicAIQuestions(gameId: string, level: number): Quest
       en: `Learning Challenge ${gameId.replace('-', ' ').toUpperCase()} Level ${level}!`
     },
     options: {
-      A: { id: "Benar", en: "Correct" },
-      B: { id: "Salah 1", en: "Incorrect 1" },
-      C: { id: "Salah 2", en: "Incorrect 2" },
-      D: { id: "Salah 3", en: "Incorrect 3" }
+      A: { id: "Pilihan Benar", en: "Correct Choice" },
+      B: { id: "Pilihan Salah 1", en: "Incorrect 1" },
+      C: { id: "Pilihan Salah 2", en: "Incorrect 2" },
+      D: { id: "Pilihan Salah 3", en: "Incorrect 3" }
     },
     correctAnswer: "A",
     explanation: { id: "Hebat! Kamu menjawab dengan benar.", en: "Awesome! You answered correctly." },
-    hint: { id: "Jawaban yang benar adalah pilihan A.", en: "The correct choice is Option A." }
+    hint: { id: "Pilihlah opsi A.", en: "Pick option A." }
   }));
 }
