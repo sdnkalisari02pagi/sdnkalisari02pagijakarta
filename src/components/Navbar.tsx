@@ -13,7 +13,7 @@ export default function Navbar() {
   const { data } = useSchool();
   const { lang, setLang, t } = useLanguage();
   const isProfilActive = location.pathname.startsWith('/profil');
-  const isKegiatanActive = location.pathname.startsWith('/ekstrakurikuler') || location.pathname.startsWith('/prestasi');
+  const isKegiatanActive = location.pathname.startsWith('/ekstrakurikuler') || location.pathname.startsWith('/prestasi') || (location.pathname === '/' && location.hash === '#kalender');
 
   const profilSubMenu = [
     { label: t('nav_sejarah'), path: '/profil?tab=sejarah' },
@@ -25,6 +25,7 @@ export default function Navbar() {
   const kegiatanSubMenu = [
     { label: t('nav_ekstrakurikuler'), path: '/ekstrakurikuler' },
     { label: t('nav_prestasi'), path: '/prestasi' },
+    { label: t('nav_kalender'), path: '/#kalender' },
   ];
 
   const menuItems = [

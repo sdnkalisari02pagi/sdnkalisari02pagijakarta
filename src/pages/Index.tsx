@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useSchool } from '@/contexts/SchoolContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { tr } from '@/lib/i18n';
@@ -11,8 +11,22 @@ import LastModifiedInfo from '@/components/LastModifiedInfo';
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {BookOpen, Users, Star, Shield, Award, Heart, Lightbulb, Target, Smile, Globe, Sparkles, Zap,};
 
-export default function Index() {const { data } = useSchool();
-const langCtx = useLanguage();
+export default function Index() {
+  const { data } = useSchool();
+  const langCtx = useLanguage();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace('#', '');
+      const element = document.getElementById(id);
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }, 200);
+      }
+    }
+  }, [location.hash]);
 const t = typeof langCtx?.t === 'function'
   ? langCtx.t
   : (key: string) => key;
@@ -299,7 +313,7 @@ return (
   </section>
 
   {data.kalender && data.kalender.length > 0 && (
-    <section className="py-12 md:py-16 bg-background">
+    <section id="kalender" className="py-12 md:py-16 bg-background">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="text-center mb-8 md:mb-12">
           <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">{t('section_kalender_akademik')}</h2>
