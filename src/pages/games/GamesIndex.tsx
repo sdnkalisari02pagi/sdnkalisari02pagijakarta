@@ -63,16 +63,18 @@ export default function GamesIndex() {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.05 }}
-              className="bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-md border border-slate-100 dark:border-slate-800 hover:shadow-xl transition-all duration-300 group flex flex-col justify-between"
+              className="bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-md border border-slate-100 dark:border-slate-800 hover:shadow-[0_0_25px_rgba(99,102,241,0.3)] hover:border-indigo-400 dark:hover:border-indigo-500 transition-all duration-500 group flex flex-col justify-between hover:-translate-y-1"
             >
               <div>
                 <div className="h-44 overflow-hidden relative">
+                  {/* Colorful overlay on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/20 via-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10" />
                   <img 
                     src={g.cover} 
                     alt={g.title.id} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                    className="w-full h-full object-cover group-hover:scale-110 group-hover:rotate-1 transition-all duration-700 filter group-hover:contrast-110 group-hover:brightness-105" 
                   />
-                  <div className="absolute top-3 right-3 bg-white/95 dark:bg-slate-900/95 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase shadow-sm">
+                  <div className="absolute top-3 right-3 bg-white/95 dark:bg-slate-900/95 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase shadow-sm z-20 border border-slate-100 group-hover:border-indigo-400 transition-colors">
                     {t(g.difficulty === 'easy' ? "Mudah" : "Sedang", g.difficulty === 'easy' ? "Easy" : "Medium")}
                   </div>
                 </div>
@@ -98,7 +100,7 @@ export default function GamesIndex() {
                     <button
                       key={lvlNum}
                       onClick={() => handlePlayLevel(g.id, lvlNum)}
-                      className="py-2.5 bg-indigo-50 hover:bg-indigo-600 hover:text-white dark:bg-slate-800 dark:hover:bg-indigo-600 text-indigo-700 dark:text-slate-300 font-extrabold rounded-xl transition-all hover:scale-105 text-xs text-center border border-indigo-100 dark:border-slate-800"
+                      className="py-2.5 bg-indigo-50 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-purple-600 hover:text-white dark:bg-slate-800 dark:hover:from-indigo-500 dark:hover:to-purple-600 text-indigo-700 dark:text-slate-300 font-extrabold rounded-xl transition-all hover:scale-105 text-xs text-center border border-indigo-100 dark:border-slate-800 shadow-sm"
                     >
                       {lvlNum}
                     </button>

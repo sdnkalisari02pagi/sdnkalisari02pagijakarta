@@ -322,9 +322,20 @@ export default function GamePlay() {
               
               {/* Question Image (If available) */}
               {currentQ.imageUrl && (
-                <div className="h-44 rounded-2xl overflow-hidden mb-4 border">
-                  <img src={currentQ.imageUrl} alt="Question media" className="w-full h-full object-cover" />
-                </div>
+                <motion.div 
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: 'spring', stiffness: 100 }}
+                  className="bg-gradient-to-tr from-pink-500 via-purple-500 to-indigo-500 p-[3px] rounded-2xl shadow-[0_6px_20px_rgba(168,85,247,0.4)] overflow-hidden mb-4"
+                >
+                  <div className="h-44 rounded-[13px] overflow-hidden bg-white">
+                    <img 
+                      src={currentQ.imageUrl} 
+                      alt="Question media" 
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500 cursor-zoom-in" 
+                    />
+                  </div>
+                </motion.div>
               )}
 
               {/* Question Text */}
