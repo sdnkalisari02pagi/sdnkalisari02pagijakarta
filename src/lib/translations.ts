@@ -14,6 +14,7 @@ export const translations = {
     nav_layanan: 'Layanan',
     nav_dokumen: 'Dokumen',
     nav_kontak: 'Kontak',
+    nav_games: 'Games',
     nav_login: 'Login',
 
     hero_cta_feedback: 'Kirim Masukan Anda',
@@ -124,6 +125,7 @@ export const translations = {
     nav_layanan: 'Services',
     nav_dokumen: 'Documents',
     nav_kontak: 'Contact',
+    nav_games: 'Games',
     nav_login: 'Login',
 
     hero_cta_feedback: 'Send Us Feedback',
