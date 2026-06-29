@@ -84,7 +84,7 @@ export default function Navbar() {
           </Link>
           {data.profil.tkaActive && (
             <Link to="/hasil-tka" className={`px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground ${location.pathname.startsWith('/hasil-tka') ? 'bg-accent text-accent-foreground' : 'text-foreground'}`}>
-              Hasil TKA
+              {t('nav_tka')}
             </Link>
           )}
           <Link to="/kontak" className={`px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground ${location.pathname.startsWith('/kontak') ? 'bg-accent text-accent-foreground' : 'text-foreground'}`}>
@@ -129,7 +129,7 @@ export default function Navbar() {
 
           <Link to="/dokumen" onClick={() => setOpen(false)} className={`block px-6 py-3 text-sm font-medium hover:bg-accent ${location.pathname.startsWith('/dokumen') ? 'bg-accent text-accent-foreground' : 'text-foreground'}`}>{t('nav_dokumen')}</Link>
           {data.profil.tkaActive && (
-            <Link to="/hasil-tka" onClick={() => setOpen(false)} className={`block px-6 py-3 text-sm font-medium hover:bg-accent ${location.pathname.startsWith('/hasil-tka') ? 'bg-accent text-accent-foreground' : 'text-foreground'}`}>Hasil TKA</Link>
+            <Link to="/hasil-tka" onClick={() => setOpen(false)} className={`block px-6 py-3 text-sm font-medium hover:bg-accent ${location.pathname.startsWith('/hasil-tka') ? 'bg-accent text-accent-foreground' : 'text-foreground'}`}>{t('nav_tka')}</Link>
           )}
           <Link to="/kontak" onClick={() => setOpen(false)} className={`block px-6 py-3 text-sm font-medium hover:bg-accent ${location.pathname.startsWith('/kontak') ? 'bg-accent text-accent-foreground' : 'text-foreground'}`}>{t('nav_kontak')}</Link>
 
