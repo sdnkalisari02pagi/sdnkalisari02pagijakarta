@@ -2,18 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGames } from '@/contexts/GameContext';
 import { Button } from '@/components/ui/button';
-import { Heart, Timer, HelpCircle, Award, CheckCircle2, AlertTriangle, ArrowLeft, RotateCcw } from 'lucide-react';
+import { Timer, HelpCircle, CheckCircle2, AlertTriangle, ArrowLeft, RotateCcw } from 'lucide-react';
 import TextToSpeech from '@/components/games/TextToSpeech';
 import { toast } from '@/hooks/use-toast';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 export default function GamePlay() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { player, games, activeLanguage, getQuestions, answerQuestion, completeLevel, refillHearts, useHint } = useGames();
+  const { games, activeLanguage, getQuestions } = useGames();
 
   const game = games.find(g => g.id === id);
-  const [level, setLevel] = useState(1);
+  const [level, setLevel] = useState(() => {
+    const q = new URLSearchParams(window.location.search);
+    return parseInt(q.get('level') || '1') || 1;
+  });
   const [questions, setQuestions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -25,7 +28,6 @@ export default function GamePlay() {
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(30);
   const [showExplanation, setShowExplanation] = useState(false);
-  const [gameOver, setGameOver] = useState(false);
   const [gameFinished, setGameFinished] = useState(false);
   const [showHint, setShowHint] = useState(false);
 
@@ -44,7 +46,6 @@ export default function GamePlay() {
 
   const loadLevel = async (lvl: number) => {
     setLoading(true);
-    setGameOver(false);
     setGameFinished(false);
     setCurrentIdx(0);
     setScore(0);
@@ -81,7 +82,7 @@ export default function GamePlay() {
 
   // Countdown timer for Quiz/Mapel
   useEffect(() => {
-    if (loading || gameFinished || gameOver || isAnswered) return;
+    if (loading || gameFinished || isAnswered) return;
 
     const timer = setInterval(() => {
       setTimeLeft(prev => {
@@ -95,7 +96,7 @@ export default function GamePlay() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [currentIdx, isAnswered, loading, gameFinished, gameOver]);
+  }, [currentIdx, isAnswered, loading, gameFinished]);
 
   // Anagram / Susun Kata Setup
   const initScrambleWord = (q: any) => {
@@ -136,18 +137,15 @@ export default function GamePlay() {
         const matches = [...matchedCards, newSelected[0], newSelected[1]];
         setMatchedCards(matches);
         setSelectedCards([]);
-        answerQuestion(true);
         setScore(prev => prev + 1);
 
         if (matches.length === memoryCards.length) {
           setTimeout(() => {
-            completeLevel(id || '', level, 5);
             setGameFinished(true);
           }, 800);
         }
       } else {
         // No match
-        answerQuestion(false);
         setTimeout(() => {
           setSelectedCards([]);
         }, 1000);
@@ -161,7 +159,6 @@ export default function GamePlay() {
     if (!activeItem) return;
 
     const isMatch = activeItem.type === category;
-    answerQuestion(isMatch);
 
     if (isMatch) {
       setScore(prev => prev + 1);
@@ -173,7 +170,6 @@ export default function GamePlay() {
     if (activeTrashIdx + 1 < trashItems.length) {
       setActiveTrashIdx(prev => prev + 1);
     } else {
-      completeLevel(id || '', level, score + (isMatch ? 1 : 0));
       setGameFinished(true);
     }
   };
@@ -183,14 +179,9 @@ export default function GamePlay() {
     setIsAnswered(true);
     setSelectedOption(option);
     setShowExplanation(true);
-    answerQuestion(correct);
 
     if (correct) {
       setScore(prev => prev + 1);
-    }
-
-    if (player.hearts <= 1 && !correct) {
-      setGameOver(true);
     }
   };
 
@@ -207,20 +198,7 @@ export default function GamePlay() {
         initScrambleWord(questions[currentIdx + 1]);
       }
     } else {
-      completeLevel(id || '', level, score);
       setGameFinished(true);
-    }
-  };
-
-  const buyHint = () => {
-    if (useHint()) {
-      setShowHint(true);
-    }
-  };
-
-  const handleRefill = () => {
-    if (refillHearts()) {
-      setGameOver(false);
     }
   };
 
@@ -249,11 +227,6 @@ export default function GamePlay() {
         </Button>
 
         <div className="flex items-center gap-4 bg-white/80 px-4 py-2 rounded-2xl shadow-sm border">
-          <div className="flex items-center gap-1 text-rose-500 font-bold">
-            <Heart className="w-5 h-5 fill-current" />
-            <span>{player.hearts}</span>
-          </div>
-
           <div className="flex items-center gap-1 text-slate-500 font-mono text-sm">
             <Timer className="w-4 h-4" />
             <span>{timeLeft}s</span>
@@ -263,26 +236,8 @@ export default function GamePlay() {
 
       <div className="max-w-xl mx-auto px-4 mt-6">
         
-        {/* Game Over Screen */}
-        {gameOver && (
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 text-center shadow-xl border border-rose-100 relative overflow-hidden">
-            <div className="text-6xl mb-4">💔</div>
-            <h2 className="text-2xl font-black text-rose-500">{t("Wah, Nyawa Habis!", "Oops, Hearts Empty!")}</h2>
-            <p className="text-sm text-slate-500 mt-2">{t("Isi ulang nyawa menggunakan koin untuk lanjut bertualang cilik!", "Refill hearts using coins to continue your kid adventure!")}</p>
-
-            <div className="mt-6 flex flex-col gap-3">
-              <Button onClick={handleRefill} className="bg-rose-500 hover:bg-rose-600 text-white font-bold w-full py-6 text-base rounded-2xl shadow-md gap-2">
-                <span>❤️ Isi Ulang (20 Koin)</span>
-              </Button>
-              <Button onClick={() => navigate('/games')} variant="outline" className="w-full py-6 rounded-2xl">
-                {t("Kembali ke Beranda", "Back to Hub")}
-              </Button>
-            </div>
-          </div>
-        )}
-
         {/* Game Finished Screen */}
-        {gameFinished && !gameOver && (
+        {gameFinished && (
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 text-center shadow-xl border border-indigo-100 relative overflow-hidden">
             <div className="text-6xl mb-4 animate-bounce">🏆</div>
             <h2 className="text-2xl font-black text-indigo-600 dark:text-indigo-400">{t("Hebat! Selesai!", "Superb! Complete!")}</h2>
@@ -308,14 +263,33 @@ export default function GamePlay() {
         )}
 
         {/* Active Gameplay Panel */}
-        {!gameOver && !gameFinished && currentQ && (
+        {!gameFinished && currentQ && (
           <div className="space-y-6">
             
-            {/* Header Level */}
+            {/* Header Level & Level Switcher */}
             <div className="flex justify-between items-center bg-white/40 backdrop-blur-sm p-3 rounded-2xl border">
-              <span className="text-xs font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">
-                Level {level}
-              </span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mr-2">
+                  Level {level}
+                </span>
+                
+                {/* Level Buttons directly in gameplay */}
+                <div className="flex gap-1">
+                  {[1, 2, 3, 4, 5].map((lvlNum) => (
+                    <button
+                      key={lvlNum}
+                      onClick={() => setLevel(lvlNum)}
+                      className={`w-6 h-6 text-[10px] font-black rounded-lg transition-all ${
+                        level === lvlNum 
+                          ? 'bg-indigo-600 text-white' 
+                          : 'bg-white hover:bg-slate-100 text-slate-600 border'
+                      }`}
+                    >
+                      {lvlNum}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <span className="text-xs text-slate-500 font-bold">
                 Soal {currentIdx + 1} / {questions.length}
               </span>
@@ -327,11 +301,11 @@ export default function GamePlay() {
               
               {!showHint && (
                 <button 
-                  onClick={buyHint}
+                  onClick={() => setShowHint(true)}
                   className="flex items-center gap-1 text-[11px] bg-amber-100 hover:bg-amber-200 text-amber-700 px-3 py-2 rounded-xl font-bold border border-amber-200"
                 >
                   <HelpCircle className="w-3.5 h-3.5" />
-                  <span>Petunjuk (5🪙)</span>
+                  <span>Petunjuk (Hint)</span>
                 </button>
               )}
             </div>
@@ -393,7 +367,7 @@ export default function GamePlay() {
               {/* Game 5: Memory Cards */}
               {id === 'memory-card' && (
                 <div className="grid grid-cols-4 gap-3">
-                  {memoryCards.map((card, idx) => {
+                  {memoryCards.map((card) => {
                     const isFlipped = selectedCards.includes(card.id) || matchedCards.includes(card.id);
                     return (
                       <div 
@@ -471,23 +445,21 @@ export default function GamePlay() {
 
             {/* Answer Explanation & Continuation */}
             {isAnswered && (
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
+              <div 
                 className={`p-5 rounded-2xl border ${
                   isCorrect ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-rose-50 border-rose-200 text-rose-800'
                 }`}
               >
                 <div className="flex items-center gap-2 font-bold mb-1 text-sm">
                   {isCorrect ? <CheckCircle2 className="w-4 h-4" /> : <AlertTriangle className="w-4 h-4" />}
-                  <span>{isCorrect ? t("Jawaban Benar! +10 XP", "Correct Answer! +10 XP") : t("Jawaban Kurang Tepat!", "Incorrect Answer!")}</span>
+                  <span>{isCorrect ? t("Jawaban Benar!", "Correct Answer!") : t("Jawaban Kurang Tepat!", "Incorrect Answer!")}</span>
                 </div>
                 <p className="text-xs opacity-90">{t(currentQ.explanation.id, currentQ.explanation.en)}</p>
 
                 <Button onClick={nextQuestion} className="mt-4 bg-white hover:bg-slate-100 text-slate-800 font-bold border rounded-xl w-full">
                   {t("Lanjut", "Continue")}
                 </Button>
-              </motion.div>
+              </div>
             )}
 
           </div>
