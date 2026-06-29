@@ -89,6 +89,23 @@ export default function GamePlay() {
     loadLevel(level);
   }, [id, level]);
 
+  const playCountdownBeep = () => {
+    try {
+      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+      gainNode.gain.setValueAtTime(0.04, audioCtx.currentTime);
+      oscillator.start();
+      oscillator.stop(audioCtx.currentTime + 0.1);
+    } catch (e) {
+      console.log("Audio beep failed:", e);
+    }
+  };
+
   // Countdown timer for Quiz/Mapel
   useEffect(() => {
     if (loading || gameFinished || isAnswered) return;
@@ -99,6 +116,9 @@ export default function GamePlay() {
           clearInterval(timer);
           handleAnswerSubmit(false, ''); // timeout counts as wrong
           return 0;
+        }
+        if (prev <= 4) {
+          playCountdownBeep();
         }
         return prev - 1;
       });
@@ -235,10 +255,23 @@ export default function GamePlay() {
         </Button>
 
         {level > 1 && (
-          <div className="flex items-center gap-4 bg-white/80 px-4 py-2 rounded-2xl shadow-sm border">
-            <div className="flex items-center gap-1 text-slate-500 font-mono text-sm">
-              <Timer className="w-4 h-4" />
+          <div className="flex flex-col items-end gap-1.5 shrink-0">
+            <div className="flex items-center gap-1 text-slate-500 font-mono text-xs bg-white/80 px-3.5 py-1.5 rounded-xl border shadow-sm">
+              <Timer className="w-3.5 h-3.5 text-indigo-500" />
               <span>{timeLeft}s</span>
+            </div>
+            {/* Visual Progress Bar */}
+            <div className="w-24 bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+              <div 
+                className={`h-full transition-all duration-1000 ${
+                  (timeLeft / getTimerForLvl(level)) > 0.5 
+                    ? "bg-emerald-500" 
+                    : (timeLeft / getTimerForLvl(level)) > 0.25 
+                    ? "bg-amber-500" 
+                    : "bg-rose-500 animate-pulse"
+                }`} 
+                style={{ width: `${(timeLeft / getTimerForLvl(level)) * 100}%` }}
+              ></div>
             </div>
           </div>
         )}

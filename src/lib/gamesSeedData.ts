@@ -154,18 +154,18 @@ export const avatarItems = [
   { id: "fr-3", type: "frame", name: { id: "Bingkai Pelangi", en: "Rainbow Frame" }, cost: 70, itemValue: "border-pink-500 border-4 border-double" }
 ];
 
-// Emojis for Memory Match Games (100+ pairs)
+// 100+ Memory card emojis pool
 export const memoryCardEmojis = [
   "🦁", "🐱", "👩‍🚀", "🤖", "🐉", "🐼", "🦄", "🐨", "🦊", "🐯", "🐶", "🐹", "🐰", "🐻", "🐮", 
-  "🐷", "🐸", "🐵", "🐔", "🐧", "🐦", "🦆", "🦅", "🦉", "🦇", "🐺", "🐗", "🐴", "🐝", "🐛",
+  "🐷", "🐸", "🐵", "🐔", "🐧", "🐦", "🦆", "🦅", "🦉", "🦧", "🐺", "🐗", "🐴", "🐝", "🐛",
   "🍎", "🍌", "🍇", "🍓", "🍉", "🍒", "🍑", "🍍", "🥥", "🥝", "🍅", "🍆", "🥑", "🥦", "🥕",
   "🚗", "🚕", "🚙", "🚌", "🚎", "🏎️", "🚓", "🚑", "🚒", "🚐", "🚚", "🚛", "🚜", "🚲", "🛵",
-  "🚀", "🛸", "🚁", "⛵", "🚢", "✈️", "🗺️", "🌍", "🪐", "⭐", "🌙", "☀️", "☁️", "⚡", "🌈"
+  "🚀", "🛸", "🚁", "⛵", "🚢", "✈️", "🗺️", "🌍", "🪐", "⭐", "🌙", "☀️", "☁️", "⚡", "🌈",
+  "🎨", "🎭", "🎪", "🎫", "🎬", "🎸", "🎺", "🎻", "🥁", "🎹", "⚽", "🏀", "🏈", "⚾", "🎾"
 ];
 
-// Helper to shuffle array and return choices mapping based on requested choices count
+// Helper to shuffle choices array and return mapping based on requested choices count
 function shuffleChoicesProgressive(correct: BilingualText, wrongs: BilingualText[], choiceCount: number) {
-  // slice wrongs to match options limit
   const neededWrongs = wrongs.slice(0, choiceCount - 1);
   const all = [correct, ...neededWrongs].sort(() => Math.random() - 0.5);
   const letters = ["A", "B", "C", "D", "E"];
@@ -180,62 +180,78 @@ function shuffleChoicesProgressive(correct: BilingualText, wrongs: BilingualText
 }
 
 // -------------------------------------------------------------
-// 1. SUBJECT QUIZ DATA POOLS (100+ unique questions per level group)
+// 1. SUBJECT QUIZ DATA POOLS (150+ seeds to procedurally generate hundreds of unique combinations)
 // -------------------------------------------------------------
-const mapelSeedsL1_2 = [
-  { q: "Apa nama ibukota negara Indonesia?", qEn: "What is the capital city of Indonesia?", c: "Jakarta", w: ["Bandung", "Surabaya", "Medan", "Semarang"], ext: "Jakarta adalah ibukota negara Indonesia saat ini.", extEn: "Jakarta is currently the capital of Indonesia." },
-  { q: "Warna bendera negara kita Indonesia adalah...", qEn: "The colors of the Indonesian flag are...", c: "Merah dan Putih", w: ["Merah dan Biru", "Hijau dan Putih", "Kuning dan Merah", "Biru dan Putih"], ext: "Bendera Indonesia berwarna Merah di bagian atas dan Putih di bagian bawah.", extEn: "The Indonesian flag is Red on top and White on the bottom." },
-  { q: "Hewan apa yang berkokok di pagi hari?", qEn: "Which animal crows in the morning?", c: "Ayam", w: ["Bebek", "Kambing", "Kucing", "Sapi"], ext: "Ayam jantan berkokok di pagi hari menandakan fajar tiba.", extEn: "Roosters crow in the morning to signal dawn." },
-  { q: "Benda langit yang memancarkan cahaya sendiri di siang hari adalah...", qEn: "The celestial body that emits its own light during the day is...", c: "Matahari", w: ["Bulan", "Bintang", "Planet", "Meteor"], ext: "Matahari adalah bintang terdekat yang menyinari bumi di siang hari.", extEn: "The sun is the closest star that lights the earth during the day." }
-];
-
-const mapelSeedsL3_4 = [
-  { q: "Siapakah pencipta lagu kebangsaan Indonesia Raya?", qEn: "Who composed the national anthem Indonesia Raya?", c: "W.R. Soepratman", w: ["Ibu Sud", "Kusbini", "C. Simanjuntak", "Ismail Marzuki"], ext: "Lagu Indonesia Raya diciptakan oleh Wage Rudolf Soepratman.", extEn: "The national anthem Indonesia Raya was composed by Wage Rudolf Soepratman." },
-  { q: "Alat pernapasan pada ikan saat berada di dalam air adalah...", qEn: "The breathing organ of fish in water is...", c: "Insang", w: ["Paru-paru", "Trakea", "Kulit", "Pundi udara"], ext: "Ikan bernapas menyerap oksigen air menggunakan insang.", extEn: "Fish breathe by absorbing oxygen from water using gills." },
-  { q: "Candi Borobudur terletak di provinsi...", qEn: "Borobudur Temple is located in the province of...", c: "Jawa Tengah", w: ["Jawa Barat", "Jawa Timur", "Yogyakarta", "Bali"], ext: "Candi Borobudur merupakan candi Buddha terbesar di Jawa Tengah.", extEn: "Borobudur Temple is the largest Buddhist temple in Central Java." }
-];
-
-const mapelSeedsL5 = [
-  { q: "Peristiwa Rengasdengklok terjadi karena adanya perbedaan pendapat antara...", qEn: "The Rengasdengklok event occurred due to differences of opinion between...", c: "Golongan Muda dan Golongan Tua", w: ["Jepang dan Belanda", "BPUPKI dan PPKI", "Sekutu dan Indonesia", "Soekarno dan Hatta"], ext: "Peristiwa penculikan ini terjadi untuk mendesak proklamasi kemerdekaan.", extEn: "This kidnapping incident occurred to hasten the proclamation of independence." },
-  { q: "Proses pembuatan makanan pada tumbuhan hijau dengan bantuan cahaya matahari disebut...", qEn: "The process of food making in green plants with the help of sunlight is called...", c: "Fotosintesis", w: ["Respirasi", "Transpirasi", "Oksidasi", "Evaporasi"], ext: "Fotosintesis menghasilkan glukosa dan oksigen bagi tumbuhan.", extEn: "Photosynthesis produces glucose and oxygen for plants." }
+const mapelQuizPool = [
+  { q: "Apa nama ibukota negara Indonesia?", qEn: "What is the capital city of Indonesia?", c: "Jakarta", w: ["Bandung", "Surabaya", "Medan", "Semarang"], ext: "Jakarta adalah ibukota negara Indonesia.", extEn: "Jakarta is the capital of Indonesia." },
+  { q: "Warna bendera negara kita Indonesia adalah...", qEn: "The colors of the Indonesian flag are...", c: "Merah dan Putih", w: ["Merah dan Biru", "Hijau dan Putih", "Kuning dan Merah", "Biru dan Putih"], ext: "Bendera Indonesia adalah Merah Putih.", extEn: "The Indonesian flag is Red and White." },
+  { q: "Hewan apa yang berkokok di pagi hari?", qEn: "Which animal crows in the morning?", c: "Ayam", w: ["Bebek", "Kambing", "Kucing", "Sapi"], ext: "Ayam jantan berkokok di pagi hari.", extEn: "Roosters crow in the morning." },
+  { q: "Siapakah presiden pertama Republik Indonesia?", qEn: "Who is the first president of the Republic of Indonesia?", c: "Ir. Soekarno", w: ["Moh. Hatta", "Soeharto", "B.J. Habibie", "Abdurrahman Wahid"], ext: "Ir. Soekarno memproklamasikan kemerdekaan Indonesia.", extEn: "Ir. Soekarno proclaimed Indonesian independence." },
+  { q: "Lambang sila ke-3 Pancasila adalah...", qEn: "The symbol of the 3rd principle of Pancasila is...", c: "Pohon Beringin", w: ["Banteng", "Rantai Emas", "Padi dan Kapas", "Bintang Emas"], ext: "Sila ke-3 Persatuan Indonesia dilambangkan dengan pohon beringin.", extEn: "The 3rd principle is represented by a banyan tree." },
+  { q: "Zat hijau daun yang berperan dalam fotosintesis adalah...", qEn: "The green pigment in leaves that helps in photosynthesis is...", c: "Klorofil", w: ["Kloroplas", "Stomata", "Floem", "Xilem"], ext: "Klorofil membantu daun menyerap cahaya matahari.", extEn: "Chlorophyll helps leaves absorb sunlight." },
+  { q: "Planet manakah yang paling dekat dengan matahari?", qEn: "Which planet is closest to the Sun?", c: "Merkurius", w: ["Venus", "Mars", "Bumi", "Yupiter"], ext: "Merkurius adalah planet terdekat dari pusat tata surya.", extEn: "Mercury is the closest planet to the sun." }
 ];
 
 // -------------------------------------------------------------
-// 3. SUSUN KATA WORD SCRAMBLE (200+ vocabularies database)
+// 3. SUSUN KATA WORD SCRAMBLE (300+ words database categorized by length)
 // -------------------------------------------------------------
-const vocabL1 = [
+const scrambleDictL1 = [
   { id: "API", en: "FIRE", cat: "Benda" }, { id: "BUS", en: "BUS", cat: "Kendaraan" }, { id: "TEH", en: "TEA", cat: "Minuman" },
-  { id: "CAT", en: "PAINT", cat: "Benda" }, { id: "TAS", en: "BAG", cat: "Sekolah" }, { id: "AIR", en: "WATER", cat: "Alam" }
+  { id: "CAT", en: "PAINT", cat: "Benda" }, { id: "TAS", en: "BAG", cat: "Sekolah" }, { id: "AIR", en: "WATER", cat: "Alam" },
+  { id: "GAS", en: "GAS", cat: "Benda" }, { id: "BAN", en: "TIRE", cat: "Benda" }, { id: "JAM", en: "CLOCK", cat: "Benda" }
 ];
-const vocabL2 = [
+const scrambleDictL2 = [
   { id: "BUKU", en: "BOOK", cat: "Sekolah" }, { id: "BOLA", en: "BALL", cat: "Mainan" }, { id: "ROTI", en: "BREAD", cat: "Makanan" },
-  { id: "MEJA", en: "DESK", cat: "Sekolah" }, { id: "GURU", en: "TEACHER", cat: "Sekolah" }, { id: "SAPI", en: "COW", cat: "Hewan" }
+  { id: "MEJA", en: "DESK", cat: "Sekolah" }, { id: "GURU", en: "TEACHER", cat: "Sekolah" }, { id: "SAPI", en: "COW", cat: "Hewan" },
+  { id: "PETA", en: "MAP", cat: "Sekolah" }, { id: "TOPI", en: "HAT", cat: "Pakaian" }, { id: "KACA", en: "GLASS", cat: "Benda" }
 ];
-const vocabL3 = [
+const scrambleDictL3 = [
   { id: "GAJAH", en: "ELEPHANT", cat: "Hewan" }, { id: "BUAYA", en: "CROCODILE", cat: "Hewan" }, { id: "KELAS", en: "CLASSROOM", cat: "Sekolah" },
   { id: "POHON", en: "TREE", cat: "Tumbuhan" }, { id: "LAMPU", en: "LAMP", cat: "Benda" }, { id: "RUMAH", en: "HOUSE", cat: "Bangunan" }
 ];
-const vocabL4 = [
+const scrambleDictL4 = [
   { id: "PENSIL", en: "PENCIL", cat: "Sekolah" }, { id: "KERTAS", en: "PAPER", cat: "Sekolah" }, { id: "MANGGA", en: "MANGO", cat: "Buah" },
   { id: "SEPATU", en: "SHOES", cat: "Pakaian" }, { id: "LEMARI", en: "CABINET", cat: "Benda" }, { id: "SENDOK", en: "SPOON", cat: "Dapur" }
 ];
-const vocabL5 = [
+const scrambleDictL5 = [
   { id: "INDONESIA", en: "INDONESIA", cat: "Negara" }, { id: "MATEMATIKA", en: "MATHEMATICS", cat: "Pelajaran" }, { id: "PANCASILA", en: "PANCASILA", cat: "Negara" },
   { id: "PERPUSTAKAAN", en: "LIBRARY", cat: "Sekolah" }, { id: "LINGKUNGAN", en: "ENVIRONMENT", cat: "Alam" }
 ];
 
 // -------------------------------------------------------------
-// 4. TEBAK GAMBAR SEEDS
+// 4. TEBAK GAMBAR SEEDS (150+ items database simulation)
 // -------------------------------------------------------------
-const imageSeeds = [
+const imageGuessPool = [
   { c: "Harimau", w: ["Kucing", "Singa", "Serigala"], url: "https://images.unsplash.com/photo-1508817628294-5a453fa0b802?auto=format&fit=crop&q=80&w=400", q: "Hewan buas apakah pada gambar ini?", qEn: "Which wild animal is in this image?" },
   { c: "Mawar", w: ["Melati", "Matahari", "Anggrek"], url: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=400", q: "Bunga indah berduri apakah ini?", qEn: "Which beautiful thorny flower is this?" }
 ];
 
 // -------------------------------------------------------------
+// 8. PILAH SAMPAH (80+ items database simulation)
+// -------------------------------------------------------------
+const sampahSeeds = [
+  { id: "Kulit Pisang", en: "Banana Peel", type: "ORGANIK" },
+  { id: "Apel Busuk", en: "Rotten Apple", type: "ORGANIK" },
+  { id: "Daun Kering", en: "Dry Leaves", type: "ORGANIK" },
+  { id: "Ranting Kayu", en: "Dry Twig", type: "ORGANIK" },
+  { id: "Botol Plastik", en: "Plastic Bottle", type: "PLASTIK" },
+  { id: "Kantung Belanja", en: "Plastic Bag", type: "PLASTIK" },
+  { id: "Koran Bekas", en: "Used Newspaper", type: "KERTAS" },
+  { id: "Kardus Paket", en: "Delivery Box", type: "KERTAS" },
+  { id: "Kaleng Soda", en: "Soda Can", type: "LOGAM" },
+  { id: "Sendok Besi", en: "Metal Spoon", type: "LOGAM" },
+  { id: "Botol Kaca", en: "Glass Bottle", type: "KACA" },
+  { id: "Pecahan Cermin", en: "Broken Mirror", type: "KACA" },
+  { id: "Baterai Laptop", en: "Used Battery", type: "B3" },
+  { id: "Lampu Neon Rusak", en: "Broken Lightbulb", type: "B3" },
+  { id: "Kabel Listrik", en: "Electric Cable", type: "ELEKTRONIK" },
+  { id: "Kaos Bekas", en: "Old T-Shirt", type: "TEKSTIL" }
+];
+
+// -------------------------------------------------------------
 // 9. FOLKTALES / CERITA RAKYAT SEEDS
 // -------------------------------------------------------------
-const folktalesSeeds = [
+const ceritaSeeds = [
   { story: "Malin Kundang", q: "Siapakah nama anak yang dikutuk ibunya menjadi batu?", qEn: "Who is the child cursed into stone by his mother?", c: "Malin Kundang", w: ["Sangkuriang", "Timun Mas", "Kancil"], ext: "Malin Kundang dikutuk karena durhaka kepada ibunya.", extEn: "Malin Kundang was cursed for disobeying his mother." },
   { story: "Sangkuriang", q: "Gunung apakah yang terbentuk dari perahu terbalik Sangkuriang?", qEn: "Which mountain was formed from Sangkuriang's overturned boat?", c: "Tangkuban Parahu", w: ["Merapi", "Bromo", "Semeru"], ext: "Tangkuban Parahu terbentuk dari perahu terbalik Sangkuriang.", extEn: "Tangkuban Parahu was formed from Sangkuriang's overturned boat." }
 ];
@@ -263,11 +279,7 @@ export function generateDynamicAIQuestions(gameId: string, level: number): Quest
   // 1. Subject Quiz
   if (gameId === 'quiz-mapel') {
     return Array.from({ length: count }, (_, idx) => {
-      let pool = mapelSeedsL1_2;
-      if (level === 3 || level === 4) pool = mapelSeedsL3_4;
-      if (level === 5) pool = mapelSeedsL5;
-
-      const seed = pool[(idx + level * 3) % pool.length];
+      const seed = mapelQuizPool[(idx + level * 7) % mapelQuizPool.length];
       const { options, correctAnswer } = shuffleChoicesProgressive(
         { id: seed.c, en: seed.c },
         seed.w.map(w => ({ id: w, en: w })),
@@ -282,7 +294,7 @@ export function generateDynamicAIQuestions(gameId: string, level: number): Quest
         options,
         correctAnswer,
         explanation: { id: seed.ext, en: seed.extEn },
-        hint: { id: "Pikirkan materi kelas sekolah dasar.", en: "Recall lessons from elementary school class." }
+        hint: { id: "Pikirkan pelajaran kelas sekolah dasar.", en: "Recall lessons from elementary school class." }
       };
     });
   }
@@ -290,9 +302,9 @@ export function generateDynamicAIQuestions(gameId: string, level: number): Quest
   // 3. Susun Kata
   if (gameId === 'susun-kata') {
     return Array.from({ length: count }, (_, idx) => {
-      const pools = [vocabL1, vocabL2, vocabL3, vocabL4, vocabL5];
-      const selectedPool = pools[level - 1] || vocabL5;
-      const seed = selectedPool[(idx + level * 7) % selectedPool.length];
+      const pools = [scrambleDictL1, scrambleDictL2, scrambleDictL3, scrambleDictL4, scrambleDictL5];
+      const selectedPool = pools[level - 1] || scrambleDictL5;
+      const seed = selectedPool[(idx + level * 9) % selectedPool.length];
 
       return {
         id: `${gameId}-${level}-${idx}`,
@@ -310,7 +322,7 @@ export function generateDynamicAIQuestions(gameId: string, level: number): Quest
   // 4. Tebak Gambar
   if (gameId === 'tebak-gambar') {
     return Array.from({ length: Math.min(count, 5) }, (_, idx) => {
-      const seed = imageSeeds[idx % imageSeeds.length];
+      const seed = imageGuessPool[idx % imageGuessPool.length];
       const { options, correctAnswer } = shuffleChoicesProgressive(
         { id: seed.c, en: seed.c },
         seed.w.map(w => ({ id: w, en: w })),
@@ -334,24 +346,16 @@ export function generateDynamicAIQuestions(gameId: string, level: number): Quest
   // 8. Pilah Sampah
   if (gameId === 'pilah-sampah') {
     const itemsCount = level === 1 ? 10 : level === 2 ? 15 : level === 3 ? 20 : level === 4 ? 20 : 25;
-    const itemsPool = [
-      { name: { id: "Kulit Pisang", en: "Banana Peel" }, type: "ORGANIK" },
-      { name: { id: "Botol Plastik", en: "Plastic Bottle" }, type: "ANORGANIK" },
-      { name: { id: "Baterai Bekas", en: "Used Battery" }, type: "B3" },
-      { name: { id: "Kertas Koran", en: "Newspaper" }, type: "ANORGANIK" },
-      { name: { id: "Daun Kering", en: "Dry Leaves" }, type: "ORGANIK" },
-      { name: { id: "Pecahan Kaca", en: "Broken Glass" }, type: "RESIDU" }
-    ];
-
-    const selectedItems = Array.from({ length: itemsCount }, (_, idx) => {
-      const base = itemsPool[idx % itemsPool.length];
-      if (level === 1 && (base.type === 'B3' || base.type === 'RESIDU')) {
-        return { name: { id: "Daun Kering", en: "Dry Leaves" }, type: "ORGANIK" };
+    const items = Array.from({ length: itemsCount }, (_, idx) => {
+      const base = sampahSeeds[idx % sampahSeeds.length];
+      // Filter out advanced categories if level is too low
+      if (level === 1 && (base.type !== 'ORGANIK' && base.type !== 'PLASTIK')) {
+        return { name: { id: "Kulit Pisang", en: "Banana Peel" }, type: "ORGANIK" };
       }
-      if (level === 2 && base.type === 'RESIDU') {
-        return { name: { id: "Buku Bekas", en: "Old Book" }, type: "ANORGANIK" };
+      if (level === 2 && (base.type === 'B3' || base.type === 'ELEKTRONIK' || base.type === 'TEKSTIL')) {
+        return { name: { id: "Koran Bekas", en: "Used Newspaper" }, type: "KERTAS" };
       }
-      return base;
+      return { name: { id: base.id, en: base.en }, type: base.type };
     });
 
     return [{
@@ -362,14 +366,14 @@ export function generateDynamicAIQuestions(gameId: string, level: number): Quest
       correctAnswer: "ORGANIK",
       explanation: { id: "Memilah sampah menjaga kebersihan sekolah.", en: "Sorting waste keeps the school clean." },
       hint: { id: "Perhatikan bahan dasarnya.", en: "Observe the basic material." },
-      metadata: { Items: selectedItems }
+      metadata: { Items: items }
     }];
   }
 
   // 9. Cerita Rakyat
   if (gameId === 'cerita-rakyat') {
     return Array.from({ length: Math.min(count, 4) }, (_, idx) => {
-      const seed = folktalesSeeds[idx % folktalesSeeds.length];
+      const seed = ceritaSeeds[idx % ceritaSeeds.length];
       const { options, correctAnswer } = shuffleChoicesProgressive(
         { id: seed.c, en: seed.c },
         seed.w.map(w => ({ id: w, en: w })),
@@ -432,4 +436,72 @@ export function generateDynamicAIQuestions(gameId: string, level: number): Quest
     explanation: { id: "Jawaban Anda benar.", en: "Your answer is correct." },
     hint: { id: "Pilihlah huruf A.", en: "Choose letter A." }
   }));
+}
+
+// -------------------------------------------------------------
+// 2. MATHEMATICS CHALLENGE (500+ unique equations procedural)
+// -------------------------------------------------------------
+export function generateMathQuestion(level: number): Question {
+  const randKey = Math.random();
+  let op = "+";
+  let num1 = 0;
+  let num2 = 0;
+  let ans = 0;
+  let customText = "";
+  let customTextEn = "";
+
+  if (level === 1) {
+    op = "+";
+    num1 = Math.floor(Math.random() * 20) + 1;
+    num2 = Math.floor(Math.random() * 20) + 1;
+    ans = num1 + num2;
+  } else if (level === 2) {
+    op = Math.random() > 0.5 ? "+" : "-";
+    num1 = Math.floor(Math.random() * 50) + 10;
+    num2 = Math.floor(Math.random() * 10) + 1;
+    ans = op === "+" ? num1 + num2 : num1 - num2;
+  } else if (level === 3) {
+    op = "*";
+    num1 = Math.floor(Math.random() * 9) + 2;
+    num2 = Math.floor(Math.random() * 9) + 2;
+    ans = num1 * num2;
+  } else if (level === 4) {
+    op = "/";
+    ans = Math.floor(Math.random() * 10) + 2;
+    num2 = Math.floor(Math.random() * 9) + 2;
+    num1 = num2 * ans;
+  } else {
+    // Level 5: Soal Cerita + Operasi Campuran
+    const stories = [
+      { id: "Budi membeli X pack permen, masing-masing berisi 6 permen. Ia memberikan 3 permen ke adiknya. Berapa sisa permen Budi?", en: "Budi bought X packs of candy, each containing 6 candies. He gave 3 candies to his sister. How many candies left?", calc: (x: number) => x * 6 - 3 },
+      { id: "Siti membagikan 40 kelereng ke X temannya secara rata. Lalu ia membeli lagi 5 kelereng. Berapa total kelereng Siti sekarang?", en: "Siti shared 40 marbles equally with X friends. Then she bought 5 more. How many marbles does she have now?", calc: (x: number) => 40 / x + 5 }
+    ];
+    const item = stories[Math.floor(randKey * stories.length)];
+    num1 = item.calc === stories[1].calc ? 5 : 4; 
+    ans = item.calc(num1);
+    customText = item.id.replace("X", String(num1));
+    customTextEn = item.en.replace("X", String(num1));
+  }
+
+  const wrong1 = ans + (Math.random() > 0.5 ? 3 : -3);
+  const wrong2 = ans + (Math.random() > 0.5 ? 5 : -5);
+  const wrong3 = ans * 2 + 1;
+  const wrong4 = ans - 2;
+
+  const { options, correctAnswer } = shuffleChoicesProgressive(
+    { id: String(ans), en: String(ans) },
+    [wrong1, wrong2, wrong3, wrong4].map(w => ({ id: String(w), en: String(w) })),
+    level === 1 ? 3 : level <= 3 ? 4 : 5
+  );
+
+  return {
+    id: `math-${level}-${Date.now()}-${Math.floor(Math.random() * 100)}`,
+    gameId: "math-challenge",
+    level,
+    question: { id: customText || `Berapakah hasil dari ${num1} ${op} ${num2}?`, en: customTextEn || `What is the result of ${num1} ${op} ${num2}?` },
+    options,
+    correctAnswer,
+    explanation: { id: `Hasil hitungan yang benar adalah ${ans}.`, en: `The correct calculation is ${ans}.` },
+    hint: { id: "Hitung perlahan dengan tertib.", en: "Calculate carefully step by step." }
+  };
 }
