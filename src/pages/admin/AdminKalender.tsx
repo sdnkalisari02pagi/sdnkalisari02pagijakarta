@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Pencil, Trash2, CalendarDays, GripVertical, Upload } from 'lucide-react';
+import { Plus, Pencil, Trash2, CalendarDays, GripVertical, Upload, Download } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import LastModifiedInfo, { formatDate } from '@/components/LastModifiedInfo';
 import BilingualInput from '@/components/BilingualInput';
@@ -206,6 +206,27 @@ export default function AdminKalender() {
     reader.readAsArrayBuffer(file);
   };
 
+  const handleDownload = () => {
+    const header = ['Kegiatan (ID)', 'Kegiatan (EN)', 'Tanggal (ID)', 'Tanggal (EN)'];
+    const rows = (data.kalender || []).map((item: any) => [
+      item.kegiatan?.id || '',
+      item.kegiatan?.en || '',
+      item.tanggal?.id || '',
+      item.tanggal?.en || ''
+    ]);
+
+    const dataToExport = [header, ...rows];
+    if (rows.length === 0) {
+      dataToExport.push(['Contoh Kegiatan', 'Example Activity', '1-12 Juli 2026', 'July 1-12, 2026']);
+    }
+
+    const worksheet = XLSX.utils.aoa_to_sheet(dataToExport);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Kalender Akademik');
+    XLSX.writeFile(workbook, 'kalender_akademik.xlsx');
+    toast({ title: 'Berhasil', description: 'Data kalender berhasil diunduh sebagai Excel.' });
+  };
+
   return (
     <div className="max-w-4xl">
       <div className="flex items-center justify-between mb-4">
@@ -217,6 +238,9 @@ export default function AdminKalender() {
             </Button>
           )}
           <input type="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" className="hidden" ref={fileInputRef} onChange={handleFileUpload} />
+          <Button variant="outline" onClick={handleDownload} className="gap-2">
+            <Download className="w-4 h-4" /> Download File (Excel)
+          </Button>
           <Button variant="outline" onClick={() => fileInputRef.current?.click()} className="gap-2" disabled={isSaving}>
             <Upload className="w-4 h-4" /> Upload File (CSV/Excel)
           </Button>

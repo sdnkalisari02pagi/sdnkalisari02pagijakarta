@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useSchool } from '@/contexts/SchoolContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -15,6 +16,7 @@ interface TKAResult {
 
 export default function HasilTKA() {
   const { data } = useSchool();
+  const { t } = useLanguage();
   const [nisn, setNisn] = useState('');
   const [tanggalLahir, setTanggalLahir] = useState('');
   const [loading, setLoading] = useState(false);
@@ -28,12 +30,12 @@ export default function HasilTKA() {
 
     const cleanNisn = nisn.trim();
     if (!/^\d+$/.test(cleanNisn)) {
-      setError('NISN hanya boleh berisi angka.');
+      setError(t('tka_error_digits'));
       return;
     }
 
     if (!tanggalLahir) {
-      setError('Tanggal Lahir wajib diisi.');
+      setError(t('tka_error_dob'));
       return;
     }
 
@@ -52,12 +54,12 @@ export default function HasilTKA() {
       const resData = await response.json();
 
       if (!response.ok) {
-        throw new Error(resData.error || 'Terjadi kesalahan pada server');
+        throw new Error(resData.error || t('tka_error_server'));
       }
 
       setResult(resData);
     } catch (err: any) {
-      setError(err.message || 'Data tidak ditemukan.');
+      setError(err.message || t('tka_error_not_found'));
     } finally {
       setLoading(false);
     }
@@ -84,17 +86,27 @@ export default function HasilTKA() {
           
           {!result ? (
             <>
-              <CardTitle className="text-xl sm:text-2xl font-bold text-foreground">PENGUMUMAN HASIL TKA</CardTitle>
+              <CardTitle className="text-xl sm:text-2xl font-bold text-foreground">{t('tka_title')}</CardTitle>
               <CardDescription className="text-sm mt-2 font-medium">SDN KALISARI 02 PAGI</CardDescription>
-              <p className="text-xs text-muted-foreground mt-4">Masukkan NISN dan Tanggal Lahir untuk melihat hasil TKA</p>
+              <p className="text-xs text-muted-foreground mt-4">{t('tka_desc')}</p>
             </>
           ) : (
-            <CardTitle className="text-2xl font-bold text-primary">Hasil TKA Ditemukan</CardTitle>
+            <CardTitle className="text-2xl font-bold text-primary">{t('tka_result_found')}</CardTitle>
           )}
         </CardHeader>
 
         <CardContent>
-          {!result ? (
+          {!data.profil.tkaActive ? (
+            <div className="py-8 text-center space-y-4 animate-in fade-in zoom-in duration-500">
+              <div className="mx-auto w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
+                <GraduationCap className="w-8 h-8 text-muted-foreground" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground">{t('tka_closed_title')}</h3>
+              <p className="text-muted-foreground text-sm max-w-sm mx-auto leading-relaxed">
+                {t('tka_closed_desc')}
+              </p>
+            </div>
+          ) : !result ? (
             <form onSubmit={handleSubmit} className="space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-300">
               {error && (
                 <div className="bg-destructive/10 text-destructive text-sm px-4 py-3 rounded-md text-center border border-destructive/20 font-medium">
@@ -110,14 +122,14 @@ export default function HasilTKA() {
                   inputMode="numeric"
                   value={nisn}
                   onChange={e => setNisn(e.target.value.replace(/\D/g, ''))}
-                  placeholder="Masukkan NISN (Hanya Angka)"
+                  placeholder={t('tka_placeholder_nisn')}
                   className="h-11"
                   required
                 />
               </div>
 
               <div className="space-y-2 text-left">
-                <Label htmlFor="tanggalLahir" className="font-semibold text-foreground/80">Tanggal Lahir</Label>
+                <Label htmlFor="tanggalLahir" className="font-semibold text-foreground/80">{t('tka_dob')}</Label>
                 <Input
                   id="tanggalLahir"
                   type="date"
@@ -132,10 +144,10 @@ export default function HasilTKA() {
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Mencari Data...
+                    {t('tka_searching')}
                   </>
                 ) : (
-                  'Lihat Hasil'
+                  t('tka_view_result')
                 )}
               </Button>
             </form>
@@ -144,7 +156,7 @@ export default function HasilTKA() {
               <div className="bg-muted/30 p-5 rounded-lg border">
                 <div className="grid grid-cols-1 gap-4">
                   <div>
-                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Nama Siswa</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{t('tka_student_name')}</p>
                     <p className="font-bold text-foreground text-lg">{result.nama}</p>
                   </div>
                   <div className="h-px bg-border w-full"></div>
@@ -163,7 +175,7 @@ export default function HasilTKA() {
 
               <Button onClick={handleReset} variant="outline" className="w-full gap-2">
                 <ArrowLeft className="w-4 h-4" />
-                Cari Data Lain
+                {t('tka_search_again')}
               </Button>
             </div>
           )}

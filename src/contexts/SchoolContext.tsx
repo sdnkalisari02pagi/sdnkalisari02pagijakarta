@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Bilingual } from '@/lib/i18n';
 import { supabase } from '@/lib/supabase';
+import { updateFavicon } from '@/utils/updateFavicon';
 
 /* ================= TYPES ================= */
 
@@ -41,7 +42,7 @@ export interface SchoolData {
 }
 
 export type KelasSiswa = { id: string; kelas: Bilingual; jumlah: number; updated_at?: string; lastModified?: string };
-export type Pegawai = { id: string; nama: string; jabatan: string; foto: string; updated_at?: string; lastModified?: string };
+export type Pegawai = { id: string; nama: string; nip?: string; pangkat_gol?: string; jabatan: string; foto: string; updated_at?: string; lastModified?: string };
 export type ContentTipe = 'foto' | 'video';
 export type Berita = { id: string; judul: Bilingual; tanggal: string; tipe: ContentTipe; fotoUtama: string; thumbnail?: string; videoUrl?: string; galeri?: string[]; deskripsi: Bilingual; updated_at?: string; lastModified?: string };
 export type Prestasi = Berita;
@@ -115,7 +116,7 @@ async function fetchAll(): Promise<SchoolData> {
       logo, hero, heroImages, keunggulan, pegawai, jabatanList,
       berita, beritaGaleri, prestasi, prestasiGaleri,
       ekstrakurikuler, ekskulGaleri, dokumen, profil,
-      sambutan, kontak, footer, siswa, pelatih, kalender
+      sambutan, kontak, footer, siswa, kalender
     ] = await Promise.all([
       supabase.from('logo').select('*').limit(1).maybeSingle(),
       supabase.from('hero').select('*').limit(1).maybeSingle(),
@@ -135,7 +136,6 @@ async function fetchAll(): Promise<SchoolData> {
       supabase.from('kontak').select('*').limit(1).maybeSingle(),
       supabase.from('footer').select('*').limit(1).maybeSingle(),
       supabase.from('siswa').select('*'),
-      supabase.from('pelatih').select('*'),
       supabase.from('kalender_akademik').select('*').order('urutan', { ascending: true })
     ]);
 
@@ -176,9 +176,6 @@ async function fetchAll(): Promise<SchoolData> {
         id: e.id, nama: B(e.nama_id, e.nama_en), foto: e.foto, fotoUtama: e.foto_utama,
         deskripsi: B(e.deskripsi_id, e.deskripsi_en),
         galeri: (ekskulGaleri.data || []).filter(g => g.ekskul_id === e.id).map(g => g.url),
-        pelatih: (pelatih.data || []).filter(p => p.ekskul_id === e.id).map(p => ({
-          id: p.id, nama: B(p.nama_id, p.nama_en), foto: p.foto
-        })),
         updated_at: e.updated_at
       })),
       dokumen: (dokumen.data || []).map(d => ({
@@ -190,7 +187,8 @@ async function fetchAll(): Promise<SchoolData> {
         misi: B(profil.data.misi_id || '', profil.data.misi_en || ''),
         tujuan: B(profil.data.tujuan_id, profil.data.tujuan_en),
         fotoSekolah: profil.data.foto,
-      } : defaultData.profil,
+        tkaActive: profil.data.tka_active ?? true,
+      } : { ...defaultData.profil, tkaActive: true },
       sambutan: sambutan.data ? {
         nama: sambutan.data.nama || '', foto: sambutan.data.foto || '', teks: B(sambutan.data.teks_id || '', sambutan.data.teks_en || '')
       } : defaultData.sambutan,
@@ -230,6 +228,12 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     fetchAll().then(setData);
   }, []);
+
+  useEffect(() => {
+    if (data.logo) {
+      updateFavicon(data.logo);
+    }
+  }, [data.logo]);
 
   const updateLocal = (key: keyof SchoolData, value: any, timestampKey?: string) => {
     let finalValue = value;
@@ -370,7 +374,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     
     if (form.length > 0) {
       const { error } = await supabase.from('pegawai').upsert(form.map(f => ({
-        id: f.id, nama: f.nama, jabatan: f.jabatan, foto: f.foto, updated_at: f.lastModified || f.updated_at || new Date().toISOString()
+        id: f.id, nama: f.nama, nip: f.nip || '', pangkat_gol: f.pangkat_gol || '', jabatan: f.jabatan, foto: f.foto, updated_at: f.lastModified || f.updated_at || new Date().toISOString()
       })));
       if (error) throw error;
     }
@@ -469,16 +473,6 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
         const { error: insGalErr } = await supabase.from('ekstrakurikuler_galeri').insert(galeriPayload);
         if (insGalErr) throw insGalErr;
       }
-      
-      const { error: delPelatihErr } = await supabase.from('pelatih').delete().neq('id', -1);
-      if (delPelatihErr) throw delPelatihErr;
-      const pelatihPayload = form.flatMap(f => (f.pelatih || []).map((p: any) => ({ 
-        ekskul_id: f.id, nama_id: p.nama?.id || '', nama_en: p.nama?.en || '', foto: p.foto || '' 
-      })));
-      if (pelatihPayload.length > 0) {
-        const { error: insPelatihErr } = await supabase.from('pelatih').insert(pelatihPayload);
-        if (insPelatihErr) throw insPelatihErr;
-      }
     }
     updateLocal('ekstrakurikuler', form, 'ekstrakurikuler');
   };
@@ -508,7 +502,8 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
       visi_id: form.visi?.id || '', visi_en: form.visi?.en || '',
       misi_id: form.misi?.id || '', misi_en: form.misi?.en || '',
       tujuan_id: form.tujuan?.id || '', tujuan_en: form.tujuan?.en || '',
-      foto: form.fotoSekolah || '', updated_at: new Date().toISOString()
+      foto: form.fotoSekolah || '', tka_active: form.tkaActive ?? true,
+      updated_at: new Date().toISOString()
     });
     if (profErr) throw profErr;
 

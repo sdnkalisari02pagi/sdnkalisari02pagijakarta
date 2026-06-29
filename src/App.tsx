@@ -42,6 +42,7 @@ import AdminKeunggulan from "./pages/admin/AdminKeunggulan";
 import AdminFooter from "./pages/admin/AdminFooter";
 import AdminSiswa from "./pages/admin/AdminSiswa";
 import AdminAkun from "./pages/admin/AdminAkun";
+import AdminTKA from "./pages/admin/AdminTKA";
 
 const queryClient = new QueryClient();
 
@@ -88,6 +89,7 @@ const App = () => (
                 <Route path="keunggulan" element={<AdminKeunggulan />} />
                 <Route path="pegawai" element={<AdminPegawai />} />
                 <Route path="siswa" element={<AdminSiswa />} />
+                <Route path="tka" element={<AdminTKA />} />
                 <Route path="berita" element={<AdminBerita />} />
                 <Route path="kalender" element={<AdminKalender />} />
                 <Route path="prestasi" element={<AdminPrestasi />} />

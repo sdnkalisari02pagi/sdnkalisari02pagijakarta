@@ -14,6 +14,7 @@ const menuItems = [
   { title: 'Keunggulan', url: '/admin/keunggulan', icon: Award },
   { title: 'Pegawai', url: '/admin/pegawai', icon: Users },
   { title: 'Siswa', url: '/admin/siswa', icon: UserCog },
+  { title: 'Hasil TKA', url: '/admin/tka', icon: FileText },
   { title: 'Kalender Akademik', url: '/admin/kalender', icon: Calendar },
   { title: 'Berita', url: '/admin/berita', icon: FileText },
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useSchool, Ekstrakurikuler, Pelatih } from '@/contexts/SchoolContext';
+import { useSchool } from '@/contexts/SchoolContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -19,10 +19,9 @@ interface FormState {
   fotoUtama: string;
   deskripsi: { id: string; en: string };
   galeri: string[];
-  pelatih: Pelatih[];
 }
 
-const empty = (): FormState => ({ nama: { id: '', en: '' }, fotoUtama: '', deskripsi: { id: '', en: '' }, galeri: [], pelatih: [] });
+const empty = (): FormState => ({ nama: { id: '', en: '' }, fotoUtama: '', deskripsi: { id: '', en: '' }, galeri: [] });
 
 export default function AdminEkskul() {
   const { data, updateEkstrakurikuler } = useSchool();
@@ -30,7 +29,7 @@ export default function AdminEkskul() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editItem, setEditItem] = useState<Ekstrakurikuler | null>(null);
+  const [editItem, setEditItem] = useState<any | null>(null);
   const [form, setForm] = useState<FormState>(empty());
   const [isSaving, setIsSaving] = useState(false);
 
@@ -42,30 +41,17 @@ export default function AdminEkskul() {
   const paginatedData = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const openAdd = () => { setEditItem(null); setForm(empty()); setDialogOpen(true); };
-  const openEdit = (e: Ekstrakurikuler) => {
+  const openEdit = (e: any) => {
     setEditItem(e);
     setForm({
       nama: toBilingual(e.nama),
       fotoUtama: e.fotoUtama || e.foto || '',
       deskripsi: toBilingual(e.deskripsi),
       galeri: e.galeri || [],
-      pelatih: (e.pelatih || []).map(p => ({ nama: toBilingual(p.nama), foto: p.foto })),
     });
     setDialogOpen(true);
   };
 
-  const addPelatih = () => {
-    if (form.pelatih.length >= 3) {
-      toast({ title: 'Maksimal 3 pelatih', variant: 'destructive' });
-      return;
-    }
-    setForm(f => ({ ...f, pelatih: [...f.pelatih, { nama: { id: '', en: '' }, foto: '' }] }));
-  };
-  const removePelatih = (i: number) => setForm(f => ({ ...f, pelatih: f.pelatih.filter((_, idx) => idx !== i) }));
-  const updatePelatih = (i: number, patch: Partial<Pelatih>) => setForm(f => ({
-    ...f,
-    pelatih: f.pelatih.map((p, idx) => idx === i ? { ...p, ...patch } : p),
-  }));
 
   const handleSave = async () => {
     if (!form.nama.id) {
@@ -79,14 +65,13 @@ export default function AdminEkskul() {
     setIsSaving(true);
     try {
       const now = new Date().toISOString();
-      const payload: Ekstrakurikuler = {
+      const payload: any = {
         id: editItem?.id || Date.now().toString(),
         nama: form.nama,
         foto: form.fotoUtama, // legacy mirror
         fotoUtama: form.fotoUtama,
         deskripsi: form.deskripsi,
         galeri: form.galeri,
-        pelatih: form.pelatih,
         lastModified: now,
       };
       if (editItem) {
@@ -130,28 +115,6 @@ export default function AdminEkskul() {
               </div>
               <BilingualInput label="Deskripsi" value={form.deskripsi} onChange={v => setForm(f => ({ ...f, deskripsi: v }))} multiline rows={3} />
 
-              <div className="border rounded-lg p-3 space-y-3 bg-muted/30">
-                <div className="flex items-center justify-between">
-                  <Label>Pelatih ({form.pelatih.length}/3)</Label>
-                  <Button type="button" size="sm" variant="outline" onClick={addPelatih} disabled={form.pelatih.length >= 3} className="gap-1">
-                    <Plus className="w-3 h-3" /> Tambah Pelatih
-                  </Button>
-                </div>
-                {form.pelatih.map((p, i) => (
-                  <div key={i} className="border rounded-md p-3 bg-background space-y-2">
-                    <div className="flex items-center justify-between">
-                      <p className="text-xs font-semibold text-muted-foreground">Pelatih {i + 1}</p>
-                      <Button type="button" size="sm" variant="ghost" onClick={() => removePelatih(i)}><Trash2 className="w-3 h-3 text-destructive" /></Button>
-                    </div>
-                    <BilingualInput label="Nama" value={p.nama} onChange={v => updatePelatih(i, { nama: v })} />
-                    <div>
-                      <Label>Foto</Label>
-                      <ImageUpload value={p.foto} onChange={foto => updatePelatih(i, { foto })} placeholder recommendedSize="200×200 px" />
-                    </div>
-                  </div>
-                ))}
-                {form.pelatih.length === 0 && <p className="text-xs text-muted-foreground italic">Belum ada pelatih.</p>}
-              </div>
 
               <div><Label>Galeri</Label><GaleriUpload value={form.galeri} onChange={galeri => setForm(f => ({ ...f, galeri }))} /></div>
               <Button onClick={handleSave} className="w-full" disabled={isSaving}>{isSaving ? 'Menyimpan...' : 'Simpan'}</Button>
@@ -170,7 +133,6 @@ export default function AdminEkskul() {
               <TableHead className="w-12">No.</TableHead>
               <TableHead>Foto</TableHead>
               <TableHead>Nama</TableHead>
-              <TableHead>Pelatih</TableHead>
               <TableHead>Terakhir Diubah</TableHead>
               <TableHead className="text-right">Aksi</TableHead>
             </TableRow>
@@ -181,9 +143,6 @@ export default function AdminEkskul() {
                 <TableCell>{(currentPage - 1) * pageSize + index + 1}</TableCell>
                 <TableCell><img src={e.fotoUtama || e.foto} alt={tr(e.nama, 'id')} className="w-10 h-10 rounded object-cover" /></TableCell>
                 <TableCell className="font-medium">{tr(e.nama, 'id')}</TableCell>
-                <TableCell className="text-sm text-muted-foreground">
-                  {(e.pelatih || []).map(p => tr(p.nama, 'id')).filter(Boolean).join(', ') || '—'}
-                </TableCell>
                 <TableCell className="text-xs text-muted-foreground">
                   {e.lastModified ? formatDate(e.lastModified) : e.updated_at ? formatDate(e.updated_at) : '-'}
                 </TableCell>
