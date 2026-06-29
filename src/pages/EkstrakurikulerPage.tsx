@@ -33,7 +33,7 @@ export default function EkstrakurikulerPage() {
               <Label className="text-xs text-muted-foreground">{t('cari')}</Label>
               <div className="relative mt-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input placeholder={t('search_nama')} value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} className="pl-10" />
+                <Input placeholder={t('search_ekskul')} value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} className="pl-10" />
               </div>
             </div>
           </FilterSidebar>
