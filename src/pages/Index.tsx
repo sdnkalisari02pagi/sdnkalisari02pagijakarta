@@ -114,14 +114,13 @@ const gridColsMap: Record<number, string> = { 1: 'grid-cols-1', 2: 'grid-cols-2'
       if (a.monthIndex === -1) return 1;
       if (b.monthIndex === -1) return -1;
       
-      const getAcademicMonthOffset = (mIdx: number) => {
-        return (mIdx - 6 + 12) % 12;
+      const getAcademicScore = (mIdx: number, y: number) => {
+        const academicStartYear = mIdx >= 6 ? y : y - 1;
+        const offset = (mIdx - 6 + 12) % 12;
+        return academicStartYear * 12 + offset;
       };
       
-      const scoreA = a.year * 12 + getAcademicMonthOffset(a.monthIndex);
-      const scoreB = b.year * 12 + getAcademicMonthOffset(b.monthIndex);
-      
-      return scoreA - scoreB;
+      return getAcademicScore(a.monthIndex, a.year) - getAcademicScore(b.monthIndex, b.year);
     });
   })();
 
