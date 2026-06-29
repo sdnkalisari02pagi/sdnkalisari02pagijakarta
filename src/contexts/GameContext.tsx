@@ -5,8 +5,8 @@ import {
   gamesList,
   badgesData,
   avatarItems,
-  questionsData,
   generateMathQuestion,
+  generateDynamicAIQuestions,
   Question,
   BilingualText
 } from '@/lib/gamesSeedData';
@@ -126,68 +126,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   // Load questions dynamically: tries Supabase first, falls back to seed data
   const getQuestions = async (gameId: string, level: number): Promise<Question[]> => {
-    if (gameId === 'math-challenge') {
-      // Math is generated dynamically in client side
-      return Array.from({ length: 5 }, () => generateMathQuestion(level));
-    }
-
-    try {
-      const { data, error } = await supabase
-        .from('question_bank')
-        .select(`
-          id, game_id, level_number, question_id, question_en, explanation_id, explanation_en, hint_id, hint_en, image_url,
-          question_options(option_a_id, option_a_en, option_b_id, option_b_en, option_c_id, option_c_en, option_d_id, option_d_en, correct_answer)
-        `)
-        .eq('game_id', gameId)
-        .eq('level_number', level)
-        .limit(10);
-
-      if (error || !data || data.length === 0) throw new Error("Fallback to mock data");
-
-      return data.map((q: any) => {
-        const opt = q.question_options?.[0] || {};
-        return {
-          id: q.id,
-          gameId: gameId,
-          level: q.level_number,
-          question: { id: q.question_id, en: q.question_en },
-          options: {
-            A: { id: opt.option_a_id, en: opt.option_a_en },
-            B: { id: opt.option_b_id, en: opt.option_b_en },
-            C: { id: opt.option_c_id, en: opt.option_c_en },
-            D: { id: opt.option_d_id, en: opt.option_d_en }
-          },
-          correctAnswer: opt.correct_answer || 'A',
-          explanation: { id: q.explanation_id || '', en: q.explanation_en || '' },
-          hint: { id: q.hint_id || '', en: q.hint_en || '' },
-          imageUrl: q.image_url
-        };
-      });
-    } catch {
-      // Filter from seed data
-      const localQs = questionsData.filter(q => q.gameId === gameId && q.level === level);
-      if (localQs.length > 0) return localQs.sort(() => Math.random() - 0.5);
-
-      // Failsafe generation for games that don't have seeded questions
-      return Array.from({ length: 5 }, (_, i) => ({
-        id: `${gameId}-${level}-${i}`,
-        gameId,
-        level,
-        question: {
-          id: `Soal #${i + 1} untuk ${gameId} level ${level}. Klik jawaban benar!`,
-          en: `Question #${i + 1} for ${gameId} level ${level}. Click correct answer!`
-        },
-        options: {
-          A: { id: "Jawaban Benar", en: "Correct Answer" },
-          B: { id: "Pilihan Salah 1", en: "Incorrect 1" },
-          C: { id: "Pilihan Salah 2", en: "Incorrect 2" },
-          D: { id: "Pilihan Salah 3", en: "Incorrect 3" }
-        },
-        correctAnswer: "A",
-        explanation: { id: "Penjelasan jawaban benar.", en: "Explanation of the correct answer." },
-        hint: { id: "Ini adalah petunjuk jawaban.", en: "This is a hint." }
-      }));
-    }
+    return generateDynamicAIQuestions(gameId, level);
   };
 
   const answerQuestion = (isCorrect: boolean, isCombo = false) => {
