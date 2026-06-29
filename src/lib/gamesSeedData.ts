@@ -153,28 +153,29 @@ export const avatarItems = [
   { id: "fr-3", type: "frame", name: { id: "Bingkai Pelangi", en: "Rainbow Frame" }, cost: 70, itemValue: "border-pink-500 border-4 border-double" }
 ];
 
-// Lists of Dynamic Question Components for AI Generation
-const mapelQuizPool = [
+// -------------------------------------------------------------
+// QUESTION POOLS
+// -------------------------------------------------------------
+
+const mapelQuizPoolEasy = [
   {
-    subject: "Matematika",
-    qId: "Berapakah hasil dari 25 dikali 4?",
-    qEn: "What is 25 multiplied by 4?",
+    qId: "Siapakah presiden pertama Republik Indonesia?",
+    qEn: "Who is the first president of the Republic of Indonesia?",
     options: {
-      A: { id: "100", en: "100" },
-      B: { id: "80", en: "80" },
-      C: { id: "90", en: "90" },
-      D: { id: "120", en: "120" }
+      A: { id: "Ir. Soekarno", en: "Ir. Soekarno" },
+      B: { id: "Moh. Hatta", en: "Moh. Hatta" },
+      C: { id: "Soeharto", en: "Soeharto" },
+      D: { id: "B.J. Habibie", en: "B.J. Habibie" }
     },
     correct: "A",
-    expId: "25 dikali 4 sama dengan 100.",
-    expEn: "25 times 4 equals 100.",
-    hintId: "Coba tambahkan 25 sebanyak empat kali.",
-    hintEn: "Try adding 25 four times."
+    expId: "Ir. Soekarno memproklamasikan kemerdekaan Indonesia dan terpilih menjadi presiden pertama.",
+    expEn: "Ir. Soekarno proclaimed Indonesian independence and was elected the first president.",
+    hintId: "Beliau dijuluki Bung Karno.",
+    hintEn: "He was nicknamed Bung Karno."
   },
   {
-    subject: "IPAS",
-    qId: "Hewan apa yang bernapas menggunakan insang?",
-    qEn: "Which animal breathes using gills?",
+    qId: "Hewan apa yang hidup di air dan bernapas dengan insang?",
+    qEn: "Which animal lives in water and breathes with gills?",
     options: {
       A: { id: "Lumba-lumba", en: "Dolphin" },
       B: { id: "Ikan Mas", en: "Goldfish" },
@@ -182,53 +183,54 @@ const mapelQuizPool = [
       D: { id: "Katak", en: "Frog" }
     },
     correct: "B",
-    expId: "Ikan mas bernapas dengan insang di dalam air.",
+    expId: "Ikan mas bernapas menggunakan insang di dalam air.",
     expEn: "Goldfish breathe using gills underwater.",
     hintId: "Hewan ini bukan mamalia laut.",
     hintEn: "This animal is not a marine mammal."
-  },
-  {
-    subject: "Bahasa Indonesia",
-    qId: "Manakah kata yang baku di bawah ini?",
-    qEn: "Which of the following is the correct formal Indonesian word?",
-    options: {
-      A: { id: "Apotek", en: "Apotek" },
-      B: { id: "Apotik", en: "Apotik" },
-      C: { id: "Aktip", en: "Aktip" },
-      D: { id: "Praktek", en: "Praktek" }
-    },
-    correct: "A",
-    expId: "Kata baku yang benar menurut KBBI adalah Apotek.",
-    expEn: "The correct standard word according to KBBI is Apotek.",
-    hintId: "Gunakan vokal 'e' bukan 'i'.",
-    hintEn: "Use vowel 'e' instead of 'i'."
-  },
-  {
-    subject: "PPKn",
-    qId: "Bhinneka Tunggal Ika memiliki arti...",
-    qEn: "Bhinneka Tunggal Ika means...",
-    options: {
-      A: { id: "Berbeda-beda tetapi tetap satu jua", en: "Different but still one" },
-      B: { id: "Satu nusa satu bangsa", en: "One land one nation" },
-      C: { id: "Bersatu kita teguh bercerai kita runtuh", en: "United we stand divided we fall" },
-      D: { id: "Keadilan bagi seluruh rakyat", en: "Justice for all people" }
-    },
-    correct: "A",
-    expId: "Semboyan bangsa Indonesia ini berarti persatuan dalam perbedaan.",
-    expEn: "This motto of the Indonesian nation means unity in diversity.",
-    hintId: "Semboyan persatuan bangsa Indonesia.",
-    hintEn: "Motto of Indonesian national unity."
   }
 ];
 
-const scramblePool = [
-  { id: "GAJAH", en: "ELEPHANT", hintId: "Hewan darat terbesar.", hintEn: "The largest land animal." },
-  { id: "KUCING", en: "CAT", hintId: "Hewan peliharaan berbulu yang mengeong.", hintEn: "Furry pet that meows." },
-  { id: "PISANG", en: "BANANA", hintId: "Buah kesukaan monyet, warna kuning.", hintEn: "Monkey's favorite fruit, yellow color." },
-  { id: "GURU", en: "TEACHER", hintId: "Pahlawan tanpa tanda jasa di sekolah.", hintEn: "Teacher who guides you at school." },
-  { id: "MEJA", en: "TABLE", hintId: "Pasangan dari kursi di ruang kelas.", hintEn: "Pair of chairs in classroom." }
+const mapelQuizPoolHard = [
+  {
+    qId: "Negara manakah yang berbatasan darat langsung dengan Indonesia di Pulau Kalimantan?",
+    qEn: "Which country shares a land border with Indonesia on Kalimantan Island?",
+    options: {
+      A: { id: "Malaysia", en: "Malaysia" },
+      B: { id: "Singapura", en: "Singapore" },
+      C: { id: "Brunei Darussalam", en: "Brunei Darussalam" },
+      D: { id: "Timor Leste", en: "East Timor" }
+    },
+    correct: "A",
+    expId: "Indonesia berbatasan darat langsung dengan Malaysia di Kalimantan Utara dan Barat.",
+    expEn: "Indonesia shares a direct land border with Malaysia in North and West Kalimantan.",
+    hintId: "Ibu kotanya Kuala Lumpur.",
+    hintEn: "Its capital is Kuala Lumpur."
+  },
+  {
+    qId: "Zat hijau daun yang berperan penting dalam proses fotosintesis tumbuhan disebut...",
+    qEn: "The green pigment in leaves that plays a vital role in plant photosynthesis is called...",
+    options: {
+      A: { id: "Klorofil", en: "Chlorophyll" },
+      B: { id: "Kloroplas", en: "Chloroplast" },
+      C: { id: "Stomata", en: "Stomata" },
+      D: { id: "Floem", en: "Phloem" }
+    },
+    correct: "A",
+    expId: "Klorofil berfungsi menangkap cahaya matahari untuk fotosintesis.",
+    expEn: "Chlorophyll absorbs sunlight to drive photosynthesis.",
+    hintId: "Kata ini berawalan huruf K.",
+    hintEn: "This word starts with letter C."
+  }
 ];
 
+// Anagram Pools grouped by word length
+const scramble3L = [{ id: "API", en: "FIRE", hintId: "Panas dan bercahaya merah.", hintEn: "Hot and glows red." }];
+const scramble4L = [{ id: "BUKU", en: "BOOK", hintId: "Dibaca siswa di perpustakaan.", hintEn: "Read by students in library." }];
+const scramble5L = [{ id: "GAJAH", en: "TIGER", hintId: "Kucing besar belang loreng.", hintEn: "Big striped orange cat." }];
+const scramble6_7L = [{ id: "SEKOLAH", en: "TEACHER", hintId: "Mengajar anak-anak di kelas.", hintEn: "Teaches children in class." }];
+const scrambleLong = [{ id: "MATEMATIKA", en: "INDONESIA", hintId: "Negara kita tercinta dengan ribuan pulau.", hintEn: "Our beloved country with thousands of islands." }];
+
+// Tebak Gambar Pool
 const imageGuessPool = [
   {
     id: "tiger",
@@ -266,7 +268,8 @@ const imageGuessPool = [
   }
 ];
 
-const trafficPool = [
+// Rambu Lalu Lintas Pool
+const trafficPoolBasic = [
   {
     qId: "Apakah arti rambu huruf 'S' dicoret garis merah?",
     qEn: "What is the meaning of a sign with letter 'S' crossed by a red line?",
@@ -282,27 +285,30 @@ const trafficPool = [
     expEn: "Crossed S sign means no stopping.",
     hintId: "S singkatan dari Stop.",
     hintEn: "S stands for Stop."
-  },
-  {
-    qId: "Apakah arti rambu huruf 'P' dicoret garis merah?",
-    qEn: "What is the meaning of a sign with letter 'P' crossed by a red line?",
-    options: {
-      A: { id: "Dilarang Parkir", en: "No Parking" },
-      B: { id: "Dilarang Berhenti", en: "No Stopping" },
-      C: { id: "Khusus Parkir", en: "Parking Only" },
-      D: { id: "Jalan Terus", en: "Keep Going" }
-    },
-    correct: "A",
-    url: "https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&q=80&w=400",
-    expId: "Rambu P dicoret berarti dilarang parkir.",
-    expEn: "Crossed P sign means no parking.",
-    hintId: "P singkatan dari Parkir.",
-    hintEn: "P stands for Parking."
   }
 ];
 
-// Folktale Quizzes
-const ceritaPool = [
+const trafficPoolAdvanced = [
+  {
+    qId: "Menghadapi persimpangan jalan dengan lampu kuning berkedip-kedip, apa yang harus Anda lakukan?",
+    qEn: "Approaching an intersection with flashing yellow light, what should you do?",
+    options: {
+      A: { id: "Berhenti total dan menunggu hijau", en: "Stop completely and wait for green" },
+      B: { id: "Berjalan terus dengan kecepatan maksimal", en: "Keep going at maximum speed" },
+      C: { id: "Mengurangi kecepatan dan berhati-hati", en: "Slow down and proceed with caution" },
+      D: { id: "Memutar balik kendaraan", en: "Turn around the vehicle" }
+    },
+    correct: "C",
+    url: "https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&q=80&w=400",
+    expId: "Lampu kuning berkedip-kedip adalah peringatan hati-hati di persimpangan jalan.",
+    expEn: "Flashing yellow light warns drivers to proceed with caution at intersections.",
+    hintId: "Merupakan peringatan hati-hati.",
+    hintEn: "It is a caution signal."
+  }
+];
+
+// Cerita Rakyat Pool
+const ceritaPoolEasy = [
   {
     storyTitle: "Malin Kundang",
     qId: "Siapakah nama anak durhaka yang dikutuk ibunya menjadi batu?",
@@ -319,83 +325,90 @@ const ceritaPool = [
     expEn: "Malin Kundang was cursed into stone for refusing to acknowledge his birth mother.",
     hintId: "Namanya berawalan huruf M.",
     hintEn: "His name starts with letter M."
-  },
+  }
+];
+
+const ceritaPoolHard = [
   {
     storyTitle: "Sangkuriang",
-    qId: "Gunung apakah yang terbentuk dari perahu Tangkuban Parahu yang ditendang Sangkuriang?",
-    qEn: "Which mountain was formed from the Tangkuban Parahu boat kicked by Sangkuriang?",
+    qId: "Mengapa Dayang Sumbi menggagalkan pembangunan bendungan Sangkuriang dengan membunyikan alu?",
+    qEn: "Why did Dayang Sumbi sabotage Sangkuriang's dam building by striking rice pestles?",
     options: {
-      A: { id: "Gunung Merapi", en: "Mount Merapi" },
-      B: { id: "Tangkuban Parahu", en: "Tangkuban Parahu" },
-      C: { id: "Gunung Gede", en: "Mount Gede" },
-      D: { id: "Gunung Bromo", en: "Mount Bromo" }
-    },
-    correct: "B",
-    url: "https://images.unsplash.com/photo-1542224566-6e85f2e6772f?auto=format&fit=crop&q=80&w=400",
-    expId: "Tangkuban Parahu terbentuk dari perahu terbalik yang ditendang karena marah.",
-    expEn: "Tangkuban Parahu was formed from an overturned boat kicked in anger.",
-    hintId: "Namanya mirip dengan perahu terbalik.",
-    hintEn: "Its name is similar to an overturned boat."
-  }
-];
-
-// Puzzle Nusantara Regions
-const puzzleNusantaraPool = [
-  {
-    qId: "Manakah pulau terbesar di Indonesia yang memiliki fauna endemik Orangutan?",
-    qEn: "Which largest island in Indonesia has endemic Orangutan fauna?",
-    options: {
-      A: { id: "Kalimantan", en: "Kalimantan" },
-      B: { id: "Jawa", en: "Java" },
-      C: { id: "Bali", en: "Bali" },
-      D: { id: "Madura", en: "Madura" }
+      A: { id: "Karena dia menyadari Sangkuriang adalah anaknya", en: "Because she realized Sangkuriang was her son" },
+      B: { id: "Karena dia membenci Sangkuriang", en: "Because she hated Sangkuriang" },
+      C: { id: "Karena ingin ayam berkokok lebih awal", en: "To make the roosters crow early" },
+      D: { id: "Karena waktu perjanjian telah habis", en: "Because the time agreement expired" }
     },
     correct: "A",
-    url: "https://images.unsplash.com/photo-1569336415962-a4bd9f69cd83?auto=format&fit=crop&q=80&w=400",
-    expId: "Pulau Kalimantan terkenal dengan hutan rimba dan habitat aseli Orangutan.",
-    expEn: "Kalimantan Island is famous for its rainforests and original habitat of Orangutan.",
-    hintId: "Disebut juga pulau Borneo.",
-    hintEn: "Also known as Borneo island."
+    url: "https://images.unsplash.com/photo-1542224566-6e85f2e6772f?auto=format&fit=crop&q=80&w=400",
+    expId: "Dayang Sumbi menggagalkan Sangkuriang karena tahu Sangkuriang adalah anak kandungnya sendiri.",
+    expEn: "Dayang Sumbi stopped Sangkuriang because she discovered he was her long-lost son.",
+    hintId: "Untuk mencegah pernikahan sedarah.",
+    hintEn: "To prevent incestuous marriage."
   }
 ];
 
-// Helper to generate dynamic Math Questions
+// -------------------------------------------------------------
+// DYNAMIC MATHEMATICS QUESTION GENERATOR
+// -------------------------------------------------------------
 export function generateMathQuestion(level: number): Question {
-  const operations = ["+", "-", "*", "/"];
   let op = "+";
   let num1 = 0;
   let num2 = 0;
   let ans = 0;
+  let customQuestionText = "";
+  let customQuestionTextEn = "";
 
   if (level === 1) {
-    op = Math.random() > 0.5 ? "+" : "-";
-    num1 = Math.floor(Math.random() * 20) + 1;
-    num2 = Math.floor(Math.random() * 20) + 1;
-  } else if (level === 2) {
-    op = operations[Math.floor(Math.random() * 3)]; // +, -, *
-    num1 = Math.floor(Math.random() * 50) + 1;
-    num2 = Math.floor(Math.random() * 10) + 1;
-  } else {
-    op = operations[Math.floor(Math.random() * 4)]; // +, -, *, /
-    num1 = Math.floor(Math.random() * 100) + 1;
-    num2 = Math.floor(Math.random() * 12) + 2;
-  }
-
-  // Ensure division is clean integer
-  if (op === "/") {
-    ans = Math.floor(Math.random() * 10) + 1;
-    num1 = num2 * ans;
-  } else if (op === "+") {
+    // Level 1: Addition only (very simple numbers 1-10)
+    op = "+";
+    num1 = Math.floor(Math.random() * 9) + 1;
+    num2 = Math.floor(Math.random() * 9) + 1;
     ans = num1 + num2;
-  } else if (op === "-") {
-    if (num1 < num2) {
-      const temp = num1;
-      num1 = num2;
-      num2 = temp;
+  } else if (level === 2) {
+    // Level 2: Addition and subtraction (1-30)
+    op = Math.random() > 0.5 ? "+" : "-";
+    num1 = Math.floor(Math.random() * 20) + 10;
+    num2 = Math.floor(Math.random() * 9) + 1;
+    if (op === "-") {
+      ans = num1 - num2;
+    } else {
+      ans = num1 + num2;
     }
-    ans = num1 - num2;
-  } else {
+  } else if (level === 3) {
+    // Level 3: Multiplication start
+    op = "*";
+    num1 = Math.floor(Math.random() * 8) + 2;
+    num2 = Math.floor(Math.random() * 8) + 2;
     ans = num1 * num2;
+  } else if (level === 4) {
+    // Level 4: Division and mixed operations
+    op = "/";
+    ans = Math.floor(Math.random() * 8) + 2;
+    num2 = Math.floor(Math.random() * 8) + 2;
+    num1 = num2 * ans;
+  } else {
+    // Level 5: Word Problems / Soal Cerita
+    const templates = [
+      {
+        id: "Rani mempunyai 5 kotak pensil. Setiap kotak berisi X pensil. Berapa total pensil Rani?",
+        en: "Rani has 5 pencil boxes. Each box contains X pencils. How many pencils does she have in total?",
+        op: "*", val: 6, calc: (x: number) => 5 * x,
+        hintId: "Kalikan jumlah kotak dengan isi pensil.", hintEn: "Multiply boxes by pencil count."
+      },
+      {
+        id: "Ibu membeli 30 mangga. Ibu membagikannya kepada X anaknya secara rata. Berapa mangga yang diterima setiap anak?",
+        en: "Mother bought 30 mangoes. She distributed them equally to her X children. How many does each child get?",
+        op: "/", val: 5, calc: (x: number) => 30 / x,
+        hintId: "Bagi total mangga dengan jumlah anak.", hintEn: "Divide total mangoes by child count."
+      }
+    ];
+
+    const template = templates[Math.floor(Math.random() * templates.length)];
+    num1 = template.val;
+    ans = template.calc(num1);
+    customQuestionText = template.id.replace("X", String(num1));
+    customQuestionTextEn = template.en.replace("X", String(num1));
   }
 
   const wrong1 = ans + (Math.random() > 0.5 ? 5 : -5);
@@ -406,12 +419,12 @@ export function generateMathQuestion(level: number): Question {
   const correctLetter = ["A", "B", "C", "D"][choices.indexOf(ans)];
 
   return {
-    id: `dynamic-math-${Date.now()}`,
+    id: `math-${level}-${Date.now()}`,
     gameId: "math-challenge",
     level,
     question: {
-      id: `Berapakah ${num1} ${op} ${num2}?`,
-      en: `What is ${num1} ${op} ${num2}?`
+      id: customQuestionText || `Berapakah hasil dari ${num1} ${op} ${num2}?`,
+      en: customQuestionTextEn || `What is the result of ${num1} ${op} ${num2}?`
     },
     options: {
       A: { id: String(choices[0]), en: String(choices[0]) },
@@ -421,12 +434,12 @@ export function generateMathQuestion(level: number): Question {
     },
     correctAnswer: correctLetter,
     explanation: {
-      id: `Hasil perhitungan dari ${num1} ${op} ${num2} adalah ${ans}.`,
-      en: `The result of ${num1} ${op} ${num2} is ${ans}.`
+      id: `Hasil perhitungan yang benar adalah ${ans}.`,
+      en: `The correct calculation result is ${ans}.`
     },
     hint: {
-      id: `Coba hitung perlahan digit satuannya.`,
-      en: `Try to calculate the units digit carefully.`
+      id: level === 5 ? "Gunakan hitungan perkalian/pembagian." : `Coba hitung perlahan digit satuannya.`,
+      en: level === 5 ? "Use multiplication or division calculation." : `Try to calculate the units digit carefully.`
     }
   };
 }
@@ -435,22 +448,26 @@ export function generateMathQuestion(level: number): Question {
 // DYNAMIC AI GENERATOR FUNCTION (Generates unique questions dynamically)
 // -------------------------------------------------------------
 export function generateDynamicAIQuestions(gameId: string, level: number): Question[] {
+  // Respecting levels question counts
+  const count = level === 1 ? 5 : level === 2 ? 8 : level === 3 ? 10 : level === 4 ? 15 : 20;
+
   if (gameId === 'math-challenge') {
-    return Array.from({ length: 5 }, () => generateMathQuestion(level));
+    return Array.from({ length: count }, () => generateMathQuestion(level));
   }
 
   // 1. Quiz Mapel Generator
   if (gameId === 'quiz-mapel') {
-    return Array.from({ length: 5 }, (_, i) => {
-      const base = mapelQuizPool[i % mapelQuizPool.length];
+    return Array.from({ length: count }, (_, i) => {
+      // Level 1-2 uses easy pool, Level 3-5 uses hard pool
+      const base = level <= 2 
+        ? mapelQuizPoolEasy[i % mapelQuizPoolEasy.length] 
+        : mapelQuizPoolHard[i % mapelQuizPoolHard.length];
+
       return {
         id: `${gameId}-${level}-${i}`,
         gameId,
         level,
-        question: {
-          id: `${base.qId}`,
-          en: `${base.qEn}`
-        },
+        question: { id: base.qId, en: base.qEn },
         options: base.options,
         correctAnswer: base.correct,
         explanation: { id: base.expId, en: base.expEn },
@@ -461,20 +478,24 @@ export function generateDynamicAIQuestions(gameId: string, level: number): Quest
 
   // 3. Susun Kata Anagram
   if (gameId === 'susun-kata') {
-    return Array.from({ length: 5 }, (_, i) => {
-      const base = scramblePool[i % scramblePool.length];
+    return Array.from({ length: count }, (_, i) => {
+      // Pick word pool according to level length rules
+      const pools = [scramble3L, scramble4L, scramble5L, scramble6_7L, scrambleLong];
+      const selectedPool = pools[level - 1] || scrambleLong;
+      const base = selectedPool[i % selectedPool.length];
+
       return {
         id: `${gameId}-${level}-${i}`,
         gameId,
         level,
         question: {
-          id: `Susun huruf berikut agar membentuk kata yang sesuai petunjuk!`,
-          en: `Rearrange the letters to form the word based on the hint!`
+          id: `Susun huruf acak berikut agar membentuk kata yang benar!`,
+          en: `Rearrange the scrambled letters to build the correct word!`
         },
         correctAnswer: base.id,
         explanation: {
-          id: `Kata yang benar adalah GAJAH (Indonesia) atau ELEPHANT (English).`,
-          en: `The correct word is GAJAH (Indonesia) or ELEPHANT (English).`
+          id: `Kata yang benar adalah ${base.id}.`,
+          en: `The correct word is ${base.en}.`
         },
         hint: { id: base.hintId, en: base.hintEn },
         metadata: { Words: [{ id: base.id, en: base.en }], Answers: [base.id, base.en] }
@@ -484,7 +505,7 @@ export function generateDynamicAIQuestions(gameId: string, level: number): Quest
 
   // 4. Tebak Gambar
   if (gameId === 'tebak-gambar') {
-    return Array.from({ length: 2 }, (_, i) => {
+    return Array.from({ length: Math.min(count, 3) }, (_, i) => {
       const base = imageGuessPool[i % imageGuessPool.length];
       return {
         id: `${gameId}-${level}-${i}`,
@@ -502,30 +523,45 @@ export function generateDynamicAIQuestions(gameId: string, level: number): Quest
 
   // 8. Pilah Sampah
   if (gameId === 'pilah-sampah') {
+    // Return items length based on level
+    const itemsCount = level === 1 ? 10 : level === 2 ? 15 : level === 3 ? 20 : level === 4 ? 20 : 25;
+    const itemsPool = [
+      { name: { id: "Kulit Pisang", en: "Banana Peel" }, type: "ORGANIK" },
+      { name: { id: "Botol Plastik", en: "Plastic Bottle" }, type: "ANORGANIK" },
+      { name: { id: "Baterai Bekas", en: "Used Battery" }, type: "B3" },
+      { name: { id: "Kertas Kardus", en: "Cardboard Paper" }, type: "ANORGANIK" },
+      { name: { id: "Sisa Makanan", en: "Food Leftovers" }, type: "ORGANIK" },
+      { name: { id: "Kaca Pecah", en: "Broken Glass" }, type: "RESIDU" }
+    ];
+
+    const selectedItems = Array.from({ length: itemsCount }, (_, idx) => {
+      const base = itemsPool[idx % itemsPool.length];
+      // Filter out residu or B3 if level is too low
+      if (level === 1 && (base.type === 'B3' || base.type === 'RESIDU')) {
+        return { name: { id: "Daun Kering", en: "Dry Leaves" }, type: "ORGANIK" };
+      }
+      if (level === 2 && base.type === 'RESIDU') {
+        return { name: { id: "Kertas Bekas", en: "Used Paper" }, type: "ANORGANIK" };
+      }
+      return base;
+    });
+
     return [{
       id: `${gameId}-${level}-0`,
       gameId,
       level,
       question: { id: "Pilah barang ke tong sampah yang benar!", en: "Sort items into the correct bins!" },
       correctAnswer: "ORGANIK",
-      explanation: { id: "Kulit pisang mudah membusuk sehingga masuk organik.", en: "Banana peel is organic because it decays." },
-      hint: { id: "Pilih organik untuk sisa makanan.", en: "Choose organic for food scraps." },
-      metadata: {
-        Items: [
-          { name: { id: "Kulit Pisang", en: "Banana Peel" }, type: "ORGANIK" },
-          { name: { id: "Botol Plastik", en: "Plastic Bottle" }, type: "ANORGANIK" },
-          { name: { id: "Baterai Bekas", en: "Used Battery" }, type: "B3" },
-          { name: { id: "Kertas Kardus", en: "Cardboard Paper" }, type: "ANORGANIK" },
-          { name: { id: "Sisa Makanan", en: "Food Leftovers" }, type: "ORGANIK" }
-        ]
-      }
+      explanation: { id: "Pilah dengan cermat demi kebersihan lingkungan.", en: "Sort carefully for a cleaner environment." },
+      hint: { id: "Perhatikan bahan dasar barang.", en: "Observe the material composition." },
+      metadata: { Items: selectedItems }
     }];
   }
 
   // 9. Cerita Rakyat
   if (gameId === 'cerita-rakyat') {
-    return Array.from({ length: 2 }, (_, i) => {
-      const base = ceritaPool[i % ceritaPool.length];
+    return Array.from({ length: Math.min(count, 3) }, (_, i) => {
+      const base = level <= 2 ? ceritaPoolEasy[i % ceritaPoolEasy.length] : ceritaPoolHard[i % ceritaPoolHard.length];
       return {
         id: `${gameId}-${level}-${i}`,
         gameId,
@@ -542,8 +578,8 @@ export function generateDynamicAIQuestions(gameId: string, level: number): Quest
 
   // 10. Rambu Lalu Lintas
   if (gameId === 'rambu-lalu-lintas') {
-    return Array.from({ length: 2 }, (_, i) => {
-      const base = trafficPool[i % trafficPool.length];
+    return Array.from({ length: Math.min(count, 3) }, (_, i) => {
+      const base = level <= 2 ? trafficPoolBasic[i % trafficPoolBasic.length] : trafficPoolAdvanced[i % trafficPoolAdvanced.length];
       return {
         id: `${gameId}-${level}-${i}`,
         gameId,
@@ -558,41 +594,23 @@ export function generateDynamicAIQuestions(gameId: string, level: number): Quest
     });
   }
 
-  // 7. Puzzle Nusantara
-  if (gameId === 'puzzle-indo') {
-    return Array.from({ length: 1 }, (_, i) => {
-      const base = puzzleNusantaraPool[i % puzzleNusantaraPool.length];
-      return {
-        id: `${gameId}-${level}-${i}`,
-        gameId,
-        level,
-        question: { id: base.qId, en: base.qEn },
-        options: base.options,
-        correctAnswer: base.correct,
-        imageUrl: base.url,
-        explanation: { id: base.expId, en: base.expEn },
-        hint: { id: base.hintId, en: base.hintEn }
-      };
-    });
-  }
-
-  // General Fallback for Memory, Word Search
+  // 7. Puzzle Nusantara & other placeholders
   return Array.from({ length: 3 }, (_, i) => ({
     id: `${gameId}-${level}-${i}`,
     gameId,
     level,
     question: {
-      id: `Tantangan Belajar ${gameId.replace('-', ' ').toUpperCase()} Level ${level}!`,
-      en: `Learning Challenge ${gameId.replace('-', ' ').toUpperCase()} Level ${level}!`
+      id: `Pecahkan Tantangan Nusantara level ${level}!`,
+      en: `Solve Nusantara Challenge level ${level}!`
     },
     options: {
-      A: { id: "Pilihan Benar", en: "Correct Choice" },
-      B: { id: "Pilihan Salah 1", en: "Incorrect 1" },
-      C: { id: "Pilihan Salah 2", en: "Incorrect 2" },
-      D: { id: "Pilihan Salah 3", en: "Incorrect 3" }
+      A: { id: "Pilihan Benar", en: "Correct Answer" },
+      B: { id: "Salah 1", en: "Incorrect 1" },
+      C: { id: "Salah 2", en: "Incorrect 2" },
+      D: { id: "Salah 3", en: "Incorrect 3" }
     },
     correctAnswer: "A",
-    explanation: { id: "Hebat! Kamu menjawab dengan benar.", en: "Awesome! You answered correctly." },
-    hint: { id: "Pilihlah opsi A.", en: "Pick option A." }
+    explanation: { id: "Jawaban Anda benar.", en: "Your answer is correct." },
+    hint: { id: "Pilihlah huruf A.", en: "Choose letter A." }
   }));
 }

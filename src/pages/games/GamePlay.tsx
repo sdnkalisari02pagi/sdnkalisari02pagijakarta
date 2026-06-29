@@ -44,6 +44,14 @@ export default function GamePlay() {
     return activeLanguage === 'id' ? idText : enText;
   };
 
+  const getTimerForLvl = (lvl: number) => {
+    if (lvl === 1) return 999;
+    if (lvl === 2) return 60;
+    if (lvl === 3) return 30;
+    if (lvl === 4) return 15;
+    return 10;
+  };
+
   const loadLevel = async (lvl: number) => {
     setLoading(true);
     setGameFinished(false);
@@ -53,7 +61,7 @@ export default function GamePlay() {
     setSelectedOption(null);
     setShowExplanation(false);
     setShowHint(false);
-    setTimeLeft(30);
+    setTimeLeft(getTimerForLvl(lvl));
 
     const qs = await getQuestions(id || '', lvl);
     setQuestions(qs);
@@ -192,7 +200,7 @@ export default function GamePlay() {
       setSelectedOption(null);
       setShowExplanation(false);
       setShowHint(false);
-      setTimeLeft(30);
+      setTimeLeft(getTimerForLvl(level));
       
       if (id === 'susun-kata') {
         initScrambleWord(questions[currentIdx + 1]);
@@ -226,12 +234,14 @@ export default function GamePlay() {
           <span>{t("Kembali", "Back")}</span>
         </Button>
 
-        <div className="flex items-center gap-4 bg-white/80 px-4 py-2 rounded-2xl shadow-sm border">
-          <div className="flex items-center gap-1 text-slate-500 font-mono text-sm">
-            <Timer className="w-4 h-4" />
-            <span>{timeLeft}s</span>
+        {level > 1 && (
+          <div className="flex items-center gap-4 bg-white/80 px-4 py-2 rounded-2xl shadow-sm border">
+            <div className="flex items-center gap-1 text-slate-500 font-mono text-sm">
+              <Timer className="w-4 h-4" />
+              <span>{timeLeft}s</span>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <div className="max-w-xl mx-auto px-4 mt-6">
@@ -299,7 +309,7 @@ export default function GamePlay() {
             <div className="flex justify-between items-center gap-4">
               <TextToSpeech text={t(currentQ.question.id, currentQ.question.en)} lang={activeLanguage} />
               
-              {!showHint && (
+              {!showHint && level < 5 && (
                 <button 
                   onClick={() => setShowHint(true)}
                   className="flex items-center gap-1 text-[11px] bg-amber-100 hover:bg-amber-200 text-amber-700 px-3 py-2 rounded-xl font-bold border border-amber-200"
@@ -332,7 +342,15 @@ export default function GamePlay() {
                     <img 
                       src={currentQ.imageUrl} 
                       alt="Question media" 
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500 cursor-zoom-in" 
+                      className={`w-full h-full object-cover hover:scale-105 transition-transform duration-500 cursor-zoom-in ${
+                        id === 'tebak-gambar' && level === 2 ? 'blur-md' : ''
+                      } ${
+                        id === 'tebak-gambar' && level === 3 ? '[clip-path:circle(35%_at_50%_50%)]' : ''
+                      } ${
+                        id === 'tebak-gambar' && level === 4 ? '[clip-path:circle(15%_at_50%_50%)]' : ''
+                      } ${
+                        id === 'tebak-gambar' && level === 5 ? 'brightness-0 contrast-200 saturate-0' : ''
+                      }`} 
                     />
                   </div>
                 </motion.div>
@@ -377,14 +395,18 @@ export default function GamePlay() {
 
               {/* Game 5: Memory Cards */}
               {id === 'memory-card' && (
-                <div className="grid grid-cols-4 gap-3">
+                <div className={`grid gap-2.5 ${
+                  level === 1 ? 'grid-cols-2' : level === 2 ? 'grid-cols-3' : level === 3 ? 'grid-cols-4' : level === 4 ? 'grid-cols-4' : 'grid-cols-6'
+                }`}>
                   {memoryCards.map((card) => {
                     const isFlipped = selectedCards.includes(card.id) || matchedCards.includes(card.id);
                     return (
                       <div 
                         key={card.id} 
                         onClick={() => handleCardClick(card.id)}
-                        className={`h-16 rounded-xl flex items-center justify-center text-2xl font-bold cursor-pointer transition-all duration-300 shadow-md ${
+                        className={`rounded-xl flex items-center justify-center font-bold cursor-pointer transition-all duration-300 shadow-md ${
+                          level === 5 ? 'h-12 text-lg' : 'h-16 text-2xl'
+                        } ${
                           isFlipped ? 'bg-indigo-500 text-white rotate-y-180' : 'bg-slate-200 text-slate-400 hover:bg-slate-300'
                         }`}
                       >
@@ -404,7 +426,12 @@ export default function GamePlay() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
-                    {["ORGANIK", "ANORGANIK", "B3", "RESIDU"].map(cat => (
+                    {(level === 1 
+                      ? ["ORGANIK", "ANORGANIK"] 
+                      : level === 2 
+                      ? ["ORGANIK", "ANORGANIK", "B3"] 
+                      : ["ORGANIK", "ANORGANIK", "B3", "RESIDU"]
+                    ).map(cat => (
                       <button 
                         key={cat}
                         onClick={() => handleSortTrash(cat)}
