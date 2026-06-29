@@ -126,6 +126,48 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   // Load questions dynamically: tries Supabase first, falls back to seed data
   const getQuestions = async (gameId: string, level: number): Promise<Question[]> => {
+    try {
+      const { data: gameRecord } = await supabase
+        .from('games')
+        .select('id')
+        .eq('slug', gameId)
+        .single();
+
+      if (gameRecord) {
+        const { data, error } = await supabase
+          .from('question_bank')
+          .select(`
+            id, level_number, question_id, question_en, explanation_id, explanation_en, hint_id, hint_en, image_url,
+            question_options(option_a_id, option_a_en, option_b_id, option_b_en, option_c_id, option_c_en, option_d_id, option_d_en, correct_answer)
+          `)
+          .eq('game_id', gameRecord.id)
+          .eq('level_number', level);
+
+        if (!error && data && data.length > 0) {
+          return data.map((q: any) => {
+            const opt = q.question_options?.[0] || {};
+            return {
+              id: q.id,
+              gameId: gameId,
+              level: q.level_number,
+              question: { id: q.question_id, en: q.question_en },
+              options: {
+                A: { id: opt.option_a_id || '', en: opt.option_a_en || '' },
+                B: { id: opt.option_b_id || '', en: opt.option_b_en || '' },
+                C: { id: opt.option_c_id || '', en: opt.option_c_en || '' },
+                D: { id: opt.option_d_id || '', en: opt.option_d_en || '' }
+              },
+              correctAnswer: opt.correct_answer || 'A',
+              explanation: { id: q.explanation_id || '', en: q.explanation_en || '' },
+              hint: { id: q.hint_id || '', en: q.hint_en || '' },
+              imageUrl: q.image_url
+            };
+          });
+        }
+      }
+    } catch (err) {
+      console.log("Supabase fetch failed, falling back to dynamic generator:", err);
+    }
     return generateDynamicAIQuestions(gameId, level);
   };
 
