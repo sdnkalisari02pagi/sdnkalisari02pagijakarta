@@ -180,5 +180,185 @@ export const bahasaIndonesiaQuestions: Question[] = [
     explanation: { id: "Kata Sekolah diawali huruf S." },
     image: null,
     tags: ["huruf"]
+  },
+  {
+    id: "BI-011",
+    kelas: 1,
+    level: 1,
+    category: "Bahasa Indonesia",
+    topic: "Huruf",
+    question: { id: "Huruf apakah yang berada sebelum huruf G?" },
+    options: {
+      A: { id: "E" },
+      B: { id: "F" },
+      C: { id: "H" },
+      D: { id: "I" }
+    },
+    correctAnswer: "B",
+    explanation: { id: "Huruf sebelum G adalah F." },
+    image: null,
+    tags: ["huruf"]
+  },
+  {
+    id: "BI-012",
+    kelas: 1,
+    level: 1,
+    category: "Bahasa Indonesia",
+    topic: "Vokal",
+    question: { id: "Huruf manakah yang termasuk huruf vokal?" },
+    options: {
+      A: { id: "U" },
+      B: { id: "K" },
+      C: { id: "M" },
+      D: { id: "T" }
+    },
+    correctAnswer: "A",
+    explanation: { id: "Huruf vokal terdiri dari A, I, U, E, dan O." },
+    image: null,
+    tags: ["vokal"]
+  },
+  {
+    id: "BI-013",
+    kelas: 1,
+    level: 1,
+    category: "Bahasa Indonesia",
+    topic: "Konsonan",
+    question: { id: "Manakah yang merupakan huruf konsonan?" },
+    options: {
+      A: { id: "E" },
+      B: { id: "O" },
+      C: { id: "P" },
+      D: { id: "I" }
+    },
+    correctAnswer: "C",
+    explanation: { id: "Huruf P termasuk huruf konsonan." },
+    image: null,
+    tags: ["konsonan"]
+  },
+  {
+    id: "BI-014",
+    kelas: 1,
+    level: 1,
+    category: "Bahasa Indonesia",
+    topic: "Suku Kata",
+    question: { id: "Kata 'BOLA' terdiri atas ... suku kata." },
+    options: {
+      A: { id: "1" },
+      B: { id: "2" },
+      C: { id: "3" },
+      D: { id: "4" }
+    },
+    correctAnswer: "B",
+    explanation: { id: "BO-LA terdiri dari dua suku kata." },
+    image: null,
+    tags: ["suku kata"]
+  },
+  {
+    id: "BI-015",
+    kelas: 1,
+    level: 1,
+    category: "Bahasa Indonesia",
+    topic: "Suku Kata",
+    question: { id: "Kata 'SEPEDA' terdiri atas ... suku kata." },
+    options: {
+      A: { id: "2" },
+      B: { id: "3" },
+      C: { id: "4" },
+      D: { id: "5" }
+    },
+    correctAnswer: "B",
+    explanation: { id: "SE-PE-DA terdiri dari tiga suku kata." },
+    image: null,
+    tags: ["suku kata"]
+  },
+  {
+    id: "BI-016",
+    kelas: 1,
+    level: 1,
+    category: "Bahasa Indonesia",
+    topic: "Nama Hewan",
+    question: { id: "Manakah yang merupakan nama hewan?" },
+    options: {
+      A: { id: "Ayam" },
+      B: { id: "Meja" },
+      C: { id: "Buku" },
+      D: { id: "Tas" }
+    },
+    correctAnswer: "A",
+    explanation: { id: "Ayam adalah nama hewan." },
+    image: null,
+    tags: ["hewan"]
+  },
+  {
+    id: "BI-017",
+    kelas: 1,
+    level: 1,
+    category: "Bahasa Indonesia",
+    topic: "Nama Buah",
+    question: { id: "Manakah yang merupakan nama buah?" },
+    options: {
+      A: { id: "Jeruk" },
+      B: { id: "Kursi" },
+      C: { id: "Piring" },
+      D: { id: "Sepeda" }
+    },
+    correctAnswer: "A",
+    explanation: { id: "Jeruk adalah nama buah." },
+    image: null,
+    tags: ["buah"]
+  },
+  {
+    id: "BI-018",
+    kelas: 1,
+    level: 1,
+    category: "Bahasa Indonesia",
+    topic: "Nama Benda",
+    question: { id: "Manakah yang merupakan benda yang digunakan untuk menulis?" },
+    options: {
+      A: { id: "Pensil" },
+      B: { id: "Kucing" },
+      C: { id: "Mangga" },
+      D: { id: "Ayam" }
+    },
+    correctAnswer: "A",
+    explanation: { id: "Pensil digunakan untuk menulis." },
+    image: null,
+    tags: ["benda"]
+  },
+  {
+    id: "BI-019",
+    kelas: 1,
+    level: 1,
+    category: "Bahasa Indonesia",
+    topic: "Huruf Awal",
+    question: { id: "Huruf pertama pada kata 'Bendera' adalah ..." },
+    options: {
+      A: { id: "A" },
+      B: { id: "B" },
+      C: { id: "D" },
+      D: { id: "E" }
+    },
+    correctAnswer: "B",
+    explanation: { id: "Kata Bendera diawali dengan huruf B." },
+    image: null,
+    tags: ["huruf"]
+  },
+  {
+    id: "BI-020",
+    kelas: 1,
+    level: 1,
+    category: "Bahasa Indonesia",
+    topic: "Membaca",
+    question: { id: "Manakah penulisan kata yang benar?" },
+    options: {
+      A: { id: "Sekolah" },
+      B: { id: "Skolah" },
+      C: { id: "Sekola" },
+      D: { id: "Sekolh" }
+    },
+    correctAnswer: "A",
+    explanation: { id: "Penulisan yang benar adalah 'Sekolah'." },
+    image: null,
+    tags: ["ejaan"]
   }
 ];
