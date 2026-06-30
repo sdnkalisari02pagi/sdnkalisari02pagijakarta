@@ -720,5 +720,185 @@ export const bahasaIndonesiaQuestions: Question[] = [
     explanation: { id: "Kalimat menjelaskan bahwa Sinta membantu ibu menyapu rumah setelah belajar." },
     image: null,
     tags: ["pemahaman"]
+  },
+  {
+    id: "BI-041",
+    kelas: 1,
+    level: 4,
+    category: "Bahasa Indonesia",
+    topic: "Pemahaman",
+    question: { id: "'Rudi membawa jas hujan karena langit terlihat mendung.' Mengapa Rudi membawa jas hujan?" },
+    options: {
+      A: { id: "Karena cuaca panas" },
+      B: { id: "Karena langit mendung" },
+      C: { id: "Karena ingin bermain" },
+      D: { id: "Karena akan tidur" }
+    },
+    correctAnswer: "B",
+    explanation: { id: "Langit mendung menandakan kemungkinan akan turun hujan." },
+    image: null,
+    tags: ["pemahaman"]
+  },
+  {
+    id: "BI-042",
+    kelas: 1,
+    level: 4,
+    category: "Bahasa Indonesia",
+    topic: "Kosakata",
+    question: { id: "Manakah kata yang termasuk nama pekerjaan?" },
+    options: {
+      A: { id: "Guru" },
+      B: { id: "Sepeda" },
+      C: { id: "Jeruk" },
+      D: { id: "Harimau" }
+    },
+    correctAnswer: "A",
+    explanation: { id: "Guru adalah salah satu jenis pekerjaan." },
+    image: null,
+    tags: ["profesi"]
+  },
+  {
+    id: "BI-043",
+    kelas: 1,
+    level: 4,
+    category: "Bahasa Indonesia",
+    topic: "Kalimat",
+    question: { id: "Kalimat yang paling tepat adalah..." },
+    options: {
+      A: { id: "Kami belajar bersama di kelas." },
+      B: { id: "Belajar kami bersama kelas di." },
+      C: { id: "Kelas kami bersama belajar di." },
+      D: { id: "Di belajar kami kelas bersama." }
+    },
+    correctAnswer: "A",
+    explanation: { id: "Kalimat memiliki susunan yang benar and mudah dipahami." },
+    image: null,
+    tags: ["kalimat"]
+  },
+  {
+    id: "BI-044",
+    kelas: 1,
+    level: 4,
+    category: "Bahasa Indonesia",
+    topic: "Antonim",
+    question: { id: "Lawan kata dari 'terang' adalah..." },
+    options: {
+      A: { id: "Gelap" },
+      B: { id: "Putih" },
+      C: { id: "Bersih" },
+      D: { id: "Cerah" }
+    },
+    correctAnswer: "A",
+    explanation: { id: "Antonim dari terang adalah gelap." },
+    image: null,
+    tags: ["antonim"]
+  },
+  {
+    id: "BI-045",
+    kelas: 1,
+    level: 4,
+    category: "Bahasa Indonesia",
+    topic: "Sinonim",
+    question: { id: "Sinonim dari kata 'gembira' adalah..." },
+    options: {
+      A: { id: "Senang" },
+      B: { id: "Sedih" },
+      C: { id: "Takut" },
+      D: { id: "Marah" }
+    },
+    correctAnswer: "A",
+    explanation: { id: "Gembira memiliki arti yang sama dengan senang." },
+    image: null,
+    tags: ["sinonim"]
+  },
+  {
+    id: "BI-046",
+    kelas: 1,
+    level: 4,
+    category: "Bahasa Indonesia",
+    topic: "Membaca",
+    question: { id: "'Setiap hari Minggu keluarga Dika membersihkan rumah bersama.' Kapan keluarga Dika membersihkan rumah?" },
+    options: {
+      A: { id: "Setiap Senin" },
+      B: { id: "Setiap Minggu" },
+      C: { id: "Setiap Sabtu" },
+      D: { id: "Setiap Jumat" }
+    },
+    correctAnswer: "B",
+    explanation: { id: "Kalimat menyebutkan bahwa mereka membersihkan rumah setiap hari Minggu." },
+    image: null,
+    tags: ["membaca"]
+  },
+  {
+    id: "BI-047",
+    kelas: 1,
+    level: 4,
+    category: "Bahasa Indonesia",
+    topic: "Huruf Kapital",
+    question: { id: "Penulisan nama kota yang benar adalah..." },
+    options: {
+      A: { id: "bandung" },
+      B: { id: "Bandung" },
+      C: { id: "BANdung" },
+      D: { id: "banDung" }
+    },
+    correctAnswer: "B",
+    explanation: { id: "Nama kota diawali huruf kapital." },
+    image: null,
+    tags: ["huruf kapital"]
+  },
+  {
+    id: "BI-048",
+    kelas: 1,
+    level: 4,
+    category: "Bahasa Indonesia",
+    topic: "Tanda Baca",
+    question: { id: "Kalimat perintah biasanya diakhiri dengan..." },
+    options: {
+      A: { id: "Titik (.)" },
+      B: { id: "Koma (,)" },
+      C: { id: "Tanda Tanya (?)" },
+      D: { id: "Tanda Seru (!)" }
+    },
+    correctAnswer: "D",
+    explanation: { id: "Kalimat perintah biasanya diakhiri tanda seru." },
+    image: null,
+    tags: ["tanda baca"]
+  },
+  {
+    id: "BI-049",
+    kelas: 1,
+    level: 4,
+    category: "Bahasa Indonesia",
+    topic: "Pemahaman",
+    question: { id: "'Ayu selalu mengembalikan buku ke rak setelah selesai membaca.' Apa kebiasaan baik Ayu?" },
+    options: {
+      A: { id: "Merobek buku" },
+      B: { id: "Mengembalikan buku ke rak" },
+      C: { id: "Membuang buku" },
+      D: { id: "Menyembunyikan buku" }
+    },
+    correctAnswer: "B",
+    explanation: { id: "Ayu memiliki kebiasaan mengembalikan buku ke tempatnya." },
+    image: null,
+    tags: ["pemahaman"]
+  },
+  {
+    id: "BI-050",
+    kelas: 1,
+    level: 4,
+    category: "Bahasa Indonesia",
+    topic: "Kosakata",
+    question: { id: "Manakah kata yang merupakan nama alat komunikasi?" },
+    options: {
+      A: { id: "Telepon" },
+      B: { id: "Pisang" },
+      C: { id: "Kucing" },
+      D: { id: "Meja" }
+    },
+    correctAnswer: "A",
+    explanation: { id: "Telepon merupakan alat komunikasi." },
+    image: null,
+    tags: ["alat komunikasi"]
   }
 ];
