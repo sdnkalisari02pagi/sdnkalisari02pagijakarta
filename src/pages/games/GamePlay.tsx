@@ -399,7 +399,7 @@ export default function GamePlay() {
             <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-md border border-slate-100 dark:border-slate-800 space-y-6">
               
               {/* Question Image (If available) */}
-              {currentQ.imageUrl && currentQ.imageUrl.trim() !== '' && !currentQ.imageUrl.includes('placeholder') && (
+              {currentQ.image && currentQ.image.trim() !== '' && !currentQ.image.includes('placeholder') && (
                 <motion.div 
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
@@ -408,7 +408,7 @@ export default function GamePlay() {
                 >
                   <div className="h-44 rounded-[13px] overflow-hidden bg-white">
                     <img 
-                      src={currentQ.imageUrl} 
+                      src={currentQ.image} 
                       alt="Question media" 
                       className={`w-full h-full object-cover hover:scale-105 transition-transform duration-500 cursor-zoom-in ${
                         id === 'tebak-gambar' && level === 2 ? 'blur-md' : ''

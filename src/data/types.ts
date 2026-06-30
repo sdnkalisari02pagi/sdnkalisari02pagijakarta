@@ -24,7 +24,7 @@ export interface Question {
     C: OptionItem;
     D: OptionItem;
   };
-  correctAnswer: "A" | "B" | "C" | "D";
+  correctAnswer: "A" | "B" | "C" | "D" | string;
   explanation: {
     id: string;
     en?: string;

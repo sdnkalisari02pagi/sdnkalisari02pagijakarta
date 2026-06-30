@@ -3,8 +3,10 @@ import { Question } from '../types';
 export const pilahSampahData: Question[] = [
   {
     id: "waste-procedural-1-0",
-    gameId: "pilah-sampah",
+    kelas: 1,
     level: 1,
+    category: "Ekologi",
+    topic: "Pengelolaan Sampah",
     question: { id: "Pilah barang ke tong sampah yang benar!", en: "Sort items into the correct bins!" },
     correctAnswer: "ORGANIK",
     explanation: { id: "Kulit pisang mudah membusuk dan terurai secara alami.", en: "Banana peel decomposes easily and naturally." },

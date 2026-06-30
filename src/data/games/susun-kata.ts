@@ -3,8 +3,10 @@ import { Question } from '../types';
 export const susunKataData: Question[] = [
   {
     id: "scramble-l1-1",
-    gameId: "susun-kata",
+    kelas: 1,
     level: 1,
+    category: "Benda",
+    topic: "Alam",
     question: { id: "Susun huruf-huruf acak berikut!", en: "Rearrange these scrambled letters!" },
     correctAnswer: "API",
     explanation: { id: "Huruf A-P-I membentuk kata API.", en: "Letters A-P-I form the word API." },
