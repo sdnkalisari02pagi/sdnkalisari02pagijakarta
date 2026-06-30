@@ -5,11 +5,10 @@ import {
   gamesList,
   badgesData,
   avatarItems,
-  generateMathQuestion,
-  generateDynamicAIQuestions,
   Question,
   BilingualText
 } from '@/lib/gamesSeedData';
+import { getQuestionsFromBank } from '@/data/questionLoader';
 import { toast } from '@/hooks/use-toast';
 
 export interface PlayerProfile {
@@ -168,7 +167,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       console.log("Supabase fetch failed, falling back to dynamic generator:", err);
     }
-    return generateDynamicAIQuestions(gameId, level);
+    return getQuestionsFromBank(gameId, level);
   };
 
   const answerQuestion = (isCorrect: boolean, isCombo = false) => {

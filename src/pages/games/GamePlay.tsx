@@ -257,6 +257,26 @@ export default function GamePlay() {
     );
   }
 
+  if (id !== 'memory-card' && (!questions || questions.length === 0)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-indigo-50 dark:bg-slate-950 px-4">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 max-w-sm w-full text-center shadow-xl border border-indigo-100 dark:border-slate-800">
+          <div className="text-5xl mb-4">📭</div>
+          <h2 className="text-xl font-black text-indigo-600 dark:text-indigo-400 mb-2">
+            {t("Bank Soal Belum Tersedia", "Question Bank Unavailable")}
+          </h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">
+            {t("Bank soal untuk level ini belum diisi. Hubungi guru atau administrator Anda untuk menambahkan soal.", 
+               "The question bank for this level is not populated yet. Contact your teacher or administrator to add questions.")}
+          </p>
+          <Button onClick={() => navigate('/games')} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow-md transition-all">
+            {t("Kembali ke Menu", "Back to Menu")}
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   const currentQ = questions[currentIdx];
 
   return (
@@ -379,7 +399,7 @@ export default function GamePlay() {
             <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-md border border-slate-100 dark:border-slate-800 space-y-6">
               
               {/* Question Image (If available) */}
-              {currentQ.imageUrl && (
+              {currentQ.imageUrl && currentQ.imageUrl.trim() !== '' && !currentQ.imageUrl.includes('placeholder') && (
                 <motion.div 
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
