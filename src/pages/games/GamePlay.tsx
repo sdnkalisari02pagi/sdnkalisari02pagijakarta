@@ -172,10 +172,10 @@ export default function GamePlay() {
     setSelectedCards(newSelected);
 
     if (newSelected.length === 2) {
-      const firstCard = memoryCards[newSelected[0]];
-      const secondCard = memoryCards[newSelected[1]];
+      const firstCard = memoryCards.find(c => c.id === newSelected[0]);
+      const secondCard = memoryCards.find(c => c.id === newSelected[1]);
 
-      if (firstCard.icon === secondCard.icon) {
+      if (firstCard && secondCard && firstCard.icon === secondCard.icon) {
         // Match found!
         const matches = [...matchedCards, newSelected[0], newSelected[1]];
         setMatchedCards(matches);
