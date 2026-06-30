@@ -540,5 +540,185 @@ export const bahasaIndonesiaQuestions: Question[] = [
     explanation: { id: "Pada kalimat disebutkan bahwa Edo sarapan setiap pagi." },
     image: null,
     tags: ["pemahaman"]
+  },
+  {
+    id: "BI-031",
+    kelas: 1,
+    level: 3,
+    category: "Bahasa Indonesia",
+    topic: "Kalimat",
+    question: { id: "Kalimat yang menggunakan huruf kapital dengan benar adalah..." },
+    options: {
+      A: { id: "ayah pergi ke pasar." },
+      B: { id: "Ayah pergi ke pasar." },
+      C: { id: "ayah Pergi ke Pasar." },
+      D: { id: "Ayah Pergi ke pasar." }
+    },
+    correctAnswer: "B",
+    explanation: { id: "Huruf kapital digunakan pada awal kalimat." },
+    image: null,
+    tags: ["huruf kapital"]
+  },
+  {
+    id: "BI-032",
+    kelas: 1,
+    level: 3,
+    category: "Bahasa Indonesia",
+    topic: "Tanda Baca",
+    question: { id: "Kalimat yang benar adalah..." },
+    options: {
+      A: { id: "Siapa nama kamu." },
+      B: { id: "Siapa nama kamu?" },
+      C: { id: "Siapa nama kamu!" },
+      D: { id: "Siapa nama kamu," }
+    },
+    correctAnswer: "B",
+    explanation: { id: "Kalimat tanya diakhiri tanda tanya." },
+    image: null,
+    tags: ["tanda baca"]
+  },
+  {
+    id: "BI-033",
+    kelas: 1,
+    level: 3,
+    category: "Bahasa Indonesia",
+    topic: "Kosakata",
+    question: { id: "Manakah yang merupakan nama sayuran?" },
+    options: {
+      A: { id: "Bayam" },
+      B: { id: "Jeruk" },
+      C: { id: "Harimau" },
+      D: { id: "Mobil" }
+    },
+    correctAnswer: "A",
+    explanation: { id: "Bayam termasuk sayuran." },
+    image: null,
+    tags: ["sayuran"]
+  },
+  {
+    id: "BI-034",
+    kelas: 1,
+    level: 3,
+    category: "Bahasa Indonesia",
+    topic: "Antonim",
+    question: { id: "Lawan kata dari 'cepat' adalah..." },
+    options: {
+      A: { id: "Lambat" },
+      B: { id: "Tinggi" },
+      C: { id: "Pendek" },
+      D: { id: "Kecil" }
+    },
+    correctAnswer: "A",
+    explanation: { id: "Antonim dari cepat adalah lambat." },
+    image: null,
+    tags: ["antonim"]
+  },
+  {
+    id: "BI-035",
+    kelas: 1,
+    level: 3,
+    category: "Bahasa Indonesia",
+    topic: "Sinonim",
+    question: { id: "Sinonim dari kata 'besar' adalah..." },
+    options: {
+      A: { id: "Kecil" },
+      B: { id: "Akbar" },
+      C: { id: "Luas" },
+      D: { id: "Tinggi" }
+    },
+    correctAnswer: "C",
+    explanation: { id: "Dalam konteks umum, 'luas' merupakan pilihan yang paling mendekati makna besar dibanding pilihan lainnya." },
+    image: null,
+    tags: ["sinonim"]
+  },
+  {
+    id: "BI-036",
+    kelas: 1,
+    level: 3,
+    category: "Bahasa Indonesia",
+    topic: "Membaca",
+    question: { id: "'Budi meminjam buku di perpustakaan.' Di mana Budi meminjam buku?" },
+    options: {
+      A: { id: "Kantin" },
+      B: { id: "Perpustakaan" },
+      C: { id: "Lapangan" },
+      D: { id: "Rumah" }
+    },
+    correctAnswer: "B",
+    explanation: { id: "Budi meminjam buku di perpustakaan." },
+    image: null,
+    tags: ["membaca"]
+  },
+  {
+    id: "BI-037",
+    kelas: 1,
+    level: 3,
+    category: "Bahasa Indonesia",
+    topic: "Kalimat",
+    question: { id: "Kalimat berikut yang paling benar adalah..." },
+    options: {
+      A: { id: "Ibu memasak di dapur." },
+      B: { id: "Memasak ibu dapur di." },
+      C: { id: "Dapur ibu memasak di." },
+      D: { id: "Di ibu memasak dapur." }
+    },
+    correctAnswer: "A",
+    explanation: { id: "Kalimat memiliki susunan yang benar dan mudah dipahami." },
+    image: null,
+    tags: ["kalimat"]
+  },
+  {
+    id: "BI-038",
+    kelas: 1,
+    level: 3,
+    category: "Bahasa Indonesia",
+    topic: "Pemahaman",
+    question: { id: "'Hari ini cuaca cerah sehingga anak-anak bermain di halaman.' Mengapa anak-anak bermain di halaman?" },
+    options: {
+      A: { id: "Karena hujan" },
+      B: { id: "Karena cerah" },
+      C: { id: "Karena malam" },
+      D: { id: "Karena sakit" }
+    },
+    correctAnswer: "B",
+    explanation: { id: "Mereka bermain karena cuaca cerah." },
+    image: null,
+    tags: ["pemahaman"]
+  },
+  {
+    id: "BI-039",
+    kelas: 1,
+    level: 3,
+    category: "Bahasa Indonesia",
+    topic: "Kosakata",
+    question: { id: "Manakah yang merupakan nama alat tulis?" },
+    options: {
+      A: { id: "Pensil" },
+      B: { id: "Sepatu" },
+      C: { id: "Mangga" },
+      D: { id: "Kucing" }
+    },
+    correctAnswer: "A",
+    explanation: { id: "Pensil digunakan untuk menulis." },
+    image: null,
+    tags: ["alat tulis"]
+  },
+  {
+    id: "BI-040",
+    kelas: 1,
+    level: 3,
+    category: "Bahasa Indonesia",
+    topic: "Membaca",
+    question: { id: "'Setelah belajar, Sinta membantu ibu menyapu rumah.' Apa yang dilakukan Sinta setelah belajar?" },
+    options: {
+      A: { id: "Tidur" },
+      B: { id: "Bermain bola" },
+      C: { id: "Membantu ibu menyapu rumah" },
+      D: { id: "Menonton televisi" }
+    },
+    correctAnswer: "C",
+    explanation: { id: "Kalimat menjelaskan bahwa Sinta membantu ibu menyapu rumah setelah belajar." },
+    image: null,
+    tags: ["pemahaman"]
   }
 ];
