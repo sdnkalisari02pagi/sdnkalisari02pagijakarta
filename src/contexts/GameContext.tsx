@@ -39,7 +39,7 @@ interface GameContextType {
   toggleLanguage: () => void;
   getQuestions: (gameId: string, level: number) => Promise<Question[]>;
   answerQuestion: (isCorrect: boolean, isCombo?: boolean) => void;
-  completeLevel: (gameId: string, level: number, score: number) => void;
+  completeLevel: (gameId: string, level: number, score: number, totalQuestions: number) => void;
   purchaseItem: (itemId: string) => boolean;
   equipItem: (type: 'avatar' | 'frame' | 'theme', value: string) => void;
   refillHearts: () => boolean;
@@ -206,12 +206,12 @@ export function GameProvider({ children }: { children: ReactNode }) {
     }));
   };
 
-  const completeLevel = (gameId: string, level: number, score: number) => {
-    setPlayer(prev => {
-      const isPerfect = score >= 5;
-      const bonusXP = 100 + (isPerfect ? 50 : 0);
-      const bonusCoins = 10 + (isPerfect ? 5 : 0);
+  const completeLevel = (gameId: string, level: number, score: number, totalQuestions: number) => {
+    const isPerfect = score === totalQuestions && totalQuestions > 0;
+    const bonusXP = (level * 50) + (isPerfect ? 100 : 0);
+    const bonusCoins = (level * 5) + (isPerfect ? 10 : 0);
 
+    setPlayer(prev => {
       // Check badge rewards
       const earnedBadges = [...prev.badges];
       if (level === 5 && !earnedBadges.includes('level-5-master')) {
@@ -250,7 +250,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
     toast({
       title: lang === 'id' ? "🎉 Level Selesai!" : "🎉 Level Complete!",
-      description: lang === 'id' ? `Kamu mendapat bonus XP & Koin!` : `You got bonus XP & Coins!`
+      description: lang === 'id' 
+        ? `Kamu menyelesaikan Level ${level}! (+${bonusXP} XP, +${bonusCoins} Koin)` 
+        : `You completed Level ${level}! (+${bonusXP} XP, +${bonusCoins} Coins)`
     });
   };
 

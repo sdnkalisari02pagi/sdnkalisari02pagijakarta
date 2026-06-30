@@ -11,7 +11,7 @@ import { motion } from 'framer-motion';
 export default function GamePlay() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { games, activeLanguage, getQuestions } = useGames();
+  const { games, activeLanguage, getQuestions, completeLevel } = useGames();
 
   const game = games.find(g => g.id === id);
   const [level, setLevel] = useState(() => {
@@ -46,11 +46,11 @@ export default function GamePlay() {
   };
 
   const getTimerForLvl = (lvl: number) => {
-    if (lvl === 1) return 999;
-    if (lvl === 2) return 60;
-    if (lvl === 3) return 30;
+    if (lvl === 1) return 30;
+    if (lvl === 2) return 25;
+    if (lvl === 3) return 20;
     if (lvl === 4) return 15;
-    return 10;
+    return 15;
   };
 
   const loadLevel = async (lvl: number) => {
@@ -65,18 +65,26 @@ export default function GamePlay() {
     setTimeLeft(getTimerForLvl(lvl));
 
     const qs = await getQuestions(id || '', lvl);
-    setQuestions(qs);
+    
+    // Fisher-Yates Shuffle algorithm to ensure 100% unbiased randomized layout
+    const shuffled = [...qs];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+
+    setQuestions(shuffled);
     setLoading(false);
 
-    // Initializer custom game states
-    if (id === 'susun-kata' && qs.length > 0) {
-      initScrambleWord(qs[0]);
+    // Initializer custom game states using shuffled list
+    if (id === 'susun-kata' && shuffled.length > 0) {
+      initScrambleWord(shuffled[0]);
     }
     if (id === 'memory-card') {
       initMemoryCards(lvl);
     }
-    if (id === 'pilah-sampah' && qs.length > 0) {
-      setTrashItems(qs[0].metadata?.Items || []);
+    if (id === 'pilah-sampah' && shuffled.length > 0) {
+      setTrashItems(shuffled[0].metadata?.Items || []);
       setActiveTrashIdx(0);
     }
   };
@@ -88,6 +96,13 @@ export default function GamePlay() {
     }
     loadLevel(level);
   }, [id, level]);
+
+  useEffect(() => {
+    if (gameFinished) {
+      const totalQ = questions.length || (matchedCards.length / 2) || trashItems.length || 5;
+      completeLevel(id || '', level, score, totalQ);
+    }
+  }, [gameFinished]);
 
   const playCountdownBeep = () => {
     try {

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
 export default function GamesIndex() {
-  const { games, activeLanguage, toggleLanguage } = useGames();
+  const { games, activeLanguage, toggleLanguage, gameProgress } = useGames();
   const navigate = useNavigate();
 
   const t = (idText: string, enText: string) => {
@@ -96,15 +96,24 @@ export default function GamesIndex() {
                 </div>
                 
                 <div className="grid grid-cols-5 gap-1.5">
-                  {[1, 2, 3, 4, 5].map((lvlNum) => (
-                    <button
-                      key={lvlNum}
-                      onClick={() => handlePlayLevel(g.id, lvlNum)}
-                      className="py-2.5 bg-indigo-50 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-purple-600 hover:text-white dark:bg-slate-800 dark:hover:from-indigo-500 dark:hover:to-purple-600 text-indigo-700 dark:text-slate-300 font-extrabold rounded-xl transition-all hover:scale-105 text-xs text-center border border-indigo-100 dark:border-slate-800 shadow-sm"
-                    >
-                      {lvlNum}
-                    </button>
-                  ))}
+                  {[1, 2, 3, 4, 5].map((lvlNum) => {
+                    const maxUnlocked = gameProgress?.[g.id] || 1;
+                    const isLocked = lvlNum > maxUnlocked;
+                    return (
+                      <button
+                        key={lvlNum}
+                        disabled={isLocked}
+                        onClick={() => handlePlayLevel(g.id, lvlNum)}
+                        className={`py-2.5 font-extrabold rounded-xl transition-all text-xs text-center border shadow-sm ${
+                          isLocked 
+                            ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed dark:bg-slate-800/40 dark:text-slate-600 dark:border-slate-800' 
+                            : 'bg-indigo-50 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-purple-600 hover:text-white text-indigo-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:from-indigo-500 dark:hover:to-purple-600 hover:scale-105 border-indigo-100 dark:border-slate-800'
+                        }`}
+                      >
+                        {isLocked ? '🔒' : lvlNum}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </motion.div>
