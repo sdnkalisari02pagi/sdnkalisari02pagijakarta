@@ -360,5 +360,185 @@ export const bahasaIndonesiaQuestions: Question[] = [
     explanation: { id: "Penulisan yang benar adalah 'Sekolah'." },
     image: null,
     tags: ["ejaan"]
+  },
+  {
+    id: "BI-021",
+    kelas: 1,
+    level: 2,
+    category: "Bahasa Indonesia",
+    topic: "Antonim",
+    question: { id: "Lawan kata dari 'bersih' adalah..." },
+    options: {
+      A: { id: "Rapi" },
+      B: { id: "Kotor" },
+      C: { id: "Harum" },
+      D: { id: "Indah" }
+    },
+    correctAnswer: "B",
+    explanation: { id: "Lawan kata bersih adalah kotor." },
+    image: null,
+    tags: ["antonim"]
+  },
+  {
+    id: "BI-022",
+    kelas: 1,
+    level: 2,
+    category: "Bahasa Indonesia",
+    topic: "Sinonim",
+    question: { id: "Sinonim dari kata 'pandai' adalah..." },
+    options: {
+      A: { id: "Pintar" },
+      B: { id: "Malas" },
+      C: { id: "Lemah" },
+      D: { id: "Bodoh" }
+    },
+    correctAnswer: "A",
+    explanation: { id: "Pandai memiliki arti yang sama dengan pintar." },
+    image: null,
+    tags: ["sinonim"]
+  },
+  {
+    id: "BI-023",
+    kelas: 1,
+    level: 2,
+    category: "Bahasa Indonesia",
+    topic: "Kalimat",
+    question: { id: "Kalimat yang benar adalah..." },
+    options: {
+      A: { id: "Siti membaca buku di perpustakaan." },
+      B: { id: "Membaca Siti buku di perpustakaan." },
+      C: { id: "Buku perpustakaan membaca Siti." },
+      D: { id: "Di membaca perpustakaan Siti buku." }
+    },
+    correctAnswer: "A",
+    explanation: { id: "Kalimat yang benar memiliki susunan subjek, predikat, dan keterangan yang tepat." },
+    image: null,
+    tags: ["kalimat"]
+  },
+  {
+    id: "BI-024",
+    kelas: 1,
+    level: 2,
+    category: "Bahasa Indonesia",
+    topic: "Huruf Kapital",
+    question: { id: "Penulisan nama orang yang benar adalah..." },
+    options: {
+      A: { id: "andi" },
+      B: { id: "Andi" },
+      C: { id: "ANDI" },
+      D: { id: "aNDi" }
+    },
+    correctAnswer: "B",
+    explanation: { id: "Nama orang diawali huruf kapital." },
+    image: null,
+    tags: ["huruf kapital"]
+  },
+  {
+    id: "BI-025",
+    kelas: 1,
+    level: 2,
+    category: "Bahasa Indonesia",
+    topic: "Tanda Baca",
+    question: { id: "Kalimat tanya harus diakhiri dengan..." },
+    options: {
+      A: { id: "Titik (.)" },
+      B: { id: "Koma (,)" },
+      C: { id: "Tanda Tanya (?)" },
+      D: { id: "Tanda Seru (!)" }
+    },
+    correctAnswer: "C",
+    explanation: { id: "Kalimat tanya selalu diakhiri tanda tanya." },
+    image: null,
+    tags: ["tanda baca"]
+  },
+  {
+    id: "BI-026",
+    kelas: 1,
+    level: 2,
+    category: "Bahasa Indonesia",
+    topic: "Pemahaman Kalimat",
+    question: { id: "'Lani membawa payung karena hujan.' Mengapa Lani membawa payung?" },
+    options: {
+      A: { id: "Karena panas" },
+      B: { id: "Karena hujan" },
+      C: { id: "Karena bermain" },
+      D: { id: "Karena lapar" }
+    },
+    correctAnswer: "B",
+    explanation: { id: "Kalimat menjelaskan bahwa Lani membawa payung karena hujan." },
+    image: null,
+    tags: ["membaca"]
+  },
+  {
+    id: "BI-027",
+    kelas: 1,
+    level: 2,
+    category: "Bahasa Indonesia",
+    topic: "Kosakata",
+    question: { id: "Manakah yang termasuk nama profesi?" },
+    options: {
+      A: { id: "Dokter" },
+      B: { id: "Mangga" },
+      C: { id: "Sepeda" },
+      D: { id: "Harimau" }
+    },
+    correctAnswer: "A",
+    explanation: { id: "Dokter adalah salah satu profesi." },
+    image: null,
+    tags: ["profesi"]
+  },
+  {
+    id: "BI-028",
+    kelas: 1,
+    level: 2,
+    category: "Bahasa Indonesia",
+    topic: "Suku Kata",
+    question: { id: "Kata 'KELAPA' terdiri atas ... suku kata." },
+    options: {
+      A: { id: "2" },
+      B: { id: "3" },
+      C: { id: "4" },
+      D: { id: "5" }
+    },
+    correctAnswer: "B",
+    explanation: { id: "KE-LA-PA terdiri atas tiga suku kata." },
+    image: null,
+    tags: ["suku kata"]
+  },
+  {
+    id: "BI-029",
+    kelas: 1,
+    level: 2,
+    category: "Bahasa Indonesia",
+    topic: "Kosakata",
+    question: { id: "Manakah yang merupakan nama alat transportasi?" },
+    options: {
+      A: { id: "Kereta Api" },
+      B: { id: "Pisang" },
+      C: { id: "Meja" },
+      D: { id: "Ayam" }
+    },
+    correctAnswer: "A",
+    explanation: { id: "Kereta api adalah alat transportasi." },
+    image: null,
+    tags: ["transportasi"]
+  },
+  {
+    id: "BI-030",
+    kelas: 1,
+    level: 2,
+    category: "Bahasa Indonesia",
+    topic: "Pemahaman",
+    question: { id: "'Setiap pagi Edo sarapan sebelum berangkat sekolah.' Kapan Edo sarapan?" },
+    options: {
+      A: { id: "Malam hari" },
+      B: { id: "Siang hari" },
+      C: { id: "Setiap pagi" },
+      D: { id: "Sore hari" }
+    },
+    correctAnswer: "C",
+    explanation: { id: "Pada kalimat disebutkan bahwa Edo sarapan setiap pagi." },
+    image: null,
+    tags: ["pemahaman"]
   }
 ];
