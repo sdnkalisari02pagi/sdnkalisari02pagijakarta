@@ -1,5 +1,5 @@
 import { Question } from './types';
-import { bahasaIndonesiaQuiz } from './quiz/bahasa-indonesia';
+import { bahasaIndonesiaQuestions } from './quiz/bahasa-indonesia';
 import { matematikaQuiz } from './quiz/matematika';
 import { ipasQuiz } from './quiz/ipas';
 import { ppknQuiz } from './quiz/ppkn';
@@ -19,7 +19,7 @@ export function getQuestionsFromBank(gameId: string, level: number): Question[] 
   
   if (gameId === 'quiz-mapel') {
     list = [
-      ...bahasaIndonesiaQuiz,
+      ...bahasaIndonesiaQuestions,
       ...matematikaQuiz,
       ...ipasQuiz,
       ...ppknQuiz,
