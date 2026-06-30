@@ -1,15 +1,6 @@
-// Decoupled Question & Data Bank Manager for Games Edukasi (SDN Kalisari 02 Pagi)
+// Decoupled Static Configuration Manager for Games Edukasi (SDN Kalisari 02 Pagi)
 
-import { quizMapelQuestions } from '@/data/games/quiz-mapel';
-import { mathQuestions } from '@/data/games/math-challenge';
-import { scrambleQuestions } from '@/data/games/susun-kata';
-import { tebakGambarQuestions } from '@/data/games/tebak-gambar';
-import { memoryCardData } from '@/data/games/memory-card';
-import { wordSearchQuestions } from '@/data/games/word-search';
-import { puzzleQuestions } from '@/data/games/puzzle-indo';
-import { pilahSampahData } from '@/data/games/pilah-sampah';
-import { ceritaRakyatQuestions } from '@/data/games/cerita-rakyat';
-import { rambuQuestions } from '@/data/games/rambu-lalu-lintas';
+import { kartuMemoriData } from '@/data/questionLoader';
 import { Question, BilingualText } from '@/data/types';
 
 export const gamesList = [
@@ -142,37 +133,5 @@ export const avatarItems = [
   { id: "fr-3", type: "frame", name: { id: "Bingkai Pelangi", en: "Rainbow Frame" }, cost: 70, itemValue: "border-pink-500 border-4 border-double" }
 ];
 
-// Memory match emojis pool
-export const memoryCardEmojis = memoryCardData.emojis.animals;
-
-// Main Entry Point to fetch static decoupled data
-export function generateDynamicAIQuestions(gameId: string, level: number): Question[] {
-  let matchedQuestions: Question[] = [];
-
-  if (gameId === 'quiz-mapel') {
-    matchedQuestions = quizMapelQuestions;
-  } else if (gameId === 'math-challenge') {
-    matchedQuestions = mathQuestions;
-  } else if (gameId === 'susun-kata') {
-    matchedQuestions = scrambleQuestions;
-  } else if (gameId === 'tebak-gambar') {
-    matchedQuestions = tebakGambarQuestions;
-  } else if (gameId === 'cerita-rakyat') {
-    matchedQuestions = ceritaRakyatQuestions;
-  } else if (gameId === 'rambu-lalu-lintas') {
-    matchedQuestions = rambuQuestions;
-  } else if (gameId === 'pilah-sampah') {
-    matchedQuestions = pilahSampahData as any;
-  } else if (gameId === 'word-search') {
-    matchedQuestions = wordSearchQuestions;
-  } else if (gameId === 'puzzle-indo') {
-    matchedQuestions = puzzleQuestions;
-  }
-
-  // Filter based on selected level
-  const filtered = matchedQuestions.filter(q => q.level === level);
-  
-  // Return matched items, or fall back to returning all of them if level-specific is empty
-  return filtered.length > 0 ? filtered : matchedQuestions;
-}
-export { memoryCardData, puzzleQuestions, pilahSampahData };
+// Redirect emoji list export
+export const memoryCardEmojis = kartuMemoriData.emojis;
