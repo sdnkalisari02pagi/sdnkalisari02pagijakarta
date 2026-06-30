@@ -53,6 +53,14 @@ export default function GamePlay() {
     return 15;
   };
 
+  const getSessionCountForLvl = (lvl: number) => {
+    if (lvl === 1) return 5;
+    if (lvl === 2) return 8;
+    if (lvl === 3) return 10;
+    if (lvl === 4) return 15;
+    return 20;
+  };
+
   const loadLevel = async (lvl: number) => {
     setLoading(true);
     setGameFinished(false);
@@ -73,18 +81,21 @@ export default function GamePlay() {
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
 
-    setQuestions(shuffled);
+    const limit = getSessionCountForLvl(lvl);
+    const sliced = shuffled.slice(0, limit);
+
+    setQuestions(sliced);
     setLoading(false);
 
-    // Initializer custom game states using shuffled list
-    if (id === 'susun-kata' && shuffled.length > 0) {
-      initScrambleWord(shuffled[0]);
+    // Initializer custom game states using sliced list
+    if (id === 'susun-kata' && sliced.length > 0) {
+      initScrambleWord(sliced[0]);
     }
     if (id === 'memory-card') {
       initMemoryCards(lvl);
     }
-    if (id === 'pilah-sampah' && shuffled.length > 0) {
-      setTrashItems(shuffled[0].metadata?.Items || []);
+    if (id === 'pilah-sampah' && sliced.length > 0) {
+      setTrashItems(sliced[0].metadata?.Items || []);
       setActiveTrashIdx(0);
     }
   };
