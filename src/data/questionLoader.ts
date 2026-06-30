@@ -1,6 +1,6 @@
 import { Question } from './types';
 import { bahasaIndonesiaQuestions } from './quiz/bahasa-indonesia';
-import { matematikaQuiz } from './quiz/matematika';
+import { matematikaQuestions } from './quiz/matematika';
 import { ipasQuiz } from './quiz/ipas';
 import { ppknQuiz } from './quiz/ppkn';
 import { agamaQuiz } from './quiz/agama';
@@ -20,14 +20,14 @@ export function getQuestionsFromBank(gameId: string, level: number): Question[] 
   if (gameId === 'quiz-mapel') {
     list = [
       ...bahasaIndonesiaQuestions,
-      ...matematikaQuiz,
+      ...matematikaQuestions,
       ...ipasQuiz,
       ...ppknQuiz,
       ...agamaQuiz,
       ...bahasaInggrisQuiz
     ];
   } else if (gameId === 'math-challenge') {
-    list = matematikaQuiz;
+    list = matematikaQuestions;
   } else if (gameId === 'tebak-gambar') {
     list = tebakGambarData;
   } else if (gameId === 'susun-kata') {
