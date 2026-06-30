@@ -5,8 +5,8 @@ import { mathQuestions } from '@/data/games/math-challenge';
 import { scrambleQuestions } from '@/data/games/susun-kata';
 import { tebakGambarQuestions } from '@/data/games/tebak-gambar';
 import { memoryCardData } from '@/data/games/memory-card';
-import { wordSearchData } from '@/data/games/word-search';
-import { puzzleNusantaraData } from '@/data/games/puzzle-indo';
+import { wordSearchQuestions } from '@/data/games/word-search';
+import { puzzleQuestions } from '@/data/games/puzzle-indo';
 import { pilahSampahData } from '@/data/games/pilah-sampah';
 import { ceritaRakyatQuestions } from '@/data/games/cerita-rakyat';
 import { rambuQuestions } from '@/data/games/rambu-lalu-lintas';
@@ -186,6 +186,10 @@ export function generateDynamicAIQuestions(gameId: string, level: number): Quest
     matchedQuestions = rambuQuestions;
   } else if (gameId === 'pilah-sampah') {
     matchedQuestions = pilahSampahData as any;
+  } else if (gameId === 'word-search') {
+    matchedQuestions = wordSearchQuestions;
+  } else if (gameId === 'puzzle-indo') {
+    matchedQuestions = puzzleQuestions;
   }
 
   // Filter based on selected level
@@ -194,4 +198,4 @@ export function generateDynamicAIQuestions(gameId: string, level: number): Quest
   // Return matched items, or fall back to returning all of them if level-specific is empty
   return filtered.length > 0 ? filtered : matchedQuestions;
 }
-export { memoryCardData, wordSearchData, puzzleNusantaraData, pilahSampahData };
+export { memoryCardData, puzzleQuestions, pilahSampahData };
