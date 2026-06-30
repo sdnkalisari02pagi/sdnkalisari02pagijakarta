@@ -10,30 +10,7 @@ import { puzzleQuestions } from '@/data/games/puzzle-indo';
 import { pilahSampahData } from '@/data/games/pilah-sampah';
 import { ceritaRakyatQuestions } from '@/data/games/cerita-rakyat';
 import { rambuQuestions } from '@/data/games/rambu-lalu-lintas';
-
-export interface BilingualText {
-  id: string;
-  en: string;
-}
-
-export interface Question {
-  id: string;
-  gameId: string;
-  level: number;
-  question: BilingualText;
-  options?: {
-    A: BilingualText;
-    B: BilingualText;
-    C: BilingualText;
-    D: BilingualText;
-    E?: BilingualText;
-  };
-  correctAnswer: string;
-  explanation: BilingualText;
-  hint: BilingualText;
-  imageUrl?: string;
-  metadata?: any;
-}
+import { Question, BilingualText } from '@/data/types';
 
 export const gamesList = [
   {
