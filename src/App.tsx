@@ -21,10 +21,6 @@ import Kontak from "./pages/Kontak";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import HasilTKA from "./pages/HasilTKA";
-import { GameProvider } from "@/contexts/GameContext";
-import GamesIndex from "./pages/games/GamesIndex";
-import GamePlay from "./pages/games/GamePlay";
-import AdminGames from "./pages/admin/games/AdminGames";
 
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminPegawai from "./pages/admin/AdminPegawai";
@@ -52,7 +48,6 @@ const App = () => (
       <Toaster />
       <Sonner />
       <LanguageProvider>
-      <GameProvider>
       <AuthProvider>
         <SchoolProvider>
           <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
@@ -72,8 +67,6 @@ const App = () => (
                 <Route path="/hasil-tka" element={<HasilTKA />} />
                 <Route path="/kontak" element={<Kontak />} />
                 <Route path="/login" element={<Login />} />
-                <Route path="/games" element={<GamesIndex />} />
-                <Route path="/games/play/:id" element={<GamePlay />} />
               </Route>
               <Route
                 path="/admin"
@@ -101,14 +94,12 @@ const App = () => (
                 <Route path="kontak" element={<AdminKontak />} />
                 <Route path="footer" element={<AdminFooter />} />
                 <Route path="akun" element={<AdminAkun />} />
-                <Route path="games" element={<AdminGames />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
         </SchoolProvider>
       </AuthProvider>
-      </GameProvider>
       </LanguageProvider>
     </TooltipProvider>
   </QueryClientProvider>

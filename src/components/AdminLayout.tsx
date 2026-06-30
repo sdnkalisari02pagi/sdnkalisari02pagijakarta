@@ -8,7 +8,6 @@ import { useSchool } from '@/contexts/SchoolContext';
 
 const menuItems = [
   { title: 'Dashboard', url: '/admin', icon: LayoutDashboard },
-  { title: 'Games Edukasi', url: '/admin/games', icon: Gamepad },
   { title: 'Logo', url: '/admin/logo', icon: ImageIcon },
   { title: 'Hero', url: '/admin/hero', icon: ImageIcon },
   { title: 'Keunggulan', url: '/admin/keunggulan', icon: Award },
