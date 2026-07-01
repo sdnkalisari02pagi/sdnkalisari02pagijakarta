@@ -24,58 +24,57 @@ async function generateSitemap() {
     if (keyMatch && !supabaseAnonKey) supabaseAnonKey = keyMatch[1].trim();
   }
 
-  if (!supabaseUrl || !supabaseAnonKey) {
-    console.error('Error: Supabase environment variables not found in environment or .env file.');
-    process.exit(1);
-  }
-
-  console.log('Fetching dynamic routes from Supabase...');
-  const headers = {
-    'apikey': supabaseAnonKey,
-    'Authorization': `Bearer ${supabaseAnonKey}`
-  };
-
   let beritaIds = [];
   let prestasiIds = [];
   let ekskulIds = [];
 
-  try {
-    const beritaRes = await fetch(`${supabaseUrl}/rest/v1/berita?select=id`, { headers });
-    if (beritaRes.ok) {
-      const data = await beritaRes.json();
-      beritaIds = data.map(item => item.id);
-    } else {
-      console.warn('Warning: Failed to fetch berita from Supabase REST API.');
-    }
-  } catch (error) {
-    console.error('Error fetching berita:', error);
-  }
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.warn('Warning: Supabase environment variables not found. Generating sitemap with static routes only.');
+  } else {
+    console.log('Fetching dynamic routes from Supabase...');
+    const headers = {
+      'apikey': supabaseAnonKey,
+      'Authorization': `Bearer ${supabaseAnonKey}`
+    };
 
-  try {
-    const prestasiRes = await fetch(`${supabaseUrl}/rest/v1/prestasi?select=id`, { headers });
-    if (prestasiRes.ok) {
-      const data = await prestasiRes.json();
-      prestasiIds = data.map(item => item.id);
-    } else {
-      console.warn('Warning: Failed to fetch prestasi from Supabase REST API.');
+    try {
+      const beritaRes = await fetch(`${supabaseUrl}/rest/v1/berita?select=id`, { headers });
+      if (beritaRes.ok) {
+        const data = await beritaRes.json();
+        beritaIds = data.map(item => item.id);
+      } else {
+        console.warn('Warning: Failed to fetch berita from Supabase REST API.');
+      }
+    } catch (error) {
+      console.error('Error fetching berita:', error);
     }
-  } catch (error) {
-    console.error('Error fetching prestasi:', error);
-  }
 
-  try {
-    const ekskulRes = await fetch(`${supabaseUrl}/rest/v1/ekstrakurikuler?select=id`, { headers });
-    if (ekskulRes.ok) {
-      const data = await ekskulRes.json();
-      ekskulIds = data.map(item => item.id);
-    } else {
-      console.warn('Warning: Failed to fetch ekstrakurikuler from Supabase REST API.');
+    try {
+      const prestasiRes = await fetch(`${supabaseUrl}/rest/v1/prestasi?select=id`, { headers });
+      if (prestasiRes.ok) {
+        const data = await prestasiRes.json();
+        prestasiIds = data.map(item => item.id);
+      } else {
+        console.warn('Warning: Failed to fetch prestasi from Supabase REST API.');
+      }
+    } catch (error) {
+      console.error('Error fetching prestasi:', error);
     }
-  } catch (error) {
-    console.error('Error fetching ekstrakurikuler:', error);
-  }
 
-  console.log(`Fetched: ${beritaIds.length} berita, ${prestasiIds.length} prestasi, ${ekskulIds.length} ekstrakurikuler.`);
+    try {
+      const ekskulRes = await fetch(`${supabaseUrl}/rest/v1/ekstrakurikuler?select=id`, { headers });
+      if (ekskulRes.ok) {
+        const data = await ekskulRes.json();
+        ekskulIds = data.map(item => item.id);
+      } else {
+        console.warn('Warning: Failed to fetch ekstrakurikuler from Supabase REST API.');
+      }
+    } catch (error) {
+      console.error('Error fetching ekstrakurikuler:', error);
+    }
+
+    console.log(`Fetched: ${beritaIds.length} berita, ${prestasiIds.length} prestasi, ${ekskulIds.length} ekstrakurikuler.`);
+  }
 
   // 2. Define static routes
   const staticRoutes = [
