@@ -4,6 +4,7 @@ import { tr } from '@/lib/i18n';
 import { Card, CardContent } from '@/components/ui/card';
 import { MapPin, Phone, Mail, Instagram, Youtube } from 'lucide-react';
 import TikTokIcon from '@/components/TikTokIcon';
+import SEO from '@/components/SEO';
 
 export default function Kontak() {
   const { data } = useSchool();
@@ -11,21 +12,28 @@ export default function Kontak() {
 
   return (
     <div className="py-10">
+      <SEO 
+        title={t('page_kontak')} 
+        description="Hubungi kami melalui email, telepon, media sosial resmi, atau temukan lokasi sekolah SDN Kalisari 02 Pagi di Google Maps." 
+        breadcrumbs={[
+          { name: t('page_kontak'), item: '/kontak' }
+        ]}
+      />
       <div className="container mx-auto px-4 max-w-4xl">
         <h1 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-10 text-foreground">{t('page_kontak')}</h1>
         <div className="grid md:grid-cols-2 gap-6">
           <div className="space-y-4">
             <Card><CardContent className="pt-6 flex items-start gap-3">
               <MapPin className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-              <div><h3 className="font-semibold text-foreground">{t('kontak_alamat')}</h3><p className="text-sm text-muted-foreground">{tr(data.kontak.alamat, lang)}</p></div>
+              <div><h2 className="font-semibold text-foreground text-sm sm:text-base">{t('kontak_alamat')}</h2><p className="text-sm text-muted-foreground">{tr(data.kontak.alamat, lang)}</p></div>
             </CardContent></Card>
             <Card><CardContent className="pt-6 flex items-start gap-3">
               <Phone className="w-5 h-5 text-primary shrink-0" />
-              <div><h3 className="font-semibold text-foreground">{t('kontak_telepon')}</h3><p className="text-sm text-muted-foreground">{data.kontak.telepon}</p></div>
+              <div><h2 className="font-semibold text-foreground text-sm sm:text-base">{t('kontak_telepon')}</h2><p className="text-sm text-muted-foreground">{data.kontak.telepon}</p></div>
             </CardContent></Card>
             <Card><CardContent className="pt-6 flex items-start gap-3">
               <Mail className="w-5 h-5 text-primary shrink-0" />
-              <div><h3 className="font-semibold text-foreground">{t('kontak_email')}</h3><p className="text-sm text-muted-foreground">{data.kontak.email}</p></div>
+              <div><h2 className="font-semibold text-foreground text-sm sm:text-base">{t('kontak_email')}</h2><p className="text-sm text-muted-foreground">{data.kontak.email}</p></div>
             </CardContent></Card>
             <Card><CardContent className="pt-6 flex items-center gap-4 flex-wrap">
               {data.kontak.instagram && <a href={data.kontak.instagram} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline"><Instagram className="w-5 h-5" /> Instagram</a>}

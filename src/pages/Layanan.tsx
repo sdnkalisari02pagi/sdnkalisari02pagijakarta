@@ -10,6 +10,7 @@ import { Search, Download, Eye } from 'lucide-react';
 import DocumentPreview, { detectDocType } from '@/components/DocumentPreview';
 import FilterSidebar from '@/components/FilterSidebar';
 import PaginationBar, { PerPage, paginate } from '@/components/PaginationBar';
+import SEO from '@/components/SEO';
 
 export default function Layanan() {
   const { data } = useSchool();
@@ -38,6 +39,13 @@ export default function Layanan() {
 
   return (
     <div className="py-10">
+      <SEO 
+        title={t('page_dokumen')} 
+        description="Unduh formulir, layanan kesiswaan, jadwal akademik, dan dokumen penting lainnya di SDN Kalisari 02 Pagi." 
+        breadcrumbs={[
+          { name: t('page_dokumen'), item: '/dokumen' }
+        ]}
+      />
       <div className="container mx-auto px-4">
         <h1 className="text-3xl font-bold text-center mb-8 text-foreground">{t('page_dokumen')}</h1>
         <div className="flex flex-col lg:flex-row gap-6">

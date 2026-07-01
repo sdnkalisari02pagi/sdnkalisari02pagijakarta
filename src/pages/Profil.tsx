@@ -13,6 +13,7 @@ import { Search, GraduationCap } from "lucide-react";
 import FilterSidebar from "@/components/FilterSidebar";
 import PaginationBar, { PerPage, paginate } from "@/components/PaginationBar";
 import { LinkedText } from "@/lib/linkify";
+import SEO from "@/components/SEO";
 
 const VALID_TABS = ["sejarah", "visimisi", "pegawai", "siswa"];
 
@@ -72,6 +73,13 @@ export default function Profil() {
 
   return (
     <div className="py-10">
+      <SEO 
+        title={t("page_profil")} 
+        description="Profil lengkap SDN Kalisari 02 Pagi Jakarta meliputi sejarah sekolah, visi misi, daftar pegawai/guru, serta jumlah siswa."
+        breadcrumbs={[
+          { name: t("page_profil"), item: "/profil" }
+        ]}
+      />
       <div className="container mx-auto px-4">
         <h1 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8 text-foreground">{t("page_profil")}</h1>
 
@@ -84,7 +92,7 @@ export default function Profil() {
           </TabsList>
 
           <TabsContent value="sejarah" className="mt-6 max-w-4xl mx-auto">
-            <img src={data.profil.fotoSekolah} alt="Sekolah" className="w-full max-h-[480px] object-cover rounded-xl mb-6 shadow-md" />
+            <img src={data.profil.fotoSekolah} alt="Sekolah" loading="lazy" className="w-full max-h-[480px] object-cover rounded-xl mb-6 shadow-md" />
             <div className="text-muted-foreground mb-8 leading-relaxed">
               <LinkedText text={tr(data.profil.sejarah, lang)} />
             </div>
@@ -93,7 +101,7 @@ export default function Profil() {
           <TabsContent value="visimisi" className="mt-6 space-y-6">
             <Card>
               <CardContent className="pt-6">
-                <h3 className="font-semibold text-lg text-foreground mb-2">{t("profil_visi")}</h3>
+                <h2 className="font-semibold text-lg text-foreground mb-2">{t("profil_visi")}</h2>
                 <div className="text-muted-foreground">
                   <LinkedText text={tr(data.profil.visi, lang)} />
                 </div>
@@ -101,7 +109,7 @@ export default function Profil() {
             </Card>
             <Card>
               <CardContent className="pt-6">
-                <h3 className="font-semibold text-lg text-foreground mb-2">{t("profil_misi")}</h3>
+                <h2 className="font-semibold text-lg text-foreground mb-2">{t("profil_misi")}</h2>
                 <div className="text-muted-foreground">
                   <LinkedText text={tr(data.profil.misi, lang)} />
                 </div>
@@ -109,7 +117,7 @@ export default function Profil() {
             </Card>
             <Card>
               <CardContent className="pt-6">
-                <h3 className="font-semibold text-lg text-foreground mb-2">{t("profil_tujuan")}</h3>
+                <h2 className="font-semibold text-lg text-foreground mb-2">{t("profil_tujuan")}</h2>
                 <div className="text-muted-foreground">
                   <LinkedText text={tr(data.profil.tujuan, lang)} />
                 </div>
@@ -168,7 +176,7 @@ export default function Profil() {
                       onClick={() => setSelectedPegawai(p)}
                     >
                       <div className="aspect-[3/4] w-full overflow-hidden">
-                        <img src={p.foto} alt={p.nama} className="w-full h-full object-cover" />
+                        <img src={p.foto} alt={p.nama} loading="lazy" className="w-full h-full object-cover" />
                       </div>
                       <CardContent className="p-4">
                         <h4 className="font-semibold text-foreground">{p.nama}</h4>

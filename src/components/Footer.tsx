@@ -13,7 +13,7 @@ export default function Footer() {
         <div>
          <div className="flex items-center gap-2 mb-4">
             {data.logo ? (
-              <img src={data.logo} alt="Logo" className="w-10 h-10 rounded-full object-cover" />
+              <img src={data.logo} alt="Logo" loading="lazy" className="w-10 h-10 rounded-full object-cover" />
             ) : (
               <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
                 <GraduationCap className="w-6 h-6 text-secondary-foreground" />

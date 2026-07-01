@@ -12,6 +12,7 @@ import { Search, ArrowRight, Play, Image as ImageIcon } from 'lucide-react';
 import FilterSidebar from '@/components/FilterSidebar';
 import PaginationBar, { PerPage, paginate } from '@/components/PaginationBar';
 import VideoCardThumbnail from '@/components/VideoCardThumbnail';
+import SEO from '@/components/SEO';
 
 interface Props {
   title: string;
@@ -46,6 +47,15 @@ export default function ContentListPage({ title, items, basePath, searchKey, emp
 
   return (
     <div className="py-10">
+      <SEO 
+        title={title} 
+        description={basePath === '/berita' 
+          ? 'Berita terbaru, pengumuman resmi, kabar kegiatan, dan agenda penting sekolah SDN Kalisari 02 Pagi.' 
+          : 'Galeri prestasi dan pencapaian akademik maupun non-akademik siswa-siswi SDN Kalisari 02 Pagi.'}
+        breadcrumbs={[
+          { name: title, item: basePath }
+        ]}
+      />
       <div className="container mx-auto px-4">
         <h1 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8 text-foreground">{title}</h1>
         <div className="flex flex-col lg:flex-row gap-6">
@@ -83,7 +93,7 @@ export default function ContentListPage({ title, items, basePath, searchKey, emp
                       <VideoCardThumbnail videoUrl={k.videoUrl} manualThumbnail={k.thumbnail} alt={tr(k.judul, lang)} />
                     ) : (
                       k.fotoUtama ? (
-                        <img src={k.fotoUtama} alt={tr(k.judul, lang)} className="w-full h-48 object-cover" />
+                        <img src={k.fotoUtama} alt={tr(k.judul, lang)} loading="lazy" className="w-full h-48 object-cover" />
                       ) : (
                         <div className="w-full h-48 bg-muted flex items-center justify-center"><ImageIcon className="w-10 h-10 text-muted-foreground" /></div>
                       )

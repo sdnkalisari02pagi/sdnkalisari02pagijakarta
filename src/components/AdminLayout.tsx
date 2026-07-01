@@ -5,6 +5,7 @@ import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu
 import { NavLink } from '@/components/NavLink';
 import { LayoutDashboard, Users, Calendar, Star, FileText, School, MessageSquare, Phone, LogOut, GraduationCap, ImageIcon, LayoutTemplate, Award, UserCog, Shield, Trophy } from 'lucide-react';
 import { useSchool } from '@/contexts/SchoolContext';
+import SEO from '@/components/SEO';
 
 const menuItems = [
   { title: 'Dashboard', url: '/admin', icon: LayoutDashboard },
@@ -78,6 +79,7 @@ export default function AdminLayout() {
 
   return (
     <SidebarProvider>
+      <SEO title="Admin Panel" noindex={true} />
       <div className="min-h-screen flex w-full">
         <AdminSidebar />
         <div className="flex-1 flex flex-col">

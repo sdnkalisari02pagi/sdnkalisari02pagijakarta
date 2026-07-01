@@ -7,6 +7,7 @@ import { Users, BookOpen, Star, Shield, ArrowRight, ChevronLeft, ChevronRight, A
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+import SEO from '@/components/SEO';
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {BookOpen, Users, Star, Shield, Award, Heart, Lightbulb, Target, Smile, Globe, Sparkles, Zap,};
 
@@ -41,6 +42,7 @@ const sambutanText = tr(data.sambutan.teks, lang);
 
 return (
 <div>
+  <SEO />
 
   <div className="absolute top-1/2 -right-32 w-80 h-80 rounded-full bg-secondary/10 blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
   <div className="absolute -bottom-16 left-1/3 w-64 h-64 rounded-full bg-primary/5 blur-2xl animate-pulse" style={{ animationDelay: '2s' }} />
@@ -83,7 +85,7 @@ return (
             <div className="relative animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
               <div className="relative rounded-2xl overflow-hidden shadow-xl aspect-[4/3]">
                 {images.map((img, i) => (
-                  <img key={i} src={img} alt={`Slide ${i + 1}`} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out" style={{ opacity: i === currentSlide ? 1 : 0 }} />
+                  <img key={i} src={img} alt={`Slide ${i + 1}`} loading={i === 0 ? "eager" : "lazy"} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out" style={{ opacity: i === currentSlide ? 1 : 0 }} />
                 ))}
                 {images.length > 1 && (
                   <>
@@ -111,7 +113,7 @@ return (
       <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 md:mb-12 text-foreground scroll-animate">{t('section_sambutan')}</h2>
       <div className="flex flex-col md:flex-row items-center gap-6 md:gap-10 max-w-4xl mx-auto scroll-animate delay-200">
         <div className="w-48 h-56 sm:w-56 sm:h-64 rounded-xl overflow-hidden shadow-xl border-4 border-background shrink-0">
-          <img src={data.sambutan.foto} alt={data.sambutan.nama} className="w-full h-full object-cover" />
+          <img src={data.sambutan.foto} alt={data.sambutan.nama} loading="lazy" className="w-full h-full object-cover" />
         </div>
         <div className="border-l-4 border-primary pl-4 sm:pl-6">
           <Quote className="w-8 h-8 text-secondary mb-3" />
@@ -162,7 +164,7 @@ return (
             return (
               <Link key={e.id} to={`/ekstrakurikuler/${e.id}`}>
                 <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full">
-                  <img src={cardImg} alt={tr(e.nama, lang)} className="w-full h-48 object-cover" />
+                  <img src={cardImg} alt={tr(e.nama, lang)} loading="lazy" className="w-full h-48 object-cover" />
                   <CardContent className="pt-4">
                     <h3 className="font-semibold text-foreground mb-1">{tr(e.nama, lang)}</h3>
                     {pelatihNames.length > 0 && (
@@ -192,7 +194,7 @@ return (
             <Link key={k.id} to={`/berita/${k.id}`}>
               <Card className="overflow-hidden hover:shadow-lg transition-shadow scroll-animate" style={{ animationDelay: `${(i + 1) * 100}ms` }}>
                 <div className="relative">
-                  {cardImg && <img src={cardImg} alt={tr(k.judul, lang)} className="w-full h-48 object-cover" />}
+                  {cardImg && <img src={cardImg} alt={tr(k.judul, lang)} loading="lazy" className="w-full h-48 object-cover" />}
                   {k.tipe === 'video' && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/30">
                       <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center"><Play className="w-5 h-5 text-primary fill-primary ml-0.5" /></div>

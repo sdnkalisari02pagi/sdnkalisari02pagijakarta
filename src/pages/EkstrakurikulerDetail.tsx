@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { ArrowLeft } from 'lucide-react';
 import ImageLightbox from '@/components/ImageLightbox';
 import { LinkedText } from '@/lib/linkify';
+import SEO from '@/components/SEO';
 
 export default function EkstrakurikulerDetail() {
   const { id } = useParams();
@@ -23,15 +24,26 @@ export default function EkstrakurikulerDetail() {
   const heroImg = ekskul.fotoUtama || ekskul.foto;
   const pelatih = ekskul.pelatih || [];
   const selectedPelatih = pelatihIdx !== null ? pelatih[pelatihIdx] : null;
+  const deskripsiText = tr(ekskul.deskripsi, lang).replace(/<[^>]*>/g, '').substring(0, 160);
 
   return (
     <div className="py-10">
+      <SEO 
+        title={nama} 
+        description={deskripsiText}
+        canonicalPath={`/ekstrakurikuler/${id}`}
+        ogImage={heroImg || undefined}
+        breadcrumbs={[
+          { name: t('page_ekstrakurikuler'), item: '/ekstrakurikuler' },
+          { name: nama, item: `/ekstrakurikuler/${id}` }
+        ]}
+      />
       <div className="container mx-auto px-4 max-w-4xl">
         <Link to="/ekstrakurikuler">
           <Button variant="ghost" className="mb-6 gap-2"><ArrowLeft className="w-4 h-4" /> {t('btn_kembali')}</Button>
         </Link>
         <h1 className="text-2xl sm:text-3xl font-bold mb-4 text-foreground break-words">{nama}</h1>
-        {heroImg && <img src={heroImg} alt={nama} className="w-full max-h-[480px] object-cover rounded-xl mb-6 shadow-md" />}
+        {heroImg && <img src={heroImg} alt={nama} loading="lazy" className="w-full max-h-[480px] object-cover rounded-xl mb-6 shadow-md" />}
         <div className="text-muted-foreground mb-8 leading-relaxed">
           <LinkedText text={tr(ekskul.deskripsi, lang)} />
         </div>
@@ -44,7 +56,7 @@ export default function EkstrakurikulerDetail() {
                 <div key={i} className="flex flex-col items-center gap-2 text-center">
                   <button onClick={() => setPelatihIdx(i)} className="rounded-full overflow-hidden border-2 border-primary/20 hover:border-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary">
                     {p.foto ? (
-                      <img src={p.foto} alt={tr(p.nama, lang)} className="w-28 h-28 object-cover" />
+                      <img src={p.foto} alt={tr(p.nama, lang)} loading="lazy" className="w-28 h-28 object-cover" />
                     ) : (
                       <div className="w-28 h-28 bg-muted flex items-center justify-center text-muted-foreground text-xs">No Photo</div>
                     )}
@@ -62,7 +74,7 @@ export default function EkstrakurikulerDetail() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {ekskul.galeri.map((foto, i) => (
                 <button key={i} onClick={() => setLightboxIdx(i)} className="group relative overflow-hidden rounded-lg cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-primary">
-                  <img src={foto} alt={`${nama} ${i + 1}`} className="w-full h-48 object-cover transition-transform group-hover:scale-105" />
+                  <img src={foto} alt={`${nama} ${i + 1}`} loading="lazy" className="w-full h-48 object-cover transition-transform group-hover:scale-105" />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
                 </button>
               ))}

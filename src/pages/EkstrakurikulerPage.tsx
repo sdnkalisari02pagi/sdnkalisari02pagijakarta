@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Search } from 'lucide-react';
 import FilterSidebar from '@/components/FilterSidebar';
 import PaginationBar, { PerPage, paginate } from '@/components/PaginationBar';
+import SEO from '@/components/SEO';
 
 export default function EkstrakurikulerPage() {
   const { data } = useSchool();
@@ -25,6 +26,13 @@ export default function EkstrakurikulerPage() {
 
   return (
     <div className="py-10">
+      <SEO 
+        title={t('page_ekstrakurikuler')} 
+        description="Berbagai kegiatan ekstrakurikuler di SDN Kalisari 02 Pagi Jakarta untuk mengembangkan minat dan bakat siswa-siswi." 
+        breadcrumbs={[
+          { name: t('page_ekstrakurikuler'), item: '/ekstrakurikuler' }
+        ]}
+      />
       <div className="container mx-auto px-4">
         <h1 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8 text-foreground">{t('page_ekstrakurikuler')}</h1>
         <div className="flex flex-col lg:flex-row gap-6">
@@ -47,7 +55,7 @@ export default function EkstrakurikulerPage() {
                 return (
                   <Link key={e.id} to={`/ekstrakurikuler/${e.id}`}>
                     <Card className="overflow-hidden hover:shadow-lg transition-shadow hover:-translate-y-1 cursor-pointer h-full">
-                      <img src={cardImg} alt={nama} className="w-full h-48 object-cover" />
+                      <img src={cardImg} alt={nama} loading="lazy" className="w-full h-48 object-cover" />
                       <CardContent className="pt-4 text-center">
                         <h3 className="font-semibold text-foreground text-lg">{nama}</h3>
                         {pelatihNames.length > 0 && (

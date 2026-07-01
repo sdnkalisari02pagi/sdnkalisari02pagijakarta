@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { GraduationCap, ArrowLeft, Loader2 } from 'lucide-react';
+import SEO from '@/components/SEO';
 
 interface TKAResult {
   nama: string;
@@ -72,10 +73,17 @@ export default function HasilTKA() {
 
   return (
     <div className="min-h-[70vh] flex items-center justify-center py-10">
+      <SEO 
+        title="Hasil TKA" 
+        description="Halaman verifikasi dan pencarian hasil seleksi TKA (Tes Kemampuan Akademik) siswa SDN Kalisari 02 Pagi." 
+        breadcrumbs={[
+          { name: "Hasil TKA", item: "/hasil-tka" }
+        ]}
+      />
       <Card className="w-full max-w-md mx-4 shadow-lg border-primary/10">
         <CardHeader className="text-center pb-4">
           {data.logo ? (
-            <img src={data.logo} alt="Logo" className="w-20 h-20 rounded-full object-cover mx-auto mb-4 border shadow-sm" />
+            <img src={data.logo} alt="Logo" loading="lazy" className="w-20 h-20 rounded-full object-cover mx-auto mb-4 border shadow-sm" />
           ) : (
             <div className="w-20 h-20 rounded-full bg-primary mx-auto mb-4 flex items-center justify-center shadow-sm">
               <GraduationCap className="w-10 h-10 text-primary-foreground" />

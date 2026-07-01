@@ -8,6 +8,7 @@ import { ArrowLeft } from 'lucide-react';
 import { LinkedText } from '@/lib/linkify';
 import { getVideoEmbed } from '@/lib/videoEmbed';
 import ImageLightbox from '@/components/ImageLightbox';
+import SEO from '@/components/SEO';
 
 interface Props {
   items: Berita[];
@@ -30,9 +31,21 @@ export default function ContentDetailPage({ items, backPath }: Props) {
   const judul = tr(item.judul, lang);
   const locale = lang === 'en' ? 'en-US' : 'id-ID';
   const embed = item.tipe === 'video' ? getVideoEmbed(item.videoUrl) : null;
+  const deskripsiText = tr(item.deskripsi, lang).replace(/<[^>]*>/g, '').substring(0, 160);
 
   return (
     <div className="py-10">
+      <SEO 
+        title={judul} 
+        description={deskripsiText}
+        canonicalPath={`${backPath}/${id}`}
+        ogImage={item.fotoUtama || undefined}
+        ogType="article"
+        breadcrumbs={[
+          { name: backPath === '/berita' ? t('page_berita') : t('page_prestasi'), item: backPath },
+          { name: judul, item: `${backPath}/${id}` }
+        ]}
+      />
       <div className="container mx-auto px-4 max-w-4xl">
         <Link to={backPath}>
           <Button variant="ghost" className="mb-6 gap-2"><ArrowLeft className="w-4 h-4" /> {t('btn_kembali')}</Button>
@@ -43,7 +56,7 @@ export default function ContentDetailPage({ items, backPath }: Props) {
 
         {item.tipe === 'foto' ? (
           item.fotoUtama && (
-            <img src={item.fotoUtama} alt={judul} className="w-full max-h-[480px] object-cover rounded-xl mb-6 shadow-md" />
+            <img src={item.fotoUtama} alt={judul} loading="lazy" className="w-full max-h-[480px] object-cover rounded-xl mb-6 shadow-md" />
           )
         ) : (
           <div className="aspect-video w-full mb-6 rounded-xl overflow-hidden bg-black shadow-md">
@@ -71,7 +84,7 @@ export default function ContentDetailPage({ items, backPath }: Props) {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {item.galeri.map((foto, i) => (
                 <button key={i} onClick={() => setLightboxIdx(i)} className="group relative overflow-hidden rounded-lg cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-primary">
-                  <img src={foto} alt={`${judul} ${i + 1}`} className="w-full h-48 object-cover transition-transform group-hover:scale-105" />
+                  <img src={foto} alt={`${judul} ${i + 1}`} loading="lazy" className="w-full h-48 object-cover transition-transform group-hover:scale-105" />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
                 </button>
               ))}

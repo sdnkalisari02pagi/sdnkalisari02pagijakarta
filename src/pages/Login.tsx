@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { GraduationCap } from 'lucide-react';
 import { toast } from 'sonner';
+import SEO from '@/components/SEO';
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -69,6 +70,7 @@ export default function Login() {
 
   return (
     <div className="min-h-[70vh] flex items-center justify-center py-10">
+      <SEO title="Masuk Admin" noindex={true} />
       <Card className="w-full max-w-md mx-4">
         <CardHeader className="text-center">
           {data.logo ? (
