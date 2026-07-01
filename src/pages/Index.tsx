@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useSchool } from '@/contexts/SchoolContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { tr } from '@/lib/i18n';
@@ -8,11 +8,26 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import SEO from '@/components/SEO';
+import LastModifiedInfo from '@/components/LastModifiedInfo';
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {BookOpen, Users, Star, Shield, Award, Heart, Lightbulb, Target, Smile, Globe, Sparkles, Zap,};
 
-export default function Index() {const { data } = useSchool();
-const langCtx = useLanguage();
+export default function Index() {
+  const { data } = useSchool();
+  const langCtx = useLanguage();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace('#', '');
+      const element = document.getElementById(id);
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }, 200);
+      }
+    }
+  }, [location.hash]);
 const t = typeof langCtx?.t === 'function'
   ? langCtx.t
   : (key: string) => key;
@@ -22,6 +37,7 @@ const sambutanRef = useScrollAnimation();
 const keunggulanRef = useScrollAnimation();
 const ekstrakurikulerRef = useScrollAnimation();
 const beritaRef = useScrollAnimation();
+const prestasiRef = useScrollAnimation();
 const kalenderRef = useScrollAnimation();
 const [ekskulPage, setEkskulPage] = useState(0);
 
@@ -38,7 +54,93 @@ const vis = hero.statsVisibility;const allStats = [{ key: 'staff', icon: Users, 
 const stats = allStats.filter(s => s.show);
 const gridColsMap: Record<number, string> = { 1: 'grid-cols-1', 2: 'grid-cols-2', 3: 'grid-cols-2 sm', 4: 'grid-cols-2 sm' };
 
-const sambutanText = tr(data.sambutan.teks, lang);
+  const getMonthAndYear = (dateStr: string) => {
+    const cleanStr = dateStr.toLowerCase();
+    const idMonths = ['januari', 'februari', 'maret', 'april', 'mei', 'juni', 'juli', 'agustus', 'september', 'oktober', 'november', 'desember'];
+    const enMonths = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+
+    let monthIndex = -1;
+    for (let i = 0; i < 12; i++) {
+      if (cleanStr.includes(idMonths[i])) {
+        monthIndex = i;
+        break;
+      }
+    }
+    if (monthIndex === -1) {
+      for (let i = 0; i < 12; i++) {
+        if (cleanStr.includes(enMonths[i])) {
+          monthIndex = i;
+          break;
+        }
+      }
+    }
+
+    const yearMatch = dateStr.match(/\b(20\d{2})\b/);
+    const year = yearMatch ? parseInt(yearMatch[1]) : new Date().getFullYear();
+
+    return { monthIndex, year };
+  };
+
+  const getMonthLabel = (monthIndex: number, lang: string) => {
+    const idMonths = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    const enMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    if (monthIndex === -1) return lang === 'en' ? 'Other' : 'Lainnya';
+    return lang === 'en' ? enMonths[monthIndex] : idMonths[monthIndex];
+  };
+
+  const monthStyles = [
+    { bg: '#93C5FD', text: 'text-slate-800' }, // 0: Blue
+    { bg: '#86EFAC', text: 'text-slate-800' }, // 1: Green
+    { bg: '#FDE68A', text: 'text-slate-800' }, // 2: Yellow/Amber
+    { bg: '#FDBA74', text: 'text-slate-800' }, // 3: Orange
+    { bg: '#FCA5A5', text: 'text-slate-800' }, // 4: Red/Pink
+    { bg: '#C4B5FD', text: 'text-slate-800' }, // 5: Violet
+    { bg: '#F9A8D4', text: 'text-slate-800' }, // 6: Pink
+    { bg: '#99F6E4', text: 'text-slate-800' }, // 7: Teal
+    { bg: '#A5F3FC', text: 'text-slate-800' }, // 8: Cyan
+    { bg: '#A5B4FC', text: 'text-slate-800' }, // 9: Indigo
+    { bg: '#BEF264', text: 'text-slate-800' }, // 10: Lime
+    { bg: '#FCD34D', text: 'text-slate-800' }, // 11: Gold/Amber
+    { bg: '#D8B4FE', text: 'text-slate-800' }  // 12: Purple
+  ];
+
+  const fallbackStyle = { bg: '#CBD5E1', text: 'text-slate-800' };
+
+  const groupedKalender = (() => {
+    if (!data.kalender) return [];
+    
+    const groups: Record<string, { monthIndex: number; year: number; items: any[] }> = {};
+    
+    data.kalender.forEach((k: any) => {
+      const dateStr = tr(k.tanggal, 'id') || '';
+      const { monthIndex, year } = getMonthAndYear(dateStr);
+      const key = monthIndex === -1 ? 'other' : `${year}-${monthIndex}`;
+      
+      if (!groups[key]) {
+        groups[key] = { monthIndex, year, items: [] };
+      }
+      groups[key].items.push(k);
+    });
+
+    return Object.entries(groups).map(([key, value]) => ({
+      key,
+      ...value,
+      monthLabel: getMonthLabel(value.monthIndex, lang)
+    })).sort((a, b) => {
+      if (a.monthIndex === -1) return 1;
+      if (b.monthIndex === -1) return -1;
+      
+      const getAcademicScore = (mIdx: number, y: number) => {
+        const academicStartYear = mIdx >= 6 ? y : y - 1;
+        const offset = (mIdx - 6 + 12) % 12;
+        return academicStartYear * 12 + offset;
+      };
+      
+      return getAcademicScore(a.monthIndex, a.year) - getAcademicScore(b.monthIndex, b.year);
+    });
+  })();
+
+  const sambutanText = tr(data.sambutan.teks, lang);
 
 return (
 <div>
@@ -160,16 +262,12 @@ return (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 px-10 sm:px-8">
           {visibleEkskul.map((e) => {
             const cardImg = e.fotoUtama || e.foto;
-            const pelatihNames = (e.pelatih || []).slice(0, 3).map(p => tr(p.nama, lang)).filter(Boolean);
             return (
               <Link key={e.id} to={`/ekstrakurikuler/${e.id}`}>
                 <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full">
                   <img src={cardImg} alt={tr(e.nama, lang)} loading="lazy" className="w-full h-48 object-cover" />
                   <CardContent className="pt-4">
                     <h3 className="font-semibold text-foreground mb-1">{tr(e.nama, lang)}</h3>
-                    {pelatihNames.length > 0 && (
-                      <p className="text-xs text-primary font-medium mb-2">{t('pelatih')}: {pelatihNames.join(', ')}</p>
-                    )}
                     <p className="text-sm text-muted-foreground line-clamp-2">{tr(e.deskripsi, lang)}</p>
                   </CardContent>
                 </Card>
@@ -217,27 +315,65 @@ return (
     </div>
   </section>
 
+  <section className="py-12 md:py-16 bg-background" ref={prestasiRef}>
+    <div className="container mx-auto px-4">
+      <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 md:mb-10 text-foreground scroll-animate">{t('page_prestasi')}</h2>
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {data.prestasi.slice(0, 6).map((p, i) => {
+          const cardImg = p.tipe === 'video' ? p.thumbnail : p.fotoUtama;
+          return (
+            <Link key={p.id} to={`/prestasi/${p.id}`}>
+              <Card className="overflow-hidden hover:shadow-lg transition-shadow scroll-animate" style={{ animationDelay: `${(i + 1) * 100}ms` }}>
+                <div className="relative">
+                  {cardImg && <img src={cardImg} alt={tr(p.judul, lang)} className="w-full h-48 object-cover" />}
+                  {p.tipe === 'video' && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                      <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center"><Play className="w-5 h-5 text-primary fill-primary ml-0.5" /></div>
+                    </div>
+                  )}
+                </div>
+                <CardContent className="pt-4">
+                  <p className="text-xs text-muted-foreground mb-1">{new Date(p.tanggal).toLocaleDateString(lang === 'en' ? 'en-US' : 'id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                  <h3 className="font-semibold text-foreground mb-2">{tr(p.judul, lang)}</h3>
+                  <p className="text-sm text-muted-foreground line-clamp-2">{tr(p.deskripsi, lang)}</p>
+                </CardContent>
+              </Card>
+            </Link>
+          );
+        })}
+      </div>
+      <div className="text-center mt-8 scroll-animate delay-400">
+        <Link to="/prestasi"><Button variant="outline" className="gap-2">{t('btn_lihat_semua')} <ArrowRight className="w-4 h-4" /></Button></Link>
+      </div>
+    </div>
+  </section>
+
   {data.kalender && data.kalender.length > 0 && (
-    <section className="py-12 md:py-16 bg-background">
-      <div className="container mx-auto px-4 max-w-5xl">
-        <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 md:mb-10 text-foreground">{t('section_kalender_akademik')}</h2>
-        <div className="rounded-t-lg overflow-hidden border border-border">
-          <table className="w-full text-sm sm:text-base">
-            <thead className="bg-[#b91c1c] text-white">
-              <tr>
-                <th className="px-4 py-3 text-left font-semibold border-r border-[#991b1b] w-1/2 sm:w-2/3">{t('th_kegiatan')}</th>
-                <th className="px-4 py-3 text-left font-semibold">{t('th_tanggal')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.kalender.map((k: any, i: number) => (
-                <tr key={k.id} className="border-b last:border-b-0 hover:bg-muted/50 transition-colors bg-white">
-                  <td className="px-4 py-3 border-r text-foreground">{tr(k.kegiatan, lang)}</td>
-                  <td className="px-4 py-3 text-foreground whitespace-pre-wrap">{tr(k.tanggal, lang)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+    <section id="kalender" className="py-12 md:py-16 bg-muted">
+      <div className="container mx-auto px-4 max-w-6xl">
+        <div className="text-center mb-8 md:mb-12">
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">{t('section_kalender_akademik')}</h2>
+          <LastModifiedInfo timestamp={data.lastModified?.kalender} className="justify-center" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          {groupedKalender.map((group, idx) => {
+            const style = monthStyles[idx % monthStyles.length] || fallbackStyle;
+            return (
+              <div key={group.key} className="rounded-xl border overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 bg-white flex flex-col" style={{ borderColor: style.bg }}>
+                <div className={`${style.text} px-4 py-3 font-bold text-center text-base sm:text-lg tracking-wide`} style={{ backgroundColor: style.bg }}>
+                  {group.monthLabel} {group.monthIndex !== -1 && group.year}
+                </div>
+                <div className="p-4 space-y-4 flex-1">
+                  {group.items.map((item) => (
+                    <div key={item.id} className="flex flex-col pb-3 last:pb-0 border-b last:border-b-0 border-slate-100">
+                      <span className="text-xs font-semibold text-primary">{tr(item.tanggal, lang)}</span>
+                      <span className="text-sm font-medium text-slate-700 mt-1 leading-relaxed">{tr(item.kegiatan, lang)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

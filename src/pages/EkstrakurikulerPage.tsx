@@ -41,7 +41,7 @@ export default function EkstrakurikulerPage() {
               <Label className="text-xs text-muted-foreground">{t('cari')}</Label>
               <div className="relative mt-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input placeholder={t('search_nama')} value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} className="pl-10" />
+                <Input placeholder={t('search_ekskul')} value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} className="pl-10" />
               </div>
             </div>
           </FilterSidebar>
@@ -51,16 +51,12 @@ export default function EkstrakurikulerPage() {
               {paged.map((e) => {
                 const nama = tr(e.nama, lang);
                 const cardImg = e.fotoUtama || e.foto;
-                const pelatihNames = (e.pelatih || []).slice(0, 3).map(p => tr(p.nama, lang)).filter(Boolean);
                 return (
                   <Link key={e.id} to={`/ekstrakurikuler/${e.id}`}>
                     <Card className="overflow-hidden hover:shadow-lg transition-shadow hover:-translate-y-1 cursor-pointer h-full">
                       <img src={cardImg} alt={nama} loading="lazy" className="w-full h-48 object-cover" />
                       <CardContent className="pt-4 text-center">
                         <h3 className="font-semibold text-foreground text-lg">{nama}</h3>
-                        {pelatihNames.length > 0 && (
-                          <p className="text-xs text-primary font-medium mt-1">{t('pelatih')}: {pelatihNames.join(', ')}</p>
-                        )}
                       </CardContent>
                     </Card>
                   </Link>

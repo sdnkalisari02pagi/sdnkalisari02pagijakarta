@@ -3,7 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import { NavLink } from '@/components/NavLink';
-import { LayoutDashboard, Users, Calendar, Star, FileText, School, MessageSquare, Phone, LogOut, GraduationCap, ImageIcon, LayoutTemplate, Award, UserCog, Shield, Trophy } from 'lucide-react';
+import { LayoutDashboard, Users, Calendar, Star, FileText, School, MessageSquare, Phone, LogOut, GraduationCap, ImageIcon, LayoutTemplate, Award, UserCog, Shield, Trophy, Gamepad } from 'lucide-react';
 import { useSchool } from '@/contexts/SchoolContext';
 import SEO from '@/components/SEO';
 
@@ -14,6 +14,7 @@ const menuItems = [
   { title: 'Keunggulan', url: '/admin/keunggulan', icon: Award },
   { title: 'Pegawai', url: '/admin/pegawai', icon: Users },
   { title: 'Siswa', url: '/admin/siswa', icon: UserCog },
+  { title: 'Hasil TKA', url: '/admin/tka', icon: FileText },
   { title: 'Kalender Akademik', url: '/admin/kalender', icon: Calendar },
   { title: 'Berita', url: '/admin/berita', icon: FileText },
 

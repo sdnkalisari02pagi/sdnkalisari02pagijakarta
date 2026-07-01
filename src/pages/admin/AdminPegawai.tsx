@@ -23,7 +23,7 @@ export default function AdminPegawai() {
   const [editItem, setEditItem] = useState<Pegawai | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [jabatanDialogOpen, setJabatanDialogOpen] = useState(false);
-  const [form, setForm] = useState({ nama: '', jabatan: '', foto: '' });
+  const [form, setForm] = useState({ nama: '', nip: '', pangkat_gol: '', jabatan: '', foto: '' });
   const [newJabatan, setNewJabatan] = useState({ id: '', en: '' });
   const [editJabIdx, setEditJabIdx] = useState<number | null>(null);
   const [editJabValue, setEditJabValue] = useState({ id: '', en: '' });
@@ -39,7 +39,8 @@ export default function AdminPegawai() {
   }, [search, filterJabatan]);
 
   const filtered = data.pegawai.filter(p => {
-    const ms = p.nama.toLowerCase().includes(search.toLowerCase());
+    const searchLower = search.toLowerCase();
+    const ms = p.nama.toLowerCase().includes(searchLower) || (p.nip && p.nip.toLowerCase().includes(searchLower));
     const mf = filterJabatan === 'all' || p.jabatan === filterJabatan;
     return ms && mf;
   });
@@ -60,8 +61,8 @@ export default function AdminPegawai() {
   };
   const handleDragEnd = () => { setDraggedIndex(null); setDragOverIndex(null); };
 
-  const openAdd = () => { setEditItem(null); setForm({ nama: '', jabatan: '', foto: '' }); setDialogOpen(true); };
-  const openEdit = (p: Pegawai) => { setEditItem(p); setForm({ nama: p.nama, jabatan: p.jabatan, foto: p.foto }); setDialogOpen(true); };
+  const openAdd = () => { setEditItem(null); setForm({ nama: '', nip: '', pangkat_gol: '', jabatan: '', foto: '' }); setDialogOpen(true); };
+  const openEdit = (p: Pegawai) => { setEditItem(p); setForm({ nama: p.nama, nip: p.nip || '', pangkat_gol: p.pangkat_gol || '', jabatan: p.jabatan, foto: p.foto }); setDialogOpen(true); };
 
   const handleSave = async () => {
     if (!form.nama || !form.jabatan || !form.foto) {
@@ -209,6 +210,8 @@ export default function AdminPegawai() {
                     </SelectContent>
                   </Select>
                 </div>
+                <div><Label>NIP</Label><Input value={form.nip} onChange={e => setForm(f => ({ ...f, nip: e.target.value }))} /></div>
+                <div><Label>Pangkat/Gol</Label><Input value={form.pangkat_gol} onChange={e => setForm(f => ({ ...f, pangkat_gol: e.target.value }))} /></div>
                 <div><Label>Foto</Label><ImageUpload value={form.foto} onChange={url => setForm(f => ({ ...f, foto: url }))} placeholder required recommendedSize="300×400 px (3:4)" /></div>
                 <Button onClick={handleSave} className="w-full" disabled={isSaving}>{isSaving ? 'Menyimpan...' : 'Simpan'}</Button>
               </div>
@@ -218,7 +221,7 @@ export default function AdminPegawai() {
       </div>
       <LastModifiedInfo timestamp={data.lastModified?.pegawai} />
       <div className="flex flex-col sm:flex-row gap-4 mb-6">
-        <div className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" /><Input placeholder="Cari nama..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10" /></div>
+        <div className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" /><Input placeholder="Nama/NIP/NIKKI" value={search} onChange={e => setSearch(e.target.value)} className="pl-10" /></div>
         <Select value={filterJabatan} onValueChange={setFilterJabatan}>
           <SelectTrigger className="w-full sm:w-48"><SelectValue /></SelectTrigger>
           <SelectContent>
@@ -239,6 +242,8 @@ export default function AdminPegawai() {
               <TableHead>Foto</TableHead>
               <TableHead>Nama</TableHead>
               <TableHead>Jabatan</TableHead>
+              <TableHead>NIP/NIKKI</TableHead>
+              <TableHead>Pangkat/Gol</TableHead>
               <TableHead>Terakhir Diubah</TableHead>
               <TableHead className="text-right">Aksi</TableHead>
             </TableRow>
@@ -261,6 +266,8 @@ export default function AdminPegawai() {
                   <TableCell><img src={p.foto} alt={p.nama} className="w-10 h-10 rounded-full object-cover" /></TableCell>
                   <TableCell className="font-medium">{p.nama}</TableCell>
                   <TableCell>{p.jabatan}</TableCell>
+                  <TableCell>{p.nip || '-'}</TableCell>
+                  <TableCell>{p.pangkat_gol || '-'}</TableCell>
                   <TableCell className="text-xs text-muted-foreground">
                     {p.lastModified ? formatDate(p.lastModified) : p.updated_at ? formatDate(p.updated_at) : '-'}
                   </TableCell>

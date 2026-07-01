@@ -1,6 +1,7 @@
 import { Clock } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
-export function formatDate(iso: string | undefined | null) {
+export function formatDate(iso: string | undefined | null, lang: string = 'id') {
   if (!iso) return '';
 
   // Convert ' ' to 'T' just in case
@@ -16,26 +17,38 @@ export function formatDate(iso: string | undefined | null) {
   const date = new Date(fixed);
   
   if (isNaN(date.getTime())) {
-    return 'Waktu tidak valid';
+    return lang === 'en' ? 'Invalid date' : 'Waktu tidak valid';
   }
 
-  return date.toLocaleString('id-ID', {
+  const dateStr = date.toLocaleDateString(lang === 'en' ? 'en-US' : 'id-ID', {
     day: 'numeric',
     month: 'long',
-    year: 'numeric',
+    year: 'numeric'
+  });
+
+  const timeStr = date.toLocaleTimeString(lang === 'en' ? 'en-US' : 'id-ID', {
     hour: '2-digit',
     minute: '2-digit',
     hour12: false
   });
+
+  if (lang === 'en') {
+    return `${dateStr} at ${timeStr}`;
+  } else {
+    return `${dateStr} pukul ${timeStr.replace(':', '.')}`;
+  }
 }
 
-export default function LastModifiedInfo({ timestamp }: { timestamp?: string }) {
+export default function LastModifiedInfo({ timestamp, className = '' }: { timestamp?: string; className?: string }) {
+  const langCtx = useLanguage();
+  const lang = langCtx?.lang || 'id';
+
   if (!timestamp) return null;
 
   return (
-    <p className="flex items-center gap-1.5 text-sm text-muted-foreground mb-4">
+    <p className={`flex items-center gap-1.5 text-sm text-muted-foreground mb-4 ${className}`}>
       <Clock className="w-3.5 h-3.5" />
-      Terakhir diubah: {formatDate(timestamp)}
+      {lang === 'en' ? 'Last modified:' : 'Terakhir diubah:'} {formatDate(timestamp, lang)}
     </p>
   );
 }

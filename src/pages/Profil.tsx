@@ -56,7 +56,8 @@ export default function Profil() {
   const pegawaiFiltered = useMemo(
     () =>
       data.pegawai.filter((p) => {
-        const ms = p.nama.toLowerCase().includes(pSearch.toLowerCase());
+        const searchLower = pSearch.toLowerCase();
+        const ms = p.nama.toLowerCase().includes(searchLower) || (p.nip && p.nip.toLowerCase().includes(searchLower));
         const mf = pFilterJabatan === "all" || p.jabatan === pFilterJabatan;
         return ms && mf;
       }),
@@ -181,6 +182,18 @@ export default function Profil() {
                       <CardContent className="p-4">
                         <h4 className="font-semibold text-foreground">{p.nama}</h4>
                         <p className="text-sm text-muted-foreground">{translateJabatan(p.jabatan)}</p>
+                        {p.nip && (
+                          <div className="mt-2">
+                            <p className="text-[11px] text-muted-foreground">NIP/NIKKI</p>
+                            <p className="text-xs text-foreground font-medium">{p.nip}</p>
+                          </div>
+                        )}
+                        {p.pangkat_gol && (
+                          <div className="mt-1.5">
+                            <p className="text-[11px] text-muted-foreground">Pangkat/Gol</p>
+                            <p className="text-xs text-foreground font-medium">{p.pangkat_gol}</p>
+                          </div>
+                        )}
                       </CardContent>
                     </Card>
                   ))}
@@ -215,7 +228,21 @@ export default function Profil() {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <p className="text-muted-foreground">{selectedPegawai ? translateJabatan(selectedPegawai.jabatan) : ''}</p>
+                  <div className="text-muted-foreground text-center">
+                    <p className="text-sm">{selectedPegawai ? translateJabatan(selectedPegawai.jabatan) : ''}</p>
+                    {selectedPegawai?.nip && (
+                      <div className="mt-3">
+                        <p className="text-xs text-muted-foreground">NIP/NIKKI</p>
+                        <p className="text-sm text-foreground font-medium">{selectedPegawai.nip}</p>
+                      </div>
+                    )}
+                    {selectedPegawai?.pangkat_gol && (
+                      <div className="mt-2">
+                        <p className="text-xs text-muted-foreground">Pangkat/Gol</p>
+                        <p className="text-sm text-foreground font-medium">{selectedPegawai.pangkat_gol}</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </DialogContent>
             </Dialog>
