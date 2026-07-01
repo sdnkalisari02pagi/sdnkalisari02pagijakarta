@@ -4,6 +4,11 @@
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/sitemap.xml", "destination": "/sitemap.xml" },
     { "source": "/robots.txt", "destination": "/robots.txt" },
+    { "source": "/site.webmanifest", "destination": "/site.webmanifest" },
+    { "source": "/manifest.webmanifest", "destination": "/manifest.webmanifest" },
+    { "source": "/favicon.ico", "destination": "/favicon.ico" },
+    { "source": "/icon.png", "destination": "/icon.png" },
+    { "source": "/apple-touch-icon.png", "destination": "/apple-touch-icon.png" },
     { "source": "/(.*)", "destination": "/" }
   ]
 }

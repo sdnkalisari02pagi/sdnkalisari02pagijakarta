@@ -1,0 +1,33 @@
+{
+  "name": "SDN Kalisari 02 Pagi Jakarta",
+  "short_name": "SDN Kalisari 02",
+  "description": "Website Resmi SDN Kalisari 02 Pagi Jakarta yang menyediakan informasi sekolah, profil sekolah, guru, pengumuman, berita, prestasi, dan kalender akademik.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#b91c1c",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/icon.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

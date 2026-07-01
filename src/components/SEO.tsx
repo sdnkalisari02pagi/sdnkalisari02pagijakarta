@@ -33,7 +33,7 @@ export default function SEO({
   // Default values
   const defaultDesc =
     'Website resmi SDN Kalisari 02 Pagi Jakarta yang menyediakan informasi sekolah, profil sekolah, guru dan tenaga kependidikan, berita, pengumuman, prestasi, ekstrakurikuler, kalender akademik, layanan peserta didik, hasil TKA, galeri, serta informasi lainnya.';
-  const defaultLogo = data.logo || `${siteUrl}/placeholder.svg`;
+  const defaultLogo = data.logo || `${siteUrl}/logo.png`;
   const schoolLogo = typeof defaultLogo === 'string' && defaultLogo.startsWith('http') 
     ? defaultLogo 
     : `${siteUrl}${defaultLogo.startsWith('/') ? '' : '/'}${defaultLogo}`;
@@ -112,6 +112,35 @@ export default function SEO({
       document.head.appendChild(canonicalEl);
     }
     canonicalEl.setAttribute('href', activeCanonical);
+
+    // 9b. Favicons and Web Manifest
+    const setLinkTag = (rel: string, href: string, attributes: Record<string, string> = {}) => {
+      let selector = `link[rel="${rel}"]`;
+      if (attributes.sizes) {
+        selector += `[sizes="${attributes.sizes}"]`;
+      } else if (attributes.type) {
+        selector += `[type="${attributes.type}"]`;
+      }
+      
+      let el = document.querySelector(selector);
+      if (!el) {
+        el = document.createElement('link');
+        el.setAttribute('rel', rel);
+        document.head.appendChild(el);
+      }
+      el.setAttribute('href', href);
+      Object.keys(attributes).forEach(key => {
+        el.setAttribute(key, attributes[key]);
+      });
+    };
+
+    setLinkTag('shortcut icon', '/favicon.ico');
+    setLinkTag('icon', '/favicon.ico', { type: 'image/x-icon' });
+    setLinkTag('icon', '/icon.png', { type: 'image/png', sizes: '96x96' });
+    setLinkTag('icon', '/icon-192.png', { type: 'image/png', sizes: '192x192' });
+    setLinkTag('icon', '/icon-512.png', { type: 'image/png', sizes: '512x512' });
+    setLinkTag('apple-touch-icon', '/apple-touch-icon.png', { sizes: '180x180' });
+    setLinkTag('manifest', '/site.webmanifest');
 
     // 10. Structured Data (JSON-LD)
     const schoolAddress = tr(data.kontak?.alamat, 'id') || 'Kalisari, Pasar Rebo';
