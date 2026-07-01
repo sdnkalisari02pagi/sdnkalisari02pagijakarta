@@ -134,13 +134,14 @@ export default function SEO({
       });
     };
 
-    setLinkTag('shortcut icon', '/favicon.ico');
-    setLinkTag('icon', '/favicon.ico', { type: 'image/x-icon' });
-    setLinkTag('icon', '/icon.png', { type: 'image/png', sizes: '96x96' });
-    setLinkTag('icon', '/icon-192.png', { type: 'image/png', sizes: '192x192' });
-    setLinkTag('icon', '/icon-512.png', { type: 'image/png', sizes: '512x512' });
-    setLinkTag('apple-touch-icon', '/apple-touch-icon.png', { sizes: '180x180' });
-    setLinkTag('manifest', '/site.webmanifest');
+    const v = '2';
+    setLinkTag('shortcut icon', `/favicon.ico?v=${v}`);
+    setLinkTag('icon', `/favicon.ico?v=${v}`, { type: 'image/x-icon' });
+    setLinkTag('icon', `/icon.png?v=${v}`, { type: 'image/png', sizes: '96x96' });
+    setLinkTag('icon', `/icon-192.png?v=${v}`, { type: 'image/png', sizes: '192x192' });
+    setLinkTag('icon', `/icon-512.png?v=${v}`, { type: 'image/png', sizes: '512x512' });
+    setLinkTag('apple-touch-icon', `/apple-touch-icon.png?v=${v}`, { sizes: '180x180' });
+    setLinkTag('manifest', `/site.webmanifest?v=${v}`);
 
     // 10. Structured Data (JSON-LD)
     const schoolAddress = tr(data.kontak?.alamat, 'id') || 'Kalisari, Pasar Rebo';
