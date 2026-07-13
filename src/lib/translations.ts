@@ -16,6 +16,9 @@ export const translations = {
     nav_kontak: 'Kontak',
     nav_games: 'Games',
     nav_login: 'Login',
+    nav_fasilitas: 'Fasilitas',
+    page_fasilitas: 'Fasilitas Sekolah',
+    no_fasilitas: 'Tidak ada fasilitas sekolah.',
 
     hero_cta_feedback: 'Kirim Masukan Anda',
     hero_cta_staff: 'Lihat Guru & Staff',
@@ -127,6 +130,9 @@ export const translations = {
     nav_kontak: 'Contact',
     nav_games: 'Games',
     nav_login: 'Login',
+    nav_fasilitas: 'Facilities',
+    page_fasilitas: 'School Facilities',
+    no_fasilitas: 'No school facilities found.',
 
     hero_cta_feedback: 'Send Us Feedback',
     hero_cta_staff: 'View Teachers & Staff',

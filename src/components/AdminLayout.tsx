@@ -3,7 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import { NavLink } from '@/components/NavLink';
-import { LayoutDashboard, Users, Calendar, Star, FileText, School, MessageSquare, Phone, LogOut, GraduationCap, ImageIcon, LayoutTemplate, Award, UserCog, Shield, Trophy, Gamepad } from 'lucide-react';
+import { LayoutDashboard, Users, Calendar, Star, FileText, School, MessageSquare, Phone, LogOut, GraduationCap, ImageIcon, LayoutTemplate, Award, UserCog, Shield, Trophy, Gamepad, Building } from 'lucide-react';
 import { useSchool } from '@/contexts/SchoolContext';
 import SEO from '@/components/SEO';
 
@@ -20,6 +20,7 @@ const menuItems = [
 
   { title: 'Prestasi', url: '/admin/prestasi', icon: Trophy },
   { title: 'Ekstrakurikuler', url: '/admin/ekstrakurikuler', icon: Star },
+  { title: 'Fasilitas', url: '/admin/fasilitas', icon: Building },
   { title: 'Dokumen', url: '/admin/dokumen', icon: FileText },
   { title: 'Profil Sekolah', url: '/admin/profil', icon: School },
   { title: 'Sambutan', url: '/admin/sambutan', icon: MessageSquare },

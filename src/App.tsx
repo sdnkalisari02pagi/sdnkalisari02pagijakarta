@@ -21,6 +21,7 @@ import Kontak from "./pages/Kontak";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import HasilTKA from "./pages/HasilTKA";
+import Fasilitas from "./pages/Fasilitas";
 
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminPegawai from "./pages/admin/AdminPegawai";
@@ -39,6 +40,7 @@ import AdminFooter from "./pages/admin/AdminFooter";
 import AdminSiswa from "./pages/admin/AdminSiswa";
 import AdminAkun from "./pages/admin/AdminAkun";
 import AdminTKA from "./pages/admin/AdminTKA";
+import AdminFasilitas from "./pages/admin/AdminFasilitas";
 
 const queryClient = new QueryClient();
 
@@ -64,6 +66,7 @@ const App = () => (
                 <Route path="/ekstrakurikuler/:id" element={<EkstrakurikulerDetail />} />
                 <Route path="/dokumen" element={<Layanan />} />
                 <Route path="/layanan" element={<Navigate to="/dokumen" replace />} />
+                <Route path="/fasilitas" element={<Fasilitas />} />
                 <Route path="/hasil-tka" element={<HasilTKA />} />
                 <Route path="/kontak" element={<Kontak />} />
                 <Route path="/login" element={<Login />} />
@@ -88,6 +91,7 @@ const App = () => (
                 <Route path="prestasi" element={<AdminPrestasi />} />
                 <Route path="kegiatan" element={<Navigate to="/admin/berita" replace />} />
                 <Route path="ekstrakurikuler" element={<AdminEkskul />} />
+                <Route path="fasilitas" element={<AdminFasilitas />} />
                 <Route path="dokumen" element={<AdminDokumen />} />
                 <Route path="profil" element={<AdminProfil />} />
                 <Route path="sambutan" element={<AdminSambutan />} />
