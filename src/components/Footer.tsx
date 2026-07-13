@@ -29,19 +29,19 @@ export default function Footer() {
                 <GraduationCap className="w-6 h-6 text-secondary-foreground" />
               </div>
             )}
-            <span className="font-bold text-lg">{data.footer.namaSekolah}</span>
+            <span className="font-bold text-xl">{data.footer.namaSekolah}</span>
           </div>
-          <p className="text-sm opacity-80">{tr(data.footer.deskripsi, lang)}</p>
+          <p className="text-base leading-relaxed opacity-95">{tr(data.footer.deskripsi, lang)}</p>
         </div>
         <div>
-          <h3 className="font-semibold mb-4">{t('footer_kontak')}</h3>
-          <div className="space-y-2 text-sm opacity-80">
-            <div className="flex items-start gap-2"><MapPin className="w-4 h-4 mt-0.5 shrink-0" /><span>{tr(data.kontak.alamat, lang)}</span></div>
+          <h3 className="font-bold text-lg mb-4">{t('footer_kontak')}</h3>
+          <div className="space-y-3 text-base opacity-95">
+            <div className="flex items-start gap-2"><MapPin className="w-4 h-4 mt-1.5 shrink-0" /><span>{tr(data.kontak.alamat, lang)}</span></div>
             <div className="flex items-center gap-2"><Mail className="w-4 h-4 shrink-0" /><span>{data.kontak.email}</span></div>
           </div>
         </div>
         <div>
-          <h3 className="font-semibold mb-4">{t('footer_sosmed')}</h3>
+          <h3 className="font-bold text-lg mb-4">{t('footer_sosmed')}</h3>
           <div className="flex gap-4">
             {data.footer.instagram && <a href={data.footer.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors"><Instagram className="w-6 h-6" /></a>}
             {data.footer.youtube && <a href={data.footer.youtube} target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors"><Youtube className="w-6 h-6" /></a>}
@@ -49,7 +49,7 @@ export default function Footer() {
           </div>
         </div>
         <div>
-          <h3 className="font-semibold mb-4">{lang === 'id' ? 'Lokasi Kami' : 'Our Location'}</h3>
+          <h3 className="font-bold text-lg mb-4">{lang === 'id' ? 'Lokasi Kami' : 'Our Location'}</h3>
           {data.kontak.mapsEmbed ? (
             <div className="rounded-lg overflow-hidden border border-primary-foreground/20 h-[150px] w-full bg-white/5">
               <iframe
@@ -63,11 +63,11 @@ export default function Footer() {
               />
             </div>
           ) : (
-            <p className="text-sm opacity-80">{lang === 'id' ? 'Lokasi tidak tersedia.' : 'Location not available.'}</p>
+            <p className="text-base opacity-95">{lang === 'id' ? 'Lokasi tidak tersedia.' : 'Location not available.'}</p>
           )}
         </div>
       </div>
-      <div className="container mx-auto px-4 mt-8 pt-4 border-t border-primary-foreground/20 text-center text-sm opacity-60">
+      <div className="container mx-auto px-4 mt-8 pt-4 border-t border-primary-foreground/20 text-center text-sm opacity-70">
         {data.footer.copyright || `© ${new Date().getFullYear()} ${data.footer.namaSekolah}. All rights reserved.`}
       </div>
     </footer>
