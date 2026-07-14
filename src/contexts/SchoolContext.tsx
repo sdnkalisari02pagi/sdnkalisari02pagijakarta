@@ -72,7 +72,8 @@ const defaultData: SchoolData = {
     visi: B('', ''),
     misi: B('', ''),
     tujuan: B('', ''),
-    fotoSekolah: ''
+    fotoSekolah: '',
+    fasilitasDesc: B('', '')
   },
   sambutan: { nama: '', foto: '', teks: B('', '') },
   kontak: {
@@ -192,6 +193,7 @@ async function fetchAll(): Promise<SchoolData> {
         tujuan: B(profil.data.tujuan_id, profil.data.tujuan_en),
         fotoSekolah: profil.data.foto,
         tkaActive: profil.data.tka_active ?? true,
+        fasilitasDesc: B(profil.data.fasilitas_desc_id || '', profil.data.fasilitas_desc_en || ''),
       } : { ...defaultData.profil, tkaActive: true },
       sambutan: sambutan.data ? {
         nama: sambutan.data.nama || '', foto: sambutan.data.foto || '', teks: B(sambutan.data.teks_id || '', sambutan.data.teks_en || '')
@@ -511,6 +513,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
       misi_id: form.misi?.id || '', misi_en: form.misi?.en || '',
       tujuan_id: form.tujuan?.id || '', tujuan_en: form.tujuan?.en || '',
       foto: form.fotoSekolah || '', tka_active: form.tkaActive ?? true,
+      fasilitas_desc_id: form.fasilitasDesc?.id || '', fasilitas_desc_en: form.fasilitasDesc?.en || '',
       updated_at: new Date().toISOString()
     });
     if (profErr) throw profErr;

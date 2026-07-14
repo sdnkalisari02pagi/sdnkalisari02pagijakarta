@@ -33,9 +33,9 @@ export default function Fasilitas() {
             {t('page_fasilitas')}
           </h1>
           <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-            {lang === 'id' 
+            {tr(data.profil.fasilitasDesc, lang) || (lang === 'id' 
               ? 'SDN Kalisari 02 Pagi berkomitmen menyediakan fasilitas terbaik demi kenyamanan belajar dan tumbuh kembang peserta didik.'
-              : 'SDN Kalisari 02 Pagi is committed to providing the best facilities for the learning comfort and development of students.'}
+              : 'SDN Kalisari 02 Pagi is committed to providing the best facilities for the learning comfort and development of students.')}
           </p>
         </div>
 
