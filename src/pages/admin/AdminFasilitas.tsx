@@ -97,8 +97,8 @@ export default function AdminFasilitas() {
   };
 
   const handleSaveFacility = () => {
-    if (!facilityForm.nama.id.trim() || !facilityForm.foto.trim()) {
-      toast.error('Nama fasilitas (ID) dan foto wajib diisi');
+    if (!facilityForm.nama.id.trim()) {
+      toast.error('Nama fasilitas (ID) wajib diisi');
       return;
     }
 
@@ -310,7 +310,6 @@ export default function AdminFasilitas() {
                 value={facilityForm.foto}
                 onChange={url => setFacilityForm(f => ({ ...f, foto: url }))}
                 placeholder
-                required
                 recommendedSize="800×600 px (4:3)"
               />
             </div>

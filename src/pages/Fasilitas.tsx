@@ -53,22 +53,28 @@ export default function Fasilitas() {
 
               return (
                 <Card key={f.id} className="overflow-hidden group hover:shadow-xl transition-all duration-300 border border-muted hover:border-primary/20 flex flex-col h-full bg-card">
-                  <div className="relative overflow-hidden aspect-video cursor-zoom-in shrink-0 bg-muted">
-                    <img 
-                      src={f.foto} 
-                      alt={nama} 
-                      loading="lazy" 
-                      onClick={() => imgIndex !== -1 && setLightboxIdx(imgIndex)}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
-                    />
-                    <div 
-                      onClick={() => imgIndex !== -1 && setLightboxIdx(imgIndex)}
-                      className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
-                    >
-                      <div className="p-3 rounded-full bg-white/20 backdrop-blur-sm text-white scale-90 group-hover:scale-100 transition-transform duration-300">
-                        <ZoomIn className="w-6 h-6" />
-                      </div>
-                    </div>
+                  <div className={`relative overflow-hidden aspect-video shrink-0 bg-muted flex items-center justify-center border-b ${f.foto ? 'cursor-zoom-in' : ''}`}>
+                    {f.foto ? (
+                      <>
+                        <img 
+                          src={f.foto} 
+                          alt={nama} 
+                          loading="lazy" 
+                          onClick={() => imgIndex !== -1 && setLightboxIdx(imgIndex)}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                        />
+                        <div 
+                          onClick={() => imgIndex !== -1 && setLightboxIdx(imgIndex)}
+                          className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
+                        >
+                          <div className="p-3 rounded-full bg-white/20 backdrop-blur-sm text-white scale-90 group-hover:scale-100 transition-transform duration-300">
+                            <ZoomIn className="w-6 h-6" />
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <Building className="w-12 h-12 text-muted-foreground/30 animate-pulse" />
+                    )}
                   </div>
                   <CardContent className="p-4 flex-1 flex items-center justify-center text-center bg-card">
                     <h3 className="font-semibold text-foreground text-base sm:text-lg leading-snug line-clamp-2">
