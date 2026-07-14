@@ -275,16 +275,14 @@ export default function AdminFasilitas() {
         </CardContent>
       </Card>
 
-      {items.length > 0 && (
-        <Button 
-          onClick={handleSaveAll} 
-          className="w-full text-base font-semibold py-6 shadow-md" 
-          size="lg" 
-          disabled={isSaving}
-        >
-          {isSaving ? 'Menyimpan...' : 'Simpan Perubahan'}
-        </Button>
-      )}
+      <Button 
+        onClick={handleSaveAll} 
+        className="w-full text-base font-semibold py-6 shadow-md" 
+        size="lg" 
+        disabled={isSaving}
+      >
+        {isSaving ? 'Menyimpan...' : 'Simpan Perubahan'}
+      </Button>
 
       {/* Add / Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
