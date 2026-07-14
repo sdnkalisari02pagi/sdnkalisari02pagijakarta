@@ -15,3 +15,6 @@ CREATE TABLE IF NOT EXISTS fasilitas (
 -- Since the Admin panel uses local localStorage-based authentication rather than Supabase Auth,
 -- we do not restrict writes to Supabase Auth roles.
 ALTER TABLE fasilitas DISABLE ROW LEVEL SECURITY;
+
+-- 3. Grant Table Privileges to all roles used by Supabase API
+GRANT ALL ON TABLE fasilitas TO anon, authenticated, service_role;
