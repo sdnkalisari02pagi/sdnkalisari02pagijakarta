@@ -11,18 +11,7 @@ CREATE TABLE IF NOT EXISTS fasilitas (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 
--- 2. Enable Row Level Security (RLS)
-ALTER TABLE fasilitas ENABLE ROW LEVEL SECURITY;
-
--- 3. Create RLS Policies
--- Drop existing policies if they already exist
-DROP POLICY IF EXISTS "Allow public read access to fasilitas" ON fasilitas;
-DROP POLICY IF EXISTS "Allow authenticated full access to fasilitas" ON fasilitas;
-
--- Allow public select (read-only)
-CREATE POLICY "Allow public read access to fasilitas" ON fasilitas
-    FOR SELECT USING (true);
-
--- Allow authenticated users (admin) full access
-CREATE POLICY "Allow authenticated full access to fasilitas" ON fasilitas
-    FOR ALL USING (auth.role() = 'authenticated');
+-- 2. Disable Row Level Security (RLS) to match other school tables
+-- Since the Admin panel uses local localStorage-based authentication rather than Supabase Auth,
+-- we do not restrict writes to Supabase Auth roles.
+ALTER TABLE fasilitas DISABLE ROW LEVEL SECURITY;
