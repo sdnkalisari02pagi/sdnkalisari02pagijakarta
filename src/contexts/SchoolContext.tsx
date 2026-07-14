@@ -538,7 +538,7 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
       const { error } = await supabase.from('fasilitas').delete().not('id', 'in', `(${ids.map(id => `"${id}"`).join(',')})`);
       if (error) throw error;
     } else {
-      const { error } = await supabase.from('fasilitas').delete().neq('id', 'null');
+      const { error } = await supabase.from('fasilitas').delete().neq('id', '00000000-0000-0000-0000-000000000000');
       if (error) throw error;
     }
     if (form.length > 0) {
