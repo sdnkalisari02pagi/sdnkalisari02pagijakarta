@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSchool } from '@/contexts/SchoolContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/lib/supabase';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -18,8 +19,9 @@ export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { login } = useAuth(); // 🔥 dipakai sekarang
+  const { login } = useAuth();
   const { data } = useSchool();
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -31,7 +33,6 @@ export default function Login() {
     const p = password.trim();
 
     try {
-      // 🔍 ambil user dari Supabase
       const { data: users, error } = await supabase
         .from('akun')
         .select('*')
@@ -41,29 +42,25 @@ export default function Login() {
       if (error) throw error;
 
       if (!users || users.length === 0) {
-        setError('User tidak ditemukan');
+        setError(t('login_err_not_found'));
         setLoading(false);
         return;
       }
 
       const user = users[0];
 
-      // 🔐 cek password
       if (user.password !== p) {
-        setError('Password salah');
+        setError(t('login_err_wrong_pass'));
         setLoading(false);
         return;
       }
 
-      // 🔥 WAJIB: update AuthContext
       await login(user.username);
-
-      // 🚀 redirect
       navigate('/admin');
 
     } catch (err) {
       console.error(err);
-      setError('Terjadi kesalahan saat login');
+      setError(t('login_err_generic'));
     }
 
     setLoading(false);
@@ -71,7 +68,7 @@ export default function Login() {
 
   return (
     <div className="min-h-[70vh] flex items-center justify-center py-10">
-      <SEO title="Masuk Admin" noindex={true} />
+      <SEO title={t('login_title')} noindex={true} />
       <Card className="w-full max-w-md mx-4">
         <CardHeader className="text-center">
           {data.logo ? (
@@ -81,7 +78,7 @@ export default function Login() {
               <GraduationCap className="w-8 h-8 text-primary-foreground" />
             </div>
           )}
-          <CardTitle className="text-2xl">Login Admin</CardTitle>
+          <CardTitle className="text-2xl">{t('login_title')}</CardTitle>
         </CardHeader>
 
         <CardContent>
@@ -94,25 +91,25 @@ export default function Login() {
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="username">{t('login_username')}</Label>
               <Input
                 id="username"
                 value={username}
                 onChange={e => setUsername(e.target.value)}
-                placeholder="Masukkan username"
+                placeholder={t('login_username_placeholder')}
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t('login_password')}</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  placeholder="Masukkan password"
+                  placeholder={t('login_password_placeholder')}
                   required
                   className="pr-10"
                 />
@@ -127,18 +124,18 @@ export default function Login() {
             </div>
 
             <Button type="submit" disabled={loading} className="w-full">
-              {loading ? 'Memproses...' : 'Login'}
+              {loading ? t('login_processing') : t('login_submit')}
             </Button>
 
             <p className="text-center text-sm text-muted-foreground">
               <button
                 type="button"
                 onClick={() =>
-                  toast('Silakan hubungi administrator untuk mereset password Anda.')
+                  toast(t('login_forgot_toast'))
                 }
                 className="text-primary hover:underline"
               >
-                Forgot Password?
+                {t('login_forgot')}
               </button>
             </p>
 
