@@ -15,6 +15,10 @@ CREATE TABLE IF NOT EXISTS fasilitas (
 ALTER TABLE fasilitas ENABLE ROW LEVEL SECURITY;
 
 -- 3. Create RLS Policies
+-- Drop existing policies if they already exist
+DROP POLICY IF EXISTS "Allow public read access to fasilitas" ON fasilitas;
+DROP POLICY IF EXISTS "Allow authenticated full access to fasilitas" ON fasilitas;
+
 -- Allow public select (read-only)
 CREATE POLICY "Allow public read access to fasilitas" ON fasilitas
     FOR SELECT USING (true);
